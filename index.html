@@ -247,6 +247,27 @@ footer.foot small{color:#8ea2c2;font-size:13px;width:100%}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
+<style>
+/* v4 additions */
+.refbox{margin-top:30px;background:var(--wash);border:1px solid var(--line);border-radius:12px;padding:20px 24px}
+.refbox h4{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--navy);margin-bottom:10px}
+.refbox ol{margin:0;padding-left:20px}
+.refbox li{font-size:13.5px;color:var(--muted);line-height:1.55;margin-bottom:7px;word-break:break-word}
+.dbadge{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#9A6A00;background:#FFF0CC;border-radius:5px;padding:2px 7px;margin-right:4px}
+a.chip{text-decoration:none}
+.cat-kicker a{color:var(--sky)}
+.about-wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:34px;align-items:start}
+.about-wrap .lead{font-size:18px;color:#3a4658;line-height:1.7;margin:0 0 18px}
+.about-wrap p{color:var(--muted);font-size:15.5px;line-height:1.7;margin:0 0 14px}
+.about-card{border:1px solid var(--line);border-radius:14px;padding:22px;background:var(--wash)}
+.about-card h4{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:12px}
+.about-card ul{margin:0;padding:0;list-style:none}
+.about-card li{font-size:14px;color:var(--ink);padding:8px 0;border-bottom:1px solid var(--line)}
+.about-card li:last-child{border-bottom:0}
+.about-card .li-link{display:inline-flex;gap:8px;align-items:center;font-weight:600;color:var(--blue);margin-top:14px}
+.home-about{background:var(--wash);border-top:1px solid var(--line)}
+@media(max-width:860px){.about-wrap{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
@@ -258,6 +279,7 @@ footer.foot small{color:#8ea2c2;font-size:13px;width:100%}
       <a href="#/" data-route="/">Home</a>
       <a href="#/publications" data-route="/publications">Publications</a>
       <a href="#/maps" data-route="/maps">Maps &amp; Stats</a>
+      <a href="#/about" data-route="/about">About</a>
       <a class="li-icon" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener" aria-label="LinkedIn">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
       </a>
@@ -273,6 +295,7 @@ footer.foot small{color:#8ea2c2;font-size:13px;width:100%}
     <div class="links">
       <a href="#/publications">Publications</a>
       <a href="#/maps">Maps &amp; Stats</a>
+      <a href="#/about">About</a>
       <a href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">LinkedIn</a>
       <a href="#/admin">Admin</a>
     </div>
@@ -282,7 +305,6 @@ footer.foot small{color:#8ea2c2;font-size:13px;width:100%}
 
 <!-- modals -->
 <div class="modal-bg" id="ethModal"><div class="modal" id="ethInner"></div></div>
-<div class="modal-bg" id="energyModal"><div class="modal" id="energyPopup"></div></div>
 <div class="modal-bg admin" id="adminModal"><div class="modal" id="adminInner"></div></div>
 
 <script>
@@ -313,6 +335,7 @@ const SEED=[
   {id:"black-sea-security",title:"The Black Sea after the war: a contested commons",author:"Timoleon Ilias",
    date:"2026-01-18",lang:"en",type:"internal",featured:false,tags:["Black Sea","Security","NATO"],photo:"",
    excerpt:"How the post-war Black Sea is reshaping naval access, trade and deterrence.",
+   references:["NATO, “Black Sea Security”, official backgrounder, 2025.","International Crisis Group, regional briefing, 2025.","Author surname, Title of the report, Publisher, 2026, p. 12."],
    body:"## A reordered sea\nThis is a sample article. Replace or delete it from the admin panel.\n\nThe Black Sea has moved from periphery to centre stage in European security. Control of access, ports and undersea infrastructure now shapes the balance between the littoral states.\n\n## What to watch\nThe coming year will test whether deterrence holds, and whether commercial shipping can be insulated from military risk."},
   {id:"metavasi-energeias",title:"Η ενεργειακή μετάβαση και η γεωπολιτική του φυσικού αερίου",author:"Τιμολέων Ηλίας",
    date:"2025-12-10",lang:"el",type:"internal",featured:false,tags:["Energy","Ανάλυση"],photo:"",
@@ -337,8 +360,8 @@ const DEFACTO={
       {name:"Nauru",flag:FLAG_NR},
       {name:"Nicaragua",flag:FLAG_NI}
     ],
-    nextElections:"2026 (parliamentary, expected)",
-    freedomHouse:{score:22,label:"Not Free"},
+    nextElections:"2030 (presidential, next) · last March 2025",
+    freedomHouse:{score:39,label:"Partly Free"},
     info:"De facto independent since the 1992–93 war. Recognised by Russia, Venezuela, Syria, Nauru and Nicaragua; the rest of the world treats it as part of Georgia. Increasingly dependent on Moscow, with a small economy and a population of roughly 240,000.",
     tags:["Caucasus","De facto states"]
   },
@@ -353,8 +376,8 @@ const DEFACTO={
       {name:"Nauru",flag:FLAG_NR},
       {name:"Nicaragua",flag:FLAG_NI}
     ],
-    nextElections:"2026 (presidential, expected)",
-    freedomHouse:{score:8,label:"Not Free"},
+    nextElections:"2027 (presidential, next) · last May 2022",
+    freedomHouse:{score:12,label:"Not Free"},
     info:"Broke away from Georgia in the early 1990s; Russian-backed and effectively sealed off after the 2008 war. Recognised by the same handful of states as Abkhazia. Most ethnic Ossetians actually live in North Ossetia, within Russia. Georgia abolished its own exile administration of the region in early 2026.",
     tags:["Caucasus","De facto states"]
   },
@@ -370,29 +393,37 @@ const DEFACTO={
   }
 };
 
-/* ---------- energy routes ---------- */
-const PIPELINES=[
-  {id:"btc",name:"Baku–Tbilisi–Ceyhan (BTC)",color:"#2E8B57",kind:"Oil · operational",
-   note:"The flagship route: Caspian crude from Baku to the Turkish Mediterranean port of Ceyhan, bypassing Russia and the Bosphorus."},
-  {id:"supsa",name:"Baku–Supsa (Western Route)",color:"#D44C5C",kind:"Oil · operational",
-   note:"An earlier export line carrying oil to the Georgian Black Sea terminal at Supsa."},
-  {id:"novo",name:"Baku–Novorossiysk (Northern Route)",color:"#3A6FB0",kind:"Oil · operational",
-   note:"The Russia-routed line to the Black Sea port of Novorossiysk — the option that keeps Moscow in the transit picture."},
-  {id:"scp",name:"South Caucasus Pipeline (BTE gas)",color:"#E0A93A",kind:"Gas · operational",
-   note:"The gas backbone paralleling BTC to Erzurum, feeding the Southern Gas Corridor toward Europe."},
-  {id:"sgc",name:"Onward: Southern Gas Corridor",color:"#8A93A8",kind:"Gas · schematic",
-   note:"Schematic onward leg: TANAP across Turkey and TAP into south-eastern Europe."}
-];
-
-/* ---------- state + storage ---------- */
+/* ---------- state + storage ----------
+   To make publications visible to EVERYONE (not just this browser), fill in
+   your Supabase project below. Leave blank to use this browser's localStorage. */
+const SUPABASE_URL=""; // e.g. "https://abcd1234.supabase.co"
+const SUPABASE_KEY=""; // your project's anon public key
+const SUPA_ON=!!(SUPABASE_URL&&SUPABASE_KEY);
 const KEY="tilias_pubs_v3";
 let PUBS=[];
-function load(){try{const r=localStorage.getItem(KEY);PUBS=r?JSON.parse(r):SEED.slice();}catch(e){PUBS=SEED.slice();}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(PUBS));}catch(e){alert("Storage is blocked in this preview. Download & host the file, or use Export JSON.");}}
+function supaHeaders(extra){return Object.assign({apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},extra||{});}
+async function load(){
+  if(SUPA_ON){
+    try{const r=await fetch(`${SUPABASE_URL}/rest/v1/publications?select=data&order=date.desc`,{headers:supaHeaders()});
+      if(r.ok){PUBS=(await r.json()).map(x=>x.data);return;}}catch(e){}
+  }
+  try{const r=localStorage.getItem(KEY);PUBS=r?JSON.parse(r):SEED.slice();}catch(e){PUBS=SEED.slice();}
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(PUBS));}catch(e){alert("Storage is blocked here. Download & host the file, or use Export JSON.");}}
+async function persistOne(obj){
+  if(SUPA_ON){try{await fetch(`${SUPABASE_URL}/rest/v1/publications`,{method:"POST",headers:supaHeaders({Prefer:"resolution=merge-duplicates"}),body:JSON.stringify({id:obj.id,date:obj.date||"",data:obj})});}catch(e){alert("Backend unreachable — change not saved to the server.");}}
+  else save();
+}
+async function removeOne(id){
+  if(SUPA_ON){try{await fetch(`${SUPABASE_URL}/rest/v1/publications?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:supaHeaders()});}catch(e){alert("Backend unreachable.");}}
+  else save();
+}
+function publicPubs(){return PUBS.filter(p=>!p.draft);}
+const byDate=(a,b)=>(b.date||"").localeCompare(a.date||"");
 function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function fmt(d){if(!d)return"";const dt=new Date(d);return isNaN(dt)?d:dt.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}
 function bodyHtml(t){return (t||"").split(/\n{2,}/).map(b=>{b=b.trim();if(!b)return"";return b.startsWith("## ")?"<h3>"+esc(b.slice(3))+"</h3>":"<p>"+esc(b).replace(/\n/g,"<br>")+"</p>";}).join("");}
-function allTags(){const s=new Set();PUBS.forEach(p=>(p.tags||[]).forEach(x=>s.add(x)));return[...s];}
+function allTags(){const s=new Set();publicPubs().forEach(p=>(p.tags||[]).forEach(x=>s.add(x)));return[...s];}
 
 /* ---------- card markup ---------- */
 function coverHtml(p){
@@ -419,7 +450,7 @@ function card(p){
 
 /* ---------- views ---------- */
 function viewHome(){
-  const sorted=PUBS.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  const sorted=publicPubs().slice().sort(byDate);
   const featured=sorted.find(p=>p.featured)||sorted[0];
   const latest=sorted.filter(p=>!featured||p.id!==featured.id).slice(0,3);
   const spotHtml=featured?`
@@ -444,24 +475,20 @@ function viewHome(){
   return `
   <section class="hero"><div class="wrap">
     <span class="eyebrow">Geopolitics · Security · Regional affairs</span>
-    <h1>Timoleon Ilias</h1>
-    <div class="role">Analysis on geopolitics, security and the post-Soviet space</div>
-    <p>Long-form publications alongside interactive maps and stats — reading the region soberly and with evidence.</p>
+    <h1>Independent analysis of a region in flux</h1>
+    <div class="role">Geopolitics, security and the post-Soviet space</div>
+    <p>Long-form publications alongside an interactive map and regional stats — reading the region soberly and with evidence.</p>
     <div class="cta">
       <a class="btn primary" href="#/publications">Read publications</a>
-      <a class="btn ghost" href="#/maps">Explore the maps</a>
-      <a class="btn ghost" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
-        LinkedIn
-      </a>
+      <a class="btn ghost" href="#/maps">Explore the map</a>
     </div>
   </div></section>
 
   <div class="stat-band">
     <div class="wrap">
-      <div class="sstat"><div class="sv">${PUBS.length}</div><div class="sk">Publications</div></div>
+      <div class="sstat"><div class="sv">${publicPubs().length}</div><div class="sk">Publications</div></div>
       <div class="sstat"><div class="sv">2</div><div class="sk">Active de facto states tracked</div></div>
-      <div class="sstat"><div class="sv">5</div><div class="sk">Energy routes mapped</div></div>
+      <div class="sstat"><div class="sv">1</div><div class="sk">Territory dissolved since 2023</div></div>
       <div class="sstat"><div class="sv">2</div><div class="sk">Languages</div></div>
     </div>
   </div>
@@ -477,7 +504,7 @@ function viewHome(){
           <div class="ficon" style="background:var(--cyan)">
             <svg width="22" height="22" fill="none" stroke="var(--navy)" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10"/></svg>
           </div>
-          <span class="ftag">Publications · ${PUBS.length} pieces</span>
+          <span class="ftag">Publications · ${publicPubs().length} pieces</span>
           <h3>Written analysis</h3>
           <p>Articles in English and Greek on geopolitics, security and the post-Soviet space — some hosted here in full, others featured in external outlets like <em>The Perspective</em>.</p>
           <span class="go">Browse all publications →</span>
@@ -489,22 +516,22 @@ function viewHome(){
           <div class="ficon" style="background:#e0f0ff">
             <svg width="22" height="22" fill="none" stroke="var(--blue)" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7l6-3 6 3 6-3v13l-6 3-6-3-6 3z"/><path d="M9 4v13M15 7v13"/></svg>
           </div>
-          <span class="ftag">Maps · De facto states + Energy</span>
-          <h3>Interactive maps</h3>
-          <p>Two clickable vector maps of the South Caucasus: unrecognised territories with recognition status and Freedom House data, and the five major Caspian energy corridors.</p>
-          <span class="go">Open the maps →</span>
+          <span class="ftag">Maps &amp; Stats · De facto states</span>
+          <h3>States of the Caucasus</h3>
+          <p>A clickable vector map of the South Caucasus. Open any country or breakaway territory for recognition status, Freedom House scores and the next elections.</p>
+          <span class="go">Open the map →</span>
         </div>
       </a>
-      <a class="fcard" href="#/maps">
+      <a class="fcard" href="#/about">
         <div class="fbar" style="background:#C065A8"></div>
         <div class="fbody">
           <div class="ficon" style="background:#f5e8f5">
-            <svg width="22" height="22" fill="none" stroke="#C065A8" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10A15.3 15.3 0 0 1 8 12a15.3 15.3 0 0 1 4-10z"/></svg>
+            <svg width="22" height="22" fill="none" stroke="#C065A8" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
           </div>
-          <span class="ftag">Caucasus · De facto states</span>
-          <h3>De facto states</h3>
-          <p>Abkhazia and South Ossetia remain Russian-backed and unrecognised by the UN. Artsakh dissolved in January 2024. Click any territory for elections, Freedom House scores and recognition data.</p>
-          <span class="go">Explore de facto states →</span>
+          <span class="ftag">About · Timoleon Ilias</span>
+          <h3>About the author</h3>
+          <p>Who's behind t.ilias, the focus areas — security, minorities and regional geopolitics — and how to get in touch.</p>
+          <span class="go">Read more →</span>
         </div>
       </a>
     </div>
@@ -513,33 +540,78 @@ function viewHome(){
   <section class="section" style="padding-top:8px"><div class="wrap">
     <div class="sec-head"><div><span class="kicker">Latest</span><h2>Recent publications</h2></div>
       <a class="more" href="#/publications">View all →</a></div>
-    <div class="pub-grid home">${latest.map(card).join("")}</div>
+    <div class="pub-grid home">${latest.map(card).join("")||'<div class="empty">No publications yet.</div>'}</div>
+  </div></section>
+
+  <section class="section home-about"><div class="wrap">
+    <div class="sec-head"><div><span class="kicker">About</span><h2>About</h2></div>
+      <a class="more" href="#/about">Full profile →</a></div>
+    <div class="about-wrap">
+      <div>
+        <p class="lead">t.ilias is the analytical platform of Timoleon Ilias — covering security, ethnic minorities and the geopolitics of the South Caucasus and the wider post-Soviet space.</p>
+        <p>The aim is sober, evidence-led reading of a fast-moving region: written analysis on one side, and interactive reference data — recognition status, Freedom House scores, election calendars — on the other.</p>
+        <div class="cta"><a class="btn primary" href="#/about">More about the author</a>
+          <a class="btn line" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">LinkedIn ↗</a></div>
+      </div>
+      <div class="about-card">
+        <h4>Focus areas</h4>
+        <ul><li>South Caucasus security</li><li>De facto &amp; breakaway states</li><li>Energy &amp; regional geopolitics</li><li>Ethnic minorities</li><li>Post-Soviet affairs</li></ul>
+      </div>
+    </div>
   </div></section>`;
 }
 
+function chipsRow(active){
+  let h=`<a class="chip ${!active?'active':''}" href="#/publications">All</a>`;
+  h+=`<a class="chip ${active==='external'?'active':''}" href="#/category/external">External</a>`;
+  allTags().forEach(t=>{h+=`<a class="chip ${active===t?'active':''}" href="#/category/${encodeURIComponent(t)}">${esc(t)}</a>`;});
+  return h;
+}
 function viewPublications(){
+  const list=publicPubs().slice().sort(byDate);
   return `<section class="section"><div class="wrap">
     <div class="sec-head"><div><span class="kicker">Portfolio</span><h2>Publications</h2>
-      <p>Click an article to open it. External pieces open in their original outlet.</p></div></div>
-    <div class="filters" id="filters"></div>
-    <div class="pub-grid" id="pubGrid"></div>
+      <p>Click an article to open it. Click a category to see everything filed under it.</p></div></div>
+    <div class="filters">${chipsRow(null)}</div>
+    <div class="pub-grid">${list.length?list.map(card).join(""):`<div class="empty">No publications yet.</div>`}</div>
   </div></section>`;
 }
-let activeFilter="all";
-function renderFilters(){
-  const f=document.getElementById("filters");if(!f)return;
-  let h=`<button class="chip ${activeFilter==='all'?'active':''}" data-f="all">All</button>`;
-  h+=`<button class="chip ${activeFilter==='external'?'active':''}" data-f="external">External</button>`;
-  allTags().forEach(t=>{h+=`<button class="chip ${activeFilter===t?'active':''}" data-f="${esc(t)}">${esc(t)}</button>`;});
-  f.innerHTML=h;
-  f.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{activeFilter=c.dataset.f;renderFilters();renderPubGrid();});
+function viewCategory(raw){
+  const tag=decodeURIComponent(raw||"");
+  let list=publicPubs().slice().sort(byDate),title;
+  if(tag==="external"){list=list.filter(p=>p.type==="external");title="External publications";}
+  else{list=list.filter(p=>(p.tags||[]).includes(tag));title=tag;}
+  return `<section class="section"><div class="wrap">
+    <div class="sec-head"><div><span class="kicker cat-kicker"><a href="#/publications">Publications</a> · Category</span><h2>${esc(title)}</h2>
+      <p>${list.length} publication${list.length===1?"":"s"} in this category.</p></div>
+      <a class="more" href="#/publications">← All publications</a></div>
+    <div class="filters">${chipsRow(tag)}</div>
+    <div class="pub-grid">${list.length?list.map(card).join(""):`<div class="empty">No publications in this category yet.</div>`}</div>
+  </div></section>`;
 }
-function renderPubGrid(){
-  const g=document.getElementById("pubGrid");if(!g)return;
-  let list=PUBS.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
-  if(activeFilter==="external")list=list.filter(p=>p.type==="external");
-  else if(activeFilter!=="all")list=list.filter(p=>(p.tags||[]).includes(activeFilter));
-  g.innerHTML=list.length?list.map(card).join(""):`<div class="empty">No publications in this category yet.</div>`;
+function viewAbout(){
+  return `<section class="hero" style="padding:46px 0 50px"><div class="wrap">
+    <span class="eyebrow">About</span><h1>Timoleon Ilias</h1>
+    <div class="role">Geopolitics &amp; security analyst — South Caucasus and the post-Soviet space</div>
+  </div></section>
+  <section class="section"><div class="wrap">
+    <div class="about-wrap">
+      <div>
+        <p class="lead">t.ilias is an independent platform for analysis of the South Caucasus and the wider post-Soviet space — its security dynamics, its de facto and breakaway states, its energy geopolitics and its ethnic minorities.</p>
+        <p>The work pairs long-form writing with interactive reference material: a clickable map of the region's recognised and unrecognised states, each annotated with recognition status, Freedom House ratings and election calendars. Some publications appear here in full; others are featured in external outlets such as <em>The Perspective</em>.</p>
+        <p>Writing in both English and Greek, the aim is the same throughout: a calm, evidence-led reading of a region where events move quickly and narratives move faster.</p>
+        <div class="cta"><a class="btn primary" href="#/publications">Read the publications</a>
+          <a class="btn line" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">Connect on LinkedIn ↗</a></div>
+      </div>
+      <div class="about-card">
+        <h4>Focus areas</h4>
+        <ul><li>South Caucasus security</li><li>De facto &amp; breakaway states</li><li>Energy &amp; regional geopolitics</li><li>Ethnic minorities</li><li>Post-Soviet affairs</li></ul>
+        <a class="li-link" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+          linkedin.com/in/timoleon-ilias</a>
+      </div>
+    </div>
+  </div></section>`;
 }
 
 function viewArticle(id){
@@ -552,31 +624,23 @@ function viewArticle(id){
     <h1>${esc(p.title)}</h1>
     ${p.excerpt?`<p class="lead">${esc(p.excerpt)}</p>`:""}
     <div class="content">${bodyHtml(p.body)||"<p>(No content yet.)</p>"}</div>
+    ${(p.references&&p.references.length)?`<div class="refbox"><h4>References</h4><ol>${p.references.map(r=>`<li>${esc(r)}</li>`).join("")}</ol></div>`:""}
     <div class="share"><span>Share this article:</span>
       <button class="btn line" id="copyLink">Copy link</button>
-      ${(p.tags||[]).map(t=>`<span class="chip" style="cursor:default">${esc(t)}</span>`).join("")}
+      ${(p.tags||[]).map(t=>`<a class="chip" href="#/category/${encodeURIComponent(t)}">${esc(t)}</a>`).join("")}
     </div>
   </article>`;
 }
 
 /* ---------- Maps page ---------- */
-function viewMaps(sub){
-  const tabs=`<div class="map-tabs">
-    <a class="${sub==='de-facto'?'active':''}" href="#/maps/de-facto">De facto states</a>
-    <a class="${sub==='energy'?'active':''}" href="#/maps/energy">Energy routes</a>
-  </div>`;
-  const head=sub==="energy"
-    ?{k:"Info · Stats",t:"Energy routes in the South Caucasus",d:"The pipelines carrying Caspian oil and gas to market. Click a route or label for detail."}
-    :{k:"Info · Stats",t:"De facto states of the Caucasus",d:"Click a territory for its status, recognition and current situation (verified mid-2026)."};
-  const side=sub==="energy"
-    ?`<h3>Pipelines</h3><div id="legend"></div><small>Routes are drawn over real geography. Click any pipeline for detail.</small>`
-    :`<h3>Territories</h3><div id="legend"></div><small>Boundaries are approximate. Status verified mid-2026: Abkhazia and South Ossetia remain Russian-backed de facto states; Artsakh dissolved 1 January 2024.</small>`;
+function viewMaps(){
   return `<section class="section map-page"><div class="wrap">
-    <div class="sec-head"><div><span class="kicker">${head.k}</span><h2>${head.t}</h2><p>${head.d}</p></div></div>
-    ${tabs}
+    <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>States of the Caucasus</h2>
+      <p>Click a country or a breakaway territory for its status, recognition, Freedom House score, next elections and related publications (verified mid-2026).</p></div></div>
     <div class="map-layout">
       <div id="svgmap-wrap"></div>
-      <aside class="map-side">${side}</aside>
+      <aside class="map-side"><h3>Territories</h3><div id="legend"></div>
+        <small>Boundaries are indicative. Abkhazia and South Ossetia remain Russian-backed de facto states; Artsakh dissolved on 1 January 2024.</small></aside>
     </div>
   </div></section>`;
 }
@@ -628,21 +692,6 @@ const TERRITORIES_POLY={
   abkhazia:[[43.39,40.01],[43.55,40.35],[43.50,40.85],[43.35,41.30],[43.10,41.75],[42.85,41.90],[42.60,41.75],[42.51,41.55],[42.70,41.20],[42.95,40.80],[43.15,40.40]],
   s_ossetia:[[42.65,43.50],[42.70,44.00],[42.60,44.45],[42.35,44.55],[42.10,44.20],[42.12,43.80],[42.25,43.50]],
   artsakh:[[40.18,46.55],[40.10,46.85],[39.90,47.05],[39.60,46.95],[39.45,46.65],[39.55,46.40],[39.85,46.40]]
-};
-
-/* Pipeline paths (lat,lon waypoints) */
-const PIPELINE_PATHS={
-  btc:[[40.41,49.87],[41.0,47.0],[41.5,45.6],[41.72,44.78],[41.2,43.0],[40.3,42.0],[39.90,41.27],[38.6,39.5],[37.5,37.5],[36.93,35.87]],
-  supsa:[[40.41,49.87],[41.0,47.0],[41.72,44.78],[42.0,43.0],[42.03,41.76]],
-  novo:[[40.41,49.87],[41.5,48.4],[43.0,47.0],[43.4,45.6],[44.0,43.0],[44.6,40.0],[44.72,37.77]],
-  scp:[[40.41,49.87],[41.05,47.0],[41.76,44.78],[41.25,43.0],[40.35,42.0],[39.90,41.27]],
-  sgc:[[39.90,41.27],[39.8,38.5],[39.9,35.0],[40.2,31.0],[40.6,27.5]]
-};
-
-const CITY_POINTS={
-  Baku:[40.41,49.87],Tbilisi:[41.72,44.78],Yerevan:[40.18,44.51],
-  Supsa:[42.03,41.76],Ceyhan:[36.93,35.87],Novorossiysk:[44.72,37.77],
-  Erzurum:[39.90,41.27]
 };
 
 function makeSVGDeFacto(){
@@ -752,78 +801,6 @@ function makeSVGDeFacto(){
   return svg;
 }
 
-function makeSVGEnergy(){
-  const ns="http://www.w3.org/2000/svg";
-  const svg=document.createElementNS(ns,"svg");
-  svg.setAttribute("viewBox",`0 0 ${MAP_W} ${MAP_H}`);
-  svg.setAttribute("xmlns",ns);
-
-  const bg=document.createElementNS(ns,"rect");
-  bg.setAttribute("width",MAP_W);bg.setAttribute("height",MAP_H);
-  bg.setAttribute("fill","#b8d4e8");svg.appendChild(bg);
-
-  COUNTRIES.forEach(c=>{
-    const p=document.createElementNS(ns,"path");
-    p.setAttribute("d",pathD(c.d));
-    p.setAttribute("fill",c.fill);
-    p.setAttribute("stroke","#8fa8c4");
-    p.setAttribute("stroke-width","0.8");
-    svg.appendChild(p);
-  });
-
-  // Pipelines
-  PIPELINES.forEach(pip=>{
-    const coords=PIPELINE_PATHS[pip.id];if(!coords)return;
-    const pts=coords.map(([lat,lon])=>proj(lat,lon).join(",")).join(" ");
-    const line=document.createElementNS(ns,"polyline");
-    line.setAttribute("points",pts);
-    line.setAttribute("fill","none");
-    line.setAttribute("stroke",pip.color);
-    line.setAttribute("stroke-width","3.5");
-    line.setAttribute("stroke-linecap","round");
-    line.setAttribute("stroke-linejoin","round");
-    if(pip.id==="sgc")line.setAttribute("stroke-dasharray","8 5");
-    line.style.cursor="pointer";
-    line.addEventListener("click",()=>openEnergyPopup(pip.id));
-    svg.appendChild(line);
-  });
-
-  // City dots + labels
-  Object.entries(CITY_POINTS).forEach(([name,[lat,lon]])=>{
-    const [x,y]=proj(lat,lon);
-    const g=document.createElementNS(ns,"g");
-
-    const ring=document.createElementNS(ns,"circle");
-    ring.setAttribute("cx",x);ring.setAttribute("cy",y);ring.setAttribute("r","5");
-    ring.setAttribute("fill","#0F2854");ring.setAttribute("stroke","#fff");ring.setAttribute("stroke-width","2");
-    g.appendChild(ring);
-
-    const lbl=document.createElementNS(ns,"text");
-    lbl.setAttribute("x",x+8);lbl.setAttribute("y",y+4);
-    lbl.setAttribute("font-size","10");lbl.setAttribute("font-weight","700");
-    lbl.setAttribute("fill","#0F2854");
-    lbl.setAttribute("paint-order","stroke");
-    lbl.setAttribute("stroke","rgba(232,238,246,.8)");
-    lbl.setAttribute("stroke-width","3");
-    lbl.textContent=name;
-    g.appendChild(lbl);
-    svg.appendChild(g);
-  });
-
-  // Sea labels
-  [[41.0,51.5,"Caspian Sea"],[43.2,34.5,"Black Sea"]].forEach(([lat,lon,txt])=>{
-    const [x,y]=proj(lat,lon);
-    const lbl=document.createElementNS(ns,"text");
-    lbl.setAttribute("x",x);lbl.setAttribute("y",y);
-    lbl.setAttribute("text-anchor","middle");lbl.setAttribute("font-size","9");
-    lbl.setAttribute("fill","#5080a0");lbl.setAttribute("font-style","italic");
-    lbl.setAttribute("pointer-events","none");lbl.textContent=txt;
-    svg.appendChild(lbl);
-  });
-
-  return svg;
-}
-
 function initDeFacto(){
   const wrap=document.getElementById("svgmap-wrap");if(!wrap)return;
   const svg=makeSVGDeFacto();wrap.appendChild(svg);
@@ -838,18 +815,6 @@ function initDeFacto(){
   });
   leg.innerHTML=lh;
   leg.querySelectorAll(".legrow").forEach(b=>b.onclick=()=>openState(b.dataset.k));
-}
-
-function initEnergy(){
-  const wrap=document.getElementById("svgmap-wrap");if(!wrap)return;
-  const svg=makeSVGEnergy();wrap.appendChild(svg);
-  const leg=document.getElementById("legend");
-  leg.innerHTML=PIPELINES.map(p=>
-    `<button class="legrow" data-pip="${p.id}">
-      <span class="ln" style="background:${p.color}${p.id==='sgc'?';opacity:.6':''}"></span>
-      <span style="flex:1">${p.name}</span>
-    </button>`).join("");
-  leg.querySelectorAll(".legrow").forEach(b=>b.onclick=()=>openEnergyPopup(b.dataset.pip));
 }
 
 function openState(k){
@@ -878,7 +843,7 @@ function openState(k){
   }
 
   // Related publications
-  const relPubs=PUBS.filter(p=>(p.tags||[]).some(t=>d.tags.includes(t))).slice(0,3);
+  const relPubs=publicPubs().filter(p=>(p.tags||[]).some(t=>d.tags.includes(t))).slice(0,3);
   let relHtml="";
   if(relPubs.length){
     relHtml=`<div class="modal-pubs"><h4>Related publications</h4>`+
@@ -925,19 +890,6 @@ function openState(k){
   openModal("ethModal");
 }
 
-function openEnergyPopup(pipId){
-  const pip=PIPELINES.find(p=>p.id===pipId);if(!pip)return;
-  const popup=document.getElementById("energyPopup");
-  popup.innerHTML=`<button class="x" aria-label="Close">×</button>
-    <div class="epop-head">
-      <div class="ek">${pip.kind}</div>
-      <h3><span class="pip-dot" style="background:${pip.color}"></span>${esc(pip.name)}</h3>
-    </div>
-    <div class="epop-body"><p>${esc(pip.note)}</p></div>`;
-  popup.querySelector(".x").onclick=()=>closeModal("energyModal");
-  openModal("energyModal");
-}
-
 /* ---------- modal helpers ---------- */
 function openModal(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden";}
 function closeModal(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
@@ -965,7 +917,7 @@ function renderAdmin(){
   const ed=editingId?PUBS.find(p=>p.id===editingId):null;
   const v=f=>ed?esc(ed[f]||""):"";
   inner.innerHTML=`<button class="x">×</button>
-    <div class="admin-head"><h2>Control panel</h2><span class="pill">localStorage</span></div>
+    <div class="admin-head"><h2>Control panel</h2><span class="pill">${SUPA_ON?'shared · Supabase':'localStorage'}</span></div>
     <div class="admin-body">
       <div class="toolbar">
         <button class="btn primary" id="newBtn">+ New publication</button>
@@ -992,14 +944,16 @@ function renderAdmin(){
       <div class="field"><label>Cover photo URL (optional)</label><input id="f_photo" value="${v('photo')}" placeholder="https://..."></div>
       <div class="field"><label>Excerpt</label><input id="f_excerpt" value="${v('excerpt')}"></div>
       <div class="field" id="bodyField"><label>Article text</label><textarea id="f_body">${ed?esc(ed.body||''):''}</textarea><div class="hint">Blank line = new paragraph. A line starting with ## becomes a subheading.</div></div>
+      <div class="field" id="refField"><label>References (one per line)</label><textarea id="f_refs" style="min-height:90px">${ed?esc((ed.references||[]).join("\n")):''}</textarea><div class="hint">Shown in a dedicated box at the end of the article.</div></div>
       <div class="field"><label style="font-weight:500"><input type="checkbox" id="f_feat" ${ed&&ed.featured?'checked':''} style="width:auto;margin-right:8px">Mark as featured (shown as spotlight on home)</label></div>
+      <div class="field"><label style="font-weight:500"><input type="checkbox" id="f_draft" ${ed&&ed.draft?'checked':''} style="width:auto;margin-right:8px">Save as draft (hidden from the public site)</label></div>
       <div class="admin-actions"><button class="btn primary" id="saveBtn">Save</button>${ed?'<button class="mini" id="cancelBtn">Cancel</button>':''}</div>
       <h3 style="margin-top:24px;border-bottom:1px solid var(--line);padding-bottom:8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy)">Published (${PUBS.length})</h3>
       <div class="admin-list" id="adminList"></div>
     </div>`;
   inner.querySelector(".x").onclick=()=>closeModal("adminModal");
   const typeSel=inner.querySelector("#f_type");
-  const sync=()=>{const x=typeSel.value==="external";inner.querySelector("#urlField").style.display=x?"block":"none";inner.querySelector("#bodyField").style.display=x?"none":"block";};
+  const sync=()=>{const x=typeSel.value==="external";inner.querySelector("#urlField").style.display=x?"block":"none";inner.querySelector("#bodyField").style.display=x?"none":"block";inner.querySelector("#refField").style.display=x?"none":"block";};
   typeSel.onchange=sync;sync();
   inner.querySelector("#newBtn").onclick=()=>{editingId=null;renderAdmin();};
   inner.querySelector("#logoutBtn").onclick=()=>{unlocked=false;editingId=null;closeModal("adminModal");};
@@ -1007,28 +961,31 @@ function renderAdmin(){
   inner.querySelector("#importBtn").onclick=()=>inner.querySelector("#importFile").click();
   inner.querySelector("#importFile").onchange=importJSON;
   if(ed)inner.querySelector("#cancelBtn").onclick=()=>{editingId=null;renderAdmin();};
-  inner.querySelector("#saveBtn").onclick=()=>{
+  inner.querySelector("#saveBtn").onclick=async()=>{
     const g=id=>inner.querySelector("#"+id).value.trim();
     const title=g("f_title");if(!title){alert("A title is required.");return;}
     let id=ed?ed.id:title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,48)||("p"+Date.now());
     if(!ed&&PUBS.some(p=>p.id===id))id+="-"+Date.now().toString().slice(-4);
+    const refs=inner.querySelector("#f_refs").value.split("\n").map(s=>s.trim()).filter(Boolean);
     const obj={id,title,author:g("f_author")||"Timoleon Ilias",date:g("f_date"),lang:g("f_lang"),type:g("f_type"),
       url:g("f_url"),tags:g("f_tags").split(",").map(s=>s.trim()).filter(Boolean),
-      photo:g("f_photo"),
-      excerpt:g("f_excerpt"),body:inner.querySelector("#f_body").value,featured:inner.querySelector("#f_feat").checked};
-    if(obj.featured)PUBS.forEach(p=>{if(p.id!==obj.id)p.featured=false;});
+      photo:g("f_photo"),excerpt:g("f_excerpt"),body:inner.querySelector("#f_body").value,
+      references:refs,featured:inner.querySelector("#f_feat").checked,draft:inner.querySelector("#f_draft").checked};
+    let demoted=null;
+    if(obj.featured){const prev=PUBS.find(p=>p.featured&&p.id!==obj.id);if(prev){prev.featured=false;demoted=prev;}}
     if(ed){PUBS[PUBS.findIndex(p=>p.id===ed.id)]=obj;}else PUBS.unshift(obj);
-    save();editingId=null;renderAdmin();
+    await persistOne(obj);if(demoted)await persistOne(demoted);
+    editingId=null;renderAdmin();
   };
   const list=inner.querySelector("#adminList");
   list.innerHTML=PUBS.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(p=>
-    `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':'text'} · ${(p.tags||[]).join(', ')}</small></div>
+    `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${p.draft?'<span class="dbadge">Draft</span>':''}${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':'text'} · ${(p.tags||[]).join(', ')}</small></div>
       <button class="mini" data-edit="${p.id}">Edit</button><button class="mini danger" data-del="${p.id}">Delete</button></div>`).join("");
   list.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editingId=b.dataset.edit;renderAdmin();});
-  list.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Delete this publication?")){PUBS=PUBS.filter(p=>p.id!==b.dataset.del);save();renderAdmin();}});
+  list.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("Delete this publication?")){const id=b.dataset.del;PUBS=PUBS.filter(p=>p.id!==id);await removeOne(id);renderAdmin();}});
 }
 function exportJSON(){const blob=new Blob([JSON.stringify(PUBS,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="publications.json";a.click();URL.revokeObjectURL(a.href);}
-function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){PUBS=d;save();renderAdmin();}else alert("JSON must be an array.");}catch(x){alert("Invalid JSON.");}};r.readAsText(f);}
+function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){PUBS=d;if(SUPA_ON){for(const p of PUBS){await persistOne(p);}}else{save();}renderAdmin();}else alert("JSON must be an array.");}catch(x){alert("Invalid JSON.");}};r.readAsText(f);}
 
 /* ---------- router ---------- */
 function setActiveNav(path){
@@ -1040,20 +997,17 @@ function router(){
   const hash=location.hash.replace(/^#/,"")||"/";
   const parts=hash.split("/").filter(Boolean);
   const app=document.getElementById("app");
-  setActiveNav("/"+(parts[0]||""));
+  let navPath="/"+(parts[0]||"");
+  if(parts[0]==="category"||parts[0]==="article")navPath="/publications";
+  setActiveNav(navPath);
   document.getElementById("nav").classList.remove("open");
 
   if(parts[0]==="admin"){app.innerHTML=viewHome();openAdmin();window.scrollTo(0,0);return;}
-  if(parts[0]==="publications"){app.innerHTML=viewPublications();renderFilters();renderPubGrid();window.scrollTo(0,0);return;}
+  if(parts[0]==="publications"){app.innerHTML=viewPublications();window.scrollTo(0,0);return;}
+  if(parts[0]==="category"){app.innerHTML=viewCategory(parts.slice(1).join("/"));window.scrollTo(0,0);return;}
+  if(parts[0]==="about"){app.innerHTML=viewAbout();window.scrollTo(0,0);return;}
   if(parts[0]==="article"){app.innerHTML=viewArticle(parts[1]);wireArticle();window.scrollTo(0,0);return;}
-  if(parts[0]==="maps"){
-    // default to de-facto if no sub given
-    const sub=parts[1]||"de-facto";
-    if(!parts[1]){location.replace("#/maps/de-facto");return;}
-    app.innerHTML=viewMaps(sub);
-    if(sub==="energy")initEnergy();else initDeFacto();
-    window.scrollTo(0,0);return;
-  }
+  if(parts[0]==="maps"){app.innerHTML=viewMaps();initDeFacto();window.scrollTo(0,0);return;}
   app.innerHTML=viewHome();window.scrollTo(0,0);
 }
 function wireArticle(){
@@ -1064,7 +1018,7 @@ document.getElementById("menuBtn").onclick=()=>document.getElementById("nav").cl
 window.addEventListener("hashchange",router);
 
 /* ---------- boot ---------- */
-load();router();
+load().then(router);
 </script>
 </body>
 </html>
