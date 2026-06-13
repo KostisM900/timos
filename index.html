@@ -266,6 +266,7 @@ a.chip{text-decoration:none}
 .about-card li:last-child{border-bottom:0}
 .about-card .li-link{display:inline-flex;gap:8px;align-items:center;font-weight:600;color:var(--blue);margin-top:14px}
 .home-about{background:var(--wash);border-top:1px solid var(--line)}
+#svgmap-wrap svg text{font-family:"IBM Plex Sans","Inter",system-ui,sans-serif}
 @media(max-width:860px){.about-wrap{grid-template-columns:1fr}}
 </style>
 </head>
@@ -396,26 +397,27 @@ const DEFACTO={
 /* ---------- state + storage ----------
    To make publications visible to EVERYONE (not just this browser), fill in
    your Supabase project below. Leave blank to use this browser's localStorage. */
-const SUPABASE_URL="https://lvrkldiszeujgcetlozh.supabase.co/rest/v1/"; // e.g. "https://abcd1234.supabase.co"
-const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2cmtsZGlzemV1amdjZXRsb3poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzODA4MTcsImV4cCI6MjA5Njk1NjgxN30.cNSsoWwWdUkscey80FzWB_Ly5QLfTTSS8PGfvQtQmE8"; // your project's anon public key
-const SUPA_ON=!!(SUPABASE_URL&&SUPABASE_KEY);
+const SUPABASE_URL="https://lvrkldiszeujgcetlozh.supabase.co"; // your project URL
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2cmtsZGlzemV1amdjZXRsb3poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzODA4MTcsImV4cCI6MjA5Njk1NjgxN30.cNSsoWwWdUkscey80FzWB_Ly5QLfTTSS8PGfvQtQmE8"; // anon public key
+const SB_BASE=(SUPABASE_URL||"").trim().replace(/\/+$/,"").replace(/\/rest\/v1$/,""); // tolerate a pasted /rest/v1/ URL
+const SUPA_ON=!!(SB_BASE&&SUPABASE_KEY);
 const KEY="tilias_pubs_v3";
 let PUBS=[];
 function supaHeaders(extra){return Object.assign({apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},extra||{});}
 async function load(){
   if(SUPA_ON){
-    try{const r=await fetch(`${SUPABASE_URL}/rest/v1/publications?select=data&order=date.desc`,{headers:supaHeaders()});
+    try{const r=await fetch(`${SB_BASE}/rest/v1/publications?select=data&order=date.desc`,{headers:supaHeaders()});
       if(r.ok){PUBS=(await r.json()).map(x=>x.data);return;}}catch(e){}
   }
   try{const r=localStorage.getItem(KEY);PUBS=r?JSON.parse(r):SEED.slice();}catch(e){PUBS=SEED.slice();}
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(PUBS));}catch(e){alert("Storage is blocked here. Download & host the file, or use Export JSON.");}}
 async function persistOne(obj){
-  if(SUPA_ON){try{await fetch(`${SUPABASE_URL}/rest/v1/publications`,{method:"POST",headers:supaHeaders({Prefer:"resolution=merge-duplicates"}),body:JSON.stringify({id:obj.id,date:obj.date||"",data:obj})});}catch(e){alert("Backend unreachable — change not saved to the server.");}}
+  if(SUPA_ON){try{const r=await fetch(`${SB_BASE}/rest/v1/publications`,{method:"POST",headers:supaHeaders({Prefer:"resolution=merge-duplicates"}),body:JSON.stringify({id:obj.id,date:obj.date||"",data:obj})});if(!r.ok)alert("Supabase rejected the save ("+r.status+"). Check that the table and write policy exist.");}catch(e){alert("Backend unreachable — change not saved to the server.");}}
   else save();
 }
 async function removeOne(id){
-  if(SUPA_ON){try{await fetch(`${SUPABASE_URL}/rest/v1/publications?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:supaHeaders()});}catch(e){alert("Backend unreachable.");}}
+  if(SUPA_ON){try{const r=await fetch(`${SB_BASE}/rest/v1/publications?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:supaHeaders()});if(!r.ok)alert("Supabase rejected the delete ("+r.status+").");}catch(e){alert("Backend unreachable.");}}
   else save();
 }
 function publicPubs(){return PUBS.filter(p=>!p.draft);}
@@ -436,7 +438,7 @@ function card(p){
   const ext=p.type==="external";
   const href=ext?p.url:("#/article/"+p.id);
   const target=ext?` target="_blank" rel="noopener"`:"";
-  const extBadge=ext?`<span class="ext">↗ External</span>`:"";
+  const extBadge=ext?`<span class="ext" title="Opens on an external outlet">↗ Featured elsewhere</span>`:"";
   const tags=(p.tags||[]).slice(0,3).map(x=>`<span>${esc(x)}</span>`).join("");
   return `<a class="card" href="${href}"${target}>
     <div class="cover">${coverHtml(p)}<span class="tag">${esc((p.tags&&p.tags[0])||"Analysis")}</span>${extBadge}</div>
@@ -483,15 +485,6 @@ function viewHome(){
       <a class="btn ghost" href="#/maps">Explore the map</a>
     </div>
   </div></section>
-
-  <div class="stat-band">
-    <div class="wrap">
-      <div class="sstat"><div class="sv">${publicPubs().length}</div><div class="sk">Publications</div></div>
-      <div class="sstat"><div class="sv">2</div><div class="sk">Active de facto states tracked</div></div>
-      <div class="sstat"><div class="sv">1</div><div class="sk">Territory dissolved since 2023</div></div>
-      <div class="sstat"><div class="sv">2</div><div class="sk">Languages</div></div>
-    </div>
-  </div>
 
   ${spotHtml}
 
@@ -563,7 +556,7 @@ function viewHome(){
 
 function chipsRow(active){
   let h=`<a class="chip ${!active?'active':''}" href="#/publications">All</a>`;
-  h+=`<a class="chip ${active==='external'?'active':''}" href="#/category/external">External</a>`;
+  h+=`<a class="chip ${active==='external'?'active':''}" href="#/category/external">Featured elsewhere</a>`;
   allTags().forEach(t=>{h+=`<a class="chip ${active===t?'active':''}" href="#/category/${encodeURIComponent(t)}">${esc(t)}</a>`;});
   return h;
 }
@@ -579,7 +572,7 @@ function viewPublications(){
 function viewCategory(raw){
   const tag=decodeURIComponent(raw||"");
   let list=publicPubs().slice().sort(byDate),title;
-  if(tag==="external"){list=list.filter(p=>p.type==="external");title="External publications";}
+  if(tag==="external"){list=list.filter(p=>p.type==="external");title="Featured elsewhere";}
   else{list=list.filter(p=>(p.tags||[]).includes(tag));title=tag;}
   return `<section class="section"><div class="wrap">
     <div class="sec-head"><div><span class="kicker cat-kicker"><a href="#/publications">Publications</a> · Category</span><h2>${esc(title)}</h2>
@@ -646,47 +639,18 @@ function viewMaps(){
 }
 
 /* =====================================================================
-   SVG Vector Map Engine
-   Caucasus bounding box: lon 38..52, lat 38..47
-   We project to a 800×500 SVG canvas.
+   SVG Vector Map Engine — real boundaries, aspect-correct projection
    ===================================================================== */
-const MAP_W=800,MAP_H=500;
-const LON0=38,LON1=53,LAT0=38,LAT1=47.5;
-function proj(lat,lon){
-  const x=((lon-LON0)/(LON1-LON0))*MAP_W;
-  const y=((LAT1-lat)/(LAT1-LAT0))*MAP_H;
-  return [x,y];
-}
-function polyPoints(coords){return coords.map(([lat,lon])=>proj(lat,lon).join(",")).join(" ");}
-function pathD(coords){return coords.map(([lat,lon],i)=>{const [x,y]=proj(lat,lon);return(i===0?`M${x},${y}`:`L${x},${y}`);}).join(" ")+"Z";}
-
-/* Country outlines (simplified) */
-const COUNTRIES=[
-  {id:"russia",name:"Russia",d:[
-    [47.5,38],[47.5,53],[45.5,53],[45.8,49],[46.0,46],[45.2,44],[44.8,41],[45.5,38]
-  ],fill:"#d4dce8"},
-  {id:"georgia",name:"Georgia",d:[
-    [43.0,40.0],[43.6,40.4],[43.5,40.9],[43.3,41.3],[43.1,41.8],[42.8,42.0],[42.5,42.6],
-    [41.9,43.8],[41.7,44.9],[41.3,45.4],[41.0,45.6],[40.8,44.8],[41.0,43.4],[41.1,42.5],
-    [41.4,41.5],[41.6,40.5],[41.5,40.0],[42.0,39.7],[42.4,39.9],[43.0,40.0]
-  ],fill:"#c8d8ec"},
-  {id:"armenia",name:"Armenia",d:[
-    [41.3,43.4],[41.1,44.5],[40.8,44.8],[40.9,45.6],[40.5,45.6],[39.9,45.0],[38.9,44.5],
-    [38.8,43.5],[39.0,43.2],[39.5,43.0],[40.0,43.4],[40.5,43.5],[41.3,43.4]
-  ],fill:"#c8d8ec"},
-  {id:"azerbaijan",name:"Azerbaijan",d:[
-    [41.7,44.9],[41.3,45.4],[41.0,45.6],[40.8,44.8],[40.5,45.6],[39.9,45.0],[38.8,47.0],
-    [38.5,48.0],[38.4,49.0],[39.0,49.8],[39.5,50.5],[40.1,50.2],[40.5,49.6],[40.8,49.2],
-    [41.2,48.6],[41.5,47.0],[41.7,46.3],[41.5,45.9],[41.7,44.9]
-  ],fill:"#c8d8ec"},
-  {id:"turkey",name:"Turkey",d:[
-    [42.0,38.0],[41.6,38.5],[41.5,39.5],[41.1,40.5],[40.8,41.5],[40.5,42.0],[40.0,43.0],
-    [39.5,43.5],[38.8,43.5],[38.5,42.0],[38.0,41.0],[38.0,38.0],[42.0,38.0]
-  ],fill:"#d4dce8"},
-  {id:"iran",name:"Iran",d:[
-    [38.5,44.0],[38.8,44.5],[39.0,45.0],[38.8,46.0],[38.5,47.0],[38.0,48.0],[38.0,53],[38.0,44.0]
-  ],fill:"#d4dce8"},
-];
+const COUNTRIES_GEO={"GEO":{"name":"Georgia","geometry":{"type":"Polygon","coordinates":[[[41.554,41.536],[41.703,41.963],[41.453,42.645],[40.875,43.014],[40.321,43.129],[39.955,43.435],[40.077,43.553],[40.922,43.382],[42.394,43.22],[43.756,42.741],[43.931,42.555],[44.538,42.712],[45.47,42.503],[45.776,42.092],[46.405,41.861],[46.145,41.723],[46.638,41.182],[46.502,41.064],[45.963,41.124],[45.217,41.411],[44.972,41.248],[43.583,41.092],[42.62,41.583],[41.554,41.536]]]}},"ARM":{"name":"Armenia","geometry":{"type":"Polygon","coordinates":[[[43.583,41.092],[44.972,41.248],[45.179,40.985],[45.56,40.812],[45.359,40.562],[45.892,40.218],[45.61,39.9],[46.035,39.628],[46.483,39.464],[46.506,38.771],[46.144,38.741],[45.735,39.32],[45.74,39.474],[45.298,39.472],[45.002,39.74],[44.794,39.713],[44.4,40.005],[43.656,40.254],[43.753,40.74],[43.583,41.092]]]}},"AZE":{"name":"Azerbaijan","geometry":{"type":"MultiPolygon","coordinates":[[[[45.002,39.74],[45.298,39.472],[45.74,39.474],[45.735,39.32],[46.144,38.741],[45.458,38.874],[44.953,39.336],[44.794,39.713],[45.002,39.74]]],[[[47.373,41.22],[47.816,41.151],[47.987,41.406],[48.584,41.809],[49.11,41.282],[49.619,40.573],[50.085,40.526],[50.393,40.257],[49.569,40.176],[49.395,39.399],[49.223,39.049],[48.857,38.815],[48.883,38.32],[48.634,38.27],[48.011,38.794],[48.356,39.289],[48.06,39.582],[47.685,39.508],[46.506,38.771],[46.483,39.464],[46.035,39.628],[45.61,39.9],[45.892,40.218],[45.359,40.562],[45.56,40.812],[45.179,40.985],[44.972,41.248],[45.217,41.411],[45.963,41.124],[46.502,41.064],[46.638,41.182],[46.145,41.723],[46.405,41.861],[46.686,41.827],[47.373,41.22]]]]}},"TUR":{"name":"Turkey","geometry":{"type":"Polygon","coordinates":[[[38.348,40.949],[39.513,41.103],[40.373,41.014],[41.554,41.536],[42.62,41.583],[43.583,41.092],[43.753,40.74],[43.656,40.254],[44.4,40.005],[44.794,39.713],[44.109,39.428],[44.421,38.281],[44.226,37.972],[44.773,37.17],[44.293,37.002],[43.942,37.256],[42.779,37.385],[42.35,37.23],[41.212,37.074],[40.673,37.091],[39.523,36.716],[38.7,36.713],[38.168,36.901],[37.067,36.623],[36.739,36.818],[36.685,36.26],[36.368,36.0],[36.005,36.0],[36.0,36.491],[36.161,36.651],[36.0,36.628],[36.0,41.704],[36.913,41.335],[38.348,40.949]]]}},"IRN":{"name":"Iran","geometry":{"type":"Polygon","coordinates":[[[44.773,37.17],[44.226,37.972],[44.421,38.281],[44.109,39.428],[44.794,39.713],[44.953,39.336],[45.458,38.874],[46.144,38.741],[46.506,38.771],[47.685,39.508],[48.06,39.582],[48.356,39.289],[48.011,38.794],[48.634,38.27],[48.883,38.32],[49.2,37.583],[50.148,37.375],[50.842,36.873],[52.0,36.732],[52.0,36.0],[45.408,36.0],[44.773,37.17]]]}},"RUS":{"name":"Russia","geometry":{"type":"Polygon","coordinates":[[[46.466,48.394],[47.315,47.716],[48.057,47.744],[48.695,47.076],[48.593,46.561],[49.101,46.399],[48.645,45.806],[47.676,45.641],[46.682,44.609],[47.591,43.66],[47.493,42.987],[48.584,41.809],[47.987,41.406],[47.816,41.151],[47.373,41.22],[46.686,41.827],[46.405,41.861],[45.776,42.092],[45.47,42.503],[44.538,42.712],[43.931,42.555],[43.756,42.741],[42.394,43.22],[40.922,43.382],[40.077,43.553],[39.955,43.435],[38.68,44.28],[37.539,44.657],[36.675,45.245],[37.403,45.405],[38.233,46.241],[37.674,46.637],[39.148,47.045],[39.121,47.263],[38.224,47.102],[38.255,47.546],[38.771,47.826],[39.738,47.899],[39.896,48.232],[39.788,48.5],[46.547,48.5],[46.466,48.394]]]}}};
+const FOCUS=new Set(["GEO","ARM","AZE"]);
+const VIEW={lonMin:39.2,lonMax:50.8,latMin:38.2,latMax:44.3,W:900};
+const KX=Math.cos((VIEW.latMin+VIEW.latMax)/2*Math.PI/180);
+const XU=(VIEW.lonMax-VIEW.lonMin)*KX, YU=(VIEW.latMax-VIEW.latMin);
+const SCALE=VIEW.W/XU, MAP_W=VIEW.W, MAP_H=Math.round(YU*SCALE);
+function proj(lat,lon){return [(lon-VIEW.lonMin)*KX*SCALE, (VIEW.latMax-lat)*SCALE];}
+function polyPoints(coords){return coords.map(([lat,lon])=>proj(lat,lon).map(n=>n.toFixed(1)).join(",")).join(" ");}
+function ringsOf(g){if(g.type==="Polygon")return g.coordinates;const r=[];g.coordinates.forEach(p=>p.forEach(ring=>r.push(ring)));return r;}
+function geoPathD(g){return ringsOf(g).map(ring=>ring.map(([lon,lat],i)=>{const[x,y]=proj(lat,lon);return(i===0?"M":"L")+x.toFixed(1)+","+y.toFixed(1);}).join("")+"Z").join(" ");}
 
 const TERRITORIES_POLY={
   abkhazia:[[43.39,40.01],[43.55,40.35],[43.50,40.85],[43.35,41.30],[43.10,41.75],[42.85,41.90],[42.60,41.75],[42.51,41.55],[42.70,41.20],[42.95,40.80],[43.15,40.40]],
@@ -699,104 +663,47 @@ function makeSVGDeFacto(){
   const svg=document.createElementNS(ns,"svg");
   svg.setAttribute("viewBox",`0 0 ${MAP_W} ${MAP_H}`);
   svg.setAttribute("xmlns",ns);
+  const add=(tag,attrs,parent)=>{const el=document.createElementNS(ns,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);(parent||svg).appendChild(el);return el;};
 
-  // Sea background
-  const bg=document.createElementNS(ns,"rect");
-  bg.setAttribute("width",MAP_W);bg.setAttribute("height",MAP_H);
-  bg.setAttribute("fill","#b8d4e8");svg.appendChild(bg);
+  // sea
+  add("rect",{width:MAP_W,height:MAP_H,fill:"#cfe1ef"});
 
-  // Countries
-  COUNTRIES.forEach(c=>{
-    const p=document.createElementNS(ns,"path");
-    p.setAttribute("d",pathD(c.d));
-    p.setAttribute("fill",c.fill);
-    p.setAttribute("stroke","#8fa8c4");
-    p.setAttribute("stroke-width","0.8");
-    svg.appendChild(p);
+  // countries (real boundaries)
+  Object.entries(COUNTRIES_GEO).forEach(([iso,c])=>{
+    add("path",{d:geoPathD(c.geometry),"fill-rule":"evenodd",
+      fill:FOCUS.has(iso)?"#e0e9f4":"#e9eef4",
+      stroke:"#aebfd4","stroke-width":"1","stroke-linejoin":"round"});
   });
 
-  // Territory fills
+  // country labels
+  [["GEORGIA",42.05,43.25],["ARMENIA",40.0,45.0],["AZERBAIJAN",40.3,48.0],
+   ["RUSSIA",44.05,43.6],["TURKEY",39.7,40.1],["IRAN",38.55,47.7]].forEach(([n,lat,lon])=>{
+    const[x,y]=proj(lat,lon);
+    add("text",{x,y,"text-anchor":"middle","font-size":"12.5","font-weight":"700",
+      fill:"#5b6e90","letter-spacing":"0.1em","pointer-events":"none"}).textContent=n;
+  });
+
+  // territories (de facto)
   Object.entries(TERRITORIES_POLY).forEach(([k,coords])=>{
     const d=DEFACTO[k];if(!d)return;
-    const poly=document.createElementNS(ns,"polygon");
-    poly.setAttribute("points",polyPoints(coords));
-    poly.setAttribute("fill",d.color);
-    poly.setAttribute("fill-opacity","0.72");
-    poly.setAttribute("stroke",d.color);
-    poly.setAttribute("stroke-width","1.5");
-    poly.setAttribute("stroke-dasharray",d.dashed?"6 4":"none");
+    const poly=add("polygon",{points:polyPoints(coords),fill:d.color,"fill-opacity":"0.8",
+      stroke:"#ffffff","stroke-width":"1.6","stroke-linejoin":"round","stroke-dasharray":d.dashed?"5 4":"none"});
     poly.style.cursor="pointer";
-    poly.setAttribute("data-k",k);
-    // hover
-    poly.addEventListener("mouseenter",()=>{poly.setAttribute("fill-opacity","0.9");});
-    poly.addEventListener("mouseleave",()=>{poly.setAttribute("fill-opacity","0.72");});
+    poly.addEventListener("mouseenter",()=>poly.setAttribute("fill-opacity","0.96"));
+    poly.addEventListener("mouseleave",()=>poly.setAttribute("fill-opacity","0.8"));
     poly.addEventListener("click",()=>openState(k));
-    svg.appendChild(poly);
-
-    // centroid label
     const cx=coords.reduce((s,[lt,ln])=>s+proj(lt,ln)[0],0)/coords.length;
     const cy=coords.reduce((s,[lt,ln])=>s+proj(lt,ln)[1],0)/coords.length;
-    const lbl=document.createElementNS(ns,"text");
-    lbl.setAttribute("x",cx);lbl.setAttribute("y",cy);
-    lbl.setAttribute("text-anchor","middle");
-    lbl.setAttribute("font-size","10");
-    lbl.setAttribute("font-weight","700");
-    lbl.setAttribute("fill","#fff");
-    lbl.setAttribute("pointer-events","none");
-    lbl.setAttribute("paint-order","stroke");
-    lbl.setAttribute("stroke","rgba(0,0,0,.35)");
-    lbl.setAttribute("stroke-width","2");
-    lbl.textContent=d.name.length>16?d.name.split(" ")[0]:d.name;
-    svg.appendChild(lbl);
+    const t=add("text",{x:cx,y:cy+3,"text-anchor":"middle","font-size":"11","font-weight":"700",
+      fill:"#fff","pointer-events":"none","paint-order":"stroke",stroke:"rgba(0,0,0,.45)","stroke-width":"2.6"});
+    t.textContent=d.name.length>16?d.name.split(" ")[0]:d.name;
   });
 
-  // Country name labels
-  const countryLabels=[
-    {name:"Georgia",lat:42.0,lon:43.5},
-    {name:"Armenia",lat:40.2,lon:44.5},
-    {name:"Azerbaijan",lat:40.0,lon:47.5},
-    {name:"Russia",lat:46.0,lon:44.0},
-    {name:"Turkey",lat:39.5,lon:40.0},
-    {name:"Iran",lat:38.2,lon:46.5},
-  ];
-  countryLabels.forEach(({name,lat,lon})=>{
-    const [x,y]=proj(lat,lon);
-    const lbl=document.createElementNS(ns,"text");
-    lbl.setAttribute("x",x);lbl.setAttribute("y",y);
-    lbl.setAttribute("text-anchor","middle");
-    lbl.setAttribute("font-size","9");
-    lbl.setAttribute("font-weight","600");
-    lbl.setAttribute("fill","#4a6080");
-    lbl.setAttribute("letter-spacing","0.08em");
-    lbl.setAttribute("text-transform","uppercase");
-    lbl.setAttribute("pointer-events","none");
-    lbl.textContent=name.toUpperCase();
-    svg.appendChild(lbl);
+  // sea labels
+  [["Black Sea",42.8,39.55],["Caspian Sea",40.7,50.35]].forEach(([txt,lat,lon])=>{
+    const[x,y]=proj(lat,lon);
+    add("text",{x,y,"text-anchor":"middle","font-size":"13","fill":"#5d86a6","font-style":"italic","pointer-events":"none"}).textContent=txt;
   });
-
-  // Caspian Sea label
-  const [cx2,cy2]=proj(41.0,51.5);
-  const caspLbl=document.createElementNS(ns,"text");
-  caspLbl.setAttribute("x",cx2);caspLbl.setAttribute("y",cy2);
-  caspLbl.setAttribute("text-anchor","middle");
-  caspLbl.setAttribute("font-size","9");
-  caspLbl.setAttribute("fill","#5080a0");
-  caspLbl.setAttribute("font-style","italic");
-  caspLbl.setAttribute("pointer-events","none");
-  caspLbl.textContent="Caspian Sea";
-  svg.appendChild(caspLbl);
-
-  // Black Sea label
-  const [bsx,bsy]=proj(43.2,34.5);
-  const bsLbl=document.createElementNS(ns,"text");
-  bsLbl.setAttribute("x",bsx);bsLbl.setAttribute("y",bsy);
-  bsLbl.setAttribute("text-anchor","middle");
-  bsLbl.setAttribute("font-size","9");
-  bsLbl.setAttribute("fill","#5080a0");
-  bsLbl.setAttribute("font-style","italic");
-  bsLbl.setAttribute("pointer-events","none");
-  bsLbl.textContent="Black Sea";
-  svg.appendChild(bsLbl);
 
   return svg;
 }
