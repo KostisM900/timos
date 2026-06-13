@@ -1,0 +1,1070 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>t.ilias — Geopolitics & Security Analysis</title>
+<meta name="description" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space — by Timoleon Ilias.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0F2854; --blue:#1C4D8D; --sky:#4988C4; --cyan:#BDE8F5;
+  --paper:#FFFFFF; --wash:#F5F8FC; --line:#E3E9F1; --ink:#16202F; --muted:#5A6A80;
+  --display:"IBM Plex Sans",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif;
+  --maxw:1240px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--body);color:var(--ink);background:var(--paper);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.13;margin:0;letter-spacing:-.01em}
+a{color:var(--blue);text-decoration:none}a:hover{color:var(--sky)}
+img{max-width:100%;display:block}
+button{font-family:var(--body);cursor:pointer}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ── HEADER: compact classic ── */
+header.mast{background:var(--navy);color:#fff;position:sticky;top:0;z-index:1000;border-bottom:1px solid rgba(255,255,255,.07)}
+.mast .wrap{display:flex;align-items:center;gap:6px;height:52px}
+.brand{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.02em;color:#fff;margin-right:12px;white-space:nowrap}
+.brand .dot{color:var(--sky)}
+.brand .lo{color:var(--cyan)}
+nav.main{display:flex;gap:2px;margin-left:auto;align-items:center}
+nav.main a{color:#cdd8ea;font-weight:500;font-size:14px;padding:6px 11px;border-radius:7px}
+nav.main a:hover{color:#fff;background:rgba(255,255,255,.08)}
+nav.main a.active{color:#fff;background:rgba(255,255,255,.12)}
+/* LinkedIn icon-only button */
+.li-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border:1px solid rgba(255,255,255,.22);border-radius:8px;color:#cdd8ea;margin-left:4px;transition:background .15s,color .15s}
+.li-icon:hover{background:#fff;color:var(--navy);border-color:#fff}
+.li-icon svg{width:17px;height:17px}
+.menu-btn{display:none;margin-left:auto;background:transparent;border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:7px 11px;font-size:17px}
+
+/* ── generic btns ── */
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:8px;padding:11px 20px;font-weight:600;font-size:15px;border:1px solid transparent;background:none}
+.btn.primary{background:var(--sky);color:#fff}.btn.primary:hover{background:#5c9bd4}
+.btn.ghost{color:#fff;border-color:rgba(255,255,255,.34)}.btn.ghost:hover{border-color:#fff}
+.btn.dark{background:var(--navy);color:#fff}.btn.dark:hover{background:#16386f}
+.btn.line{border-color:var(--line);color:var(--blue)}.btn.line:hover{border-color:var(--sky)}
+
+/* ── hero ── */
+.hero{background:var(--navy);color:#fff;padding:60px 0 64px}
+.hero .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--sky);font-weight:600}
+.hero h1{font-size:clamp(34px,5vw,58px);margin:12px 0 6px;font-weight:700;letter-spacing:-.02em}
+.hero .role{font-size:clamp(16px,2vw,20px);color:var(--cyan);font-weight:500;margin-bottom:14px}
+.hero p{max-width:58ch;color:#c5d2e8;font-size:17px;margin:0}
+.hero .cta{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;align-items:center}
+
+/* ── home: stat band ── */
+.stat-band{background:var(--wash);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0}
+.stat-band .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.sstat{text-align:center;padding:0 16px;border-right:1px solid var(--line)}
+.sstat:last-child{border-right:0}
+.sstat .sv{font-family:var(--display);font-size:28px;font-weight:700;color:var(--navy)}
+.sstat .sk{font-size:13px;color:var(--muted);margin-top:3px}
+
+/* ── section ── */
+main{min-height:60vh}
+.section{padding:54px 0}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px;border-bottom:2px solid var(--navy);padding-bottom:11px}
+.sec-head h2{font-size:clamp(22px,2.5vw,30px);color:var(--navy);font-weight:700}
+.sec-head .kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--sky);font-weight:600;display:block;margin-bottom:4px}
+.sec-head p{margin:6px 0 0;color:var(--muted);font-size:14.5px;max-width:62ch}
+.sec-head a.more{font-size:14px;font-weight:600;white-space:nowrap}
+
+/* ── home: feature blocks ── */
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:0}
+.fcard{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .18s,transform .18s}
+.fcard:hover{box-shadow:0 16px 36px -20px rgba(15,40,84,.45);transform:translateY(-2px)}
+.fcard .fbar{height:5px}
+.fcard .fbody{padding:22px 22px 24px;flex:1;display:flex;flex-direction:column}
+.fcard .ficon{width:40px;height:40px;border-radius:10px;margin-bottom:14px;display:flex;align-items:center;justify-content:center}
+.fcard h3{font-size:18px;color:var(--navy);margin-bottom:8px}
+.fcard p{color:var(--muted);font-size:14px;line-height:1.6;margin:0 0 16px;flex:1}
+.fcard .go{font-weight:600;font-size:14px;color:var(--blue);display:inline-flex;align-items:center;gap:5px;margin-top:auto}
+.fcard .ftag{display:inline-block;font-size:11px;background:var(--wash);color:var(--muted);border-radius:4px;padding:2px 7px;font-weight:600;margin-bottom:10px;border:1px solid var(--line)}
+
+/* ── home: spotlight ── */
+.spotlight{background:var(--navy);border-radius:16px;padding:34px 36px;color:#fff;display:flex;gap:36px;align-items:center;margin-bottom:24px}
+.spotlight .sl-text{flex:1}
+.spotlight .sl-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--sky);font-weight:700;margin-bottom:8px}
+.spotlight h3{font-size:22px;color:#fff;margin-bottom:10px;line-height:1.25}
+.spotlight p{color:#b5c5df;font-size:15px;margin:0 0 18px}
+.spotlight .sl-meta{font-size:13px;color:#7a96bc;display:flex;gap:10px;align-items:center}
+.spotlight .sl-date{color:#7a96bc}
+
+/* ── publications ── */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:6px 14px;font-size:13.5px;font-weight:500}
+.chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip:hover{border-color:var(--sky);color:var(--blue)}.chip.active:hover{color:#fff}
+.pub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.pub-grid.home{margin-top:4px}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;transition:box-shadow .18s,transform .18s;cursor:pointer;display:flex;flex-direction:column}
+.card:hover{box-shadow:0 14px 34px -18px rgba(15,40,84,.45);transform:translateY(-2px)}
+.card .cover{aspect-ratio:16/8;background:var(--blue);position:relative;overflow:hidden}
+.card .cover img{width:100%;height:100%;object-fit:cover;display:block}
+.card .cover .cover-fallback{width:100%;height:100%;background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%)}
+.card .cover:after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--sky)}
+.card .cover .tag{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.92);color:var(--navy);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;padding:3px 9px;border-radius:5px}
+.card .cover .ext{position:absolute;right:10px;top:10px;background:var(--navy);color:#fff;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:4px}
+.card .cbody{padding:16px 18px 18px;flex:1;display:flex;flex-direction:column}
+.card .meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:8px}
+.card h3.t{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:7px;line-height:1.22}
+.card p.ex{color:var(--muted);font-size:14px;margin:0 0 12px;line-height:1.5}
+.card .tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto}
+.card .tags span{font-size:11px;color:var(--blue);background:var(--cyan);border-radius:4px;padding:2px 7px;font-weight:600}
+.flag{width:20px;height:14px;border-radius:2px;flex:0 0 auto;box-shadow:0 0 0 1px rgba(0,0,0,.08)}
+.empty{color:var(--muted);font-size:15px;padding:34px;text-align:center;border:1px dashed var(--line);border-radius:10px;grid-column:1/-1}
+
+/* ── article ── */
+.article{max-width:740px;margin:0 auto;padding:44px 24px 68px}
+.article .back{font-size:14px;font-weight:600;color:var(--blue);display:inline-flex;gap:6px;align-items:center;margin-bottom:22px}
+.article .meta{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:12px}
+.article h1{font-size:clamp(26px,4vw,38px);color:var(--navy);line-height:1.15;margin-bottom:14px}
+.article .lead{font-size:18px;color:#3a4658;border-left:3px solid var(--sky);padding-left:16px;margin-bottom:24px}
+.article .content{font-size:17px;line-height:1.76;color:#2b3648}
+.article .content p{margin:0 0 18px}
+.article .content h3{font-size:21px;color:var(--navy);margin:28px 0 10px}
+.article .share{margin-top:32px;border-top:1px solid var(--line);padding-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.article .share span{font-size:13px;color:var(--muted)}
+
+/* ── maps ── */
+.map-page{padding-bottom:50px}
+.map-tabs{display:flex;gap:8px;margin-bottom:22px}
+.map-tabs a{border:1px solid var(--line);border-radius:999px;padding:8px 18px;font-size:14px;font-weight:600;color:var(--muted);transition:all .15s}
+.map-tabs a.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.map-tabs a:hover{border-color:var(--sky);color:var(--blue)}.map-tabs a.active:hover{color:#fff}
+.map-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+#svgmap-wrap{border-radius:14px;border:1px solid var(--line);overflow:hidden;background:#e8eef6;position:relative;user-select:none}
+#svgmap-wrap svg{display:block;width:100%;height:auto}
+.map-side{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+.map-side h3{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:12px;font-weight:700}
+.legrow{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:14px;border:0;background:transparent;width:100%;text-align:left;color:var(--ink);border-bottom:1px solid var(--line);cursor:pointer}
+.legrow:last-child{border-bottom:0}
+.legrow:hover{color:var(--blue)}
+.legrow .ln{width:22px;height:4px;border-radius:3px;flex:0 0 auto}
+.legrow .sw{width:14px;height:14px;border-radius:3px;flex:0 0 auto}
+.map-side small{display:block;color:var(--muted);font-size:11.5px;margin-top:14px;border-top:1px solid var(--line);padding-top:12px;line-height:1.55}
+
+/* ── country modal ── */
+.modal-bg{position:fixed;inset:0;background:rgba(8,18,38,.55);backdrop-filter:blur(3px);z-index:2000;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:16px;max-width:580px;width:100%;position:relative;box-shadow:0 30px 80px -30px rgba(8,18,38,.6);animation:rise .2s ease}
+.admin .modal{max-width:860px}
+@keyframes rise{from{transform:translateY(12px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal .x{position:absolute;right:13px;top:13px;border:0;background:var(--wash);width:33px;height:33px;border-radius:9px;font-size:18px;color:var(--navy);z-index:2}
+.modal .x:hover{background:var(--cyan)}
+.eth-head{padding:22px 28px;color:#fff;border-radius:16px 16px 0 0}
+.eth-head .fam{font-size:11.5px;letter-spacing:.15em;text-transform:uppercase;opacity:.9;font-weight:600}
+.eth-head h2{font-size:24px;margin-top:5px;font-weight:700}
+.eth-head .sub{opacity:.88;font-size:14px;margin-top:3px}
+.eth-body{padding:22px 28px 28px}
+.eth-facts{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:16px}
+.eth-facts .f{background:var(--wash);border-radius:10px;padding:11px 13px}
+.eth-facts .f .k{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.eth-facts .f .v{font-size:14px;color:var(--navy);font-weight:600;margin-top:3px;line-height:1.4}
+.eth-body>p{color:#3a4658;font-size:14.5px;line-height:1.64;margin:0 0 18px}
+.status-pill{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:14px}
+/* recog detail */
+.recog-list{margin-top:6px;display:flex;flex-direction:column;gap:4px}
+.recog-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--navy)}
+.recog-item .rflag{width:20px;height:14px;border-radius:2px;box-shadow:0 0 0 1px rgba(0,0,0,.1)}
+/* fh score */
+.fh-bar{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:5px}
+.fh-fill{height:100%;border-radius:999px;transition:width .4s ease}
+/* related pubs in modal */
+.modal-pubs{margin-top:18px;border-top:1px solid var(--line);padding-top:16px}
+.modal-pubs h4{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);font-weight:700;margin-bottom:12px}
+.mpub{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.mpub:last-child{border-bottom:0}
+.mpub:hover .mpt{color:var(--sky)}
+.mpub .mpimg{width:60px;height:42px;border-radius:6px;overflow:hidden;flex:0 0 auto;background:var(--wash)}
+.mpub .mpimg img{width:100%;height:100%;object-fit:cover}
+.mpub .mpimg .mpfb{width:100%;height:100%;background:linear-gradient(135deg,var(--blue),var(--navy))}
+.mpt{font-size:13.5px;font-weight:600;color:var(--navy);line-height:1.3;margin-bottom:3px;transition:color .15s}
+.mpd{font-size:12px;color:var(--muted)}
+
+/* ── energy popup ── */
+#energyPopup{max-width:420px}
+.epop-head{padding:18px 22px;background:var(--navy);border-radius:16px 16px 0 0;color:#fff}
+.epop-head h3{font-size:18px;margin:0;font-weight:700}
+.epop-head .ek{font-size:12px;color:var(--sky);margin-bottom:4px;letter-spacing:.08em;text-transform:uppercase}
+.epop-body{padding:18px 22px 22px}
+.epop-body p{font-size:14.5px;color:#3a4658;line-height:1.64;margin:0}
+.pip-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;flex:0 0 auto}
+
+/* ── admin ── */
+.admin-head{padding:20px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.admin-head h2{font-size:20px;color:var(--navy)}
+.admin-head .pill{margin-left:auto;font-size:12px;background:var(--cyan);color:var(--blue);padding:4px 12px;border-radius:999px;font-weight:600}
+.admin-body{padding:20px 28px 28px}
+.gate{padding:34px 28px 40px;text-align:center}
+.gate p{color:var(--muted);margin:8px 0 20px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 12px;font-family:var(--body);font-size:15px;color:var(--ink);background:#fff}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--sky);box-shadow:0 0 0 3px rgba(73,136,196,.18)}
+.field textarea{min-height:150px;resize:vertical;line-height:1.6}
+.field .hint{font-size:12px;color:var(--muted);margin-top:5px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 16px}
+.mini{border:1px solid var(--line);background:#fff;border-radius:7px;padding:7px 12px;font-size:13px;font-weight:600;color:var(--blue)}
+.mini:hover{border-color:var(--sky)}.mini.danger{color:#C0493C}.mini.danger:hover{border-color:#C0493C}
+.admin-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.admin-list{margin-top:8px;border-top:1px solid var(--line)}
+.admin-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
+.admin-row .ai{flex:1;min-width:0}
+.admin-row .ai b{color:var(--navy);font-size:14.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.admin-row .ai small{color:var(--muted);font-size:12px}
+
+/* ── footer ── */
+footer.foot{background:var(--navy);color:#c8d4e8;padding:36px 0 30px;margin-top:30px}
+footer.foot .wrap{display:flex;flex-wrap:wrap;gap:18px;justify-content:space-between;align-items:center}
+footer.foot .brand{font-size:19px}
+footer.foot a{color:var(--cyan)}
+footer.foot .links{display:flex;gap:16px;align-items:center;font-size:14px}
+footer.foot small{color:#8ea2c2;font-size:13px;width:100%}
+
+@media(max-width:980px){
+  .feature-grid{grid-template-columns:1fr 1fr}
+  .pub-grid{grid-template-columns:repeat(2,1fr)}
+  .map-layout{grid-template-columns:1fr}
+  .stat-band .wrap{grid-template-columns:repeat(2,1fr)}
+  .sstat:nth-child(2){border-right:0}
+  .sstat:nth-child(3){border-top:1px solid var(--line)}
+}
+@media(max-width:760px){
+  nav.main{display:none}
+  .menu-btn{display:inline-block}
+  nav.main.open{display:flex;position:absolute;top:52px;left:0;right:0;background:var(--navy);flex-direction:column;padding:10px 22px 16px;gap:2px;border-top:1px solid rgba(255,255,255,.1)}
+  .pub-grid{grid-template-columns:1fr}
+  .eth-facts{grid-template-columns:1fr}
+  .spotlight{flex-direction:column;gap:20px}
+  .feature-grid{grid-template-columns:1fr}
+  .stat-band .wrap{grid-template-columns:repeat(2,1fr)}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <a class="brand" href="#/">t<span class="dot">.</span><span class="lo">ilias</span></a>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+    <nav class="main" id="nav">
+      <a href="#/" data-route="/">Home</a>
+      <a href="#/publications" data-route="/publications">Publications</a>
+      <a href="#/maps" data-route="/maps">Maps &amp; Stats</a>
+      <a class="li-icon" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer class="foot">
+  <div class="wrap">
+    <a class="brand" href="#/" style="color:#fff;font-family:var(--display);font-weight:700">t.ilias</a>
+    <div class="links">
+      <a href="#/publications">Publications</a>
+      <a href="#/maps">Maps &amp; Stats</a>
+      <a href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#/admin">Admin</a>
+    </div>
+    <small>© 2026 Timoleon Ilias · Geopolitics &amp; security analysis. All views are personal.</small>
+  </div>
+</footer>
+
+<!-- modals -->
+<div class="modal-bg" id="ethModal"><div class="modal" id="ethInner"></div></div>
+<div class="modal-bg" id="energyModal"><div class="modal" id="energyPopup"></div></div>
+<div class="modal-bg admin" id="adminModal"><div class="modal" id="adminInner"></div></div>
+
+<script>
+/* =====================================================================
+   t.ilias — single-file site (hash router + SVG vector map)
+   Publications persist in this browser via localStorage.
+   Admin URL: <your-site>#/admin    Passcode below.
+   ===================================================================== */
+const PASSCODE = "ilias2026";
+
+/* ---------- flags ---------- */
+const FLAG_EN=`<svg class="flag" viewBox="0 0 60 40" aria-label="English"><clipPath id="ukc"><rect width="60" height="40" rx="2"/></clipPath><g clip-path="url(#ukc)"><rect width="60" height="40" fill="#012169"/><path d="M0 0 60 40M60 0 0 40" stroke="#fff" stroke-width="8"/><path d="M0 0 60 40M60 0 0 40" stroke="#C8102E" stroke-width="4"/><path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="13"/><path d="M30 0v40M0 20h60" stroke="#C8102E" stroke-width="7"/></g></svg>`;
+const FLAG_EL=`<svg class="flag" viewBox="0 0 60 40" aria-label="Greek"><clipPath id="grc"><rect width="60" height="40" rx="2"/></clipPath><g clip-path="url(#grc)"><rect width="60" height="40" fill="#0D5EAF"/><g fill="#fff"><rect y="4.4" width="60" height="4.4"/><rect y="13.3" width="60" height="4.4"/><rect y="22.2" width="60" height="4.4"/><rect y="31.1" width="60" height="4.4"/></g><rect width="22.2" height="22.2" fill="#0D5EAF"/><rect x="8.9" width="4.4" height="22.2" fill="#fff"/><rect y="8.9" width="22.2" height="4.4" fill="#fff"/></g></svg>`;
+const FLAG_RU=`<svg class="rflag" viewBox="0 0 30 20"><rect width="30" height="7" fill="#fff"/><rect y="7" width="30" height="6" fill="#0039A6"/><rect y="13" width="30" height="7" fill="#D52B1E"/></svg>`;
+const FLAG_VE=`<svg class="rflag" viewBox="0 0 30 20"><rect width="30" height="7" fill="#CF142B"/><rect y="7" width="30" height="6" fill="#FFD700"/><rect y="13" width="30" height="7" fill="#00247D"/></svg>`;
+const FLAG_SY=`<svg class="rflag" viewBox="0 0 30 20"><rect width="30" height="7" fill="#CE1126"/><rect y="7" width="30" height="6" fill="#FFFFFF"/><rect y="13" width="30" height="7" fill="#000000"/></svg>`;
+const FLAG_NR=`<svg class="rflag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#002B7F"/><rect y="8" width="30" height="4" fill="#FFC61E"/><circle cx="7" cy="10" r="4" fill="#DE2010"/></svg>`;
+const FLAG_NI=`<svg class="rflag" viewBox="0 0 30 20"><rect width="30" height="7" fill="#fff"/><rect y="7" width="30" height="6" fill="#3E68A8"/><rect y="13" width="30" height="7" fill="#fff"/></svg>`;
+const flagFor=l=>l==="el"?FLAG_EL:FLAG_EN;
+
+/* ---------- seed publications ---------- */
+const SEED=[
+  {id:"perspective-jan26",title:"Featured analysis in The Perspective — January 2026",author:"Timoleon Ilias",
+   date:"2026-02-01",lang:"en",type:"external",featured:true,
+   url:"https://www.theperspective.se/wp-content/uploads/2026/02/Perspective_Jan26.pdf#page=45",
+   tags:["Published","Security"],photo:"",
+   excerpt:"Published in The Perspective magazine (Jan 2026 issue, p. 45). Opens the external PDF.",body:""},
+  {id:"black-sea-security",title:"The Black Sea after the war: a contested commons",author:"Timoleon Ilias",
+   date:"2026-01-18",lang:"en",type:"internal",featured:false,tags:["Black Sea","Security","NATO"],photo:"",
+   excerpt:"How the post-war Black Sea is reshaping naval access, trade and deterrence.",
+   body:"## A reordered sea\nThis is a sample article. Replace or delete it from the admin panel.\n\nThe Black Sea has moved from periphery to centre stage in European security. Control of access, ports and undersea infrastructure now shapes the balance between the littoral states.\n\n## What to watch\nThe coming year will test whether deterrence holds, and whether commercial shipping can be insulated from military risk."},
+  {id:"metavasi-energeias",title:"Η ενεργειακή μετάβαση και η γεωπολιτική του φυσικού αερίου",author:"Τιμολέων Ηλίας",
+   date:"2025-12-10",lang:"el",type:"internal",featured:false,tags:["Energy","Ανάλυση"],photo:"",
+   excerpt:"Πώς η μετάβαση αλλάζει τους δρόμους του αερίου και τις περιφερειακές ισορροπίες.",
+   body:"## Εισαγωγή\nΑυτό είναι δείγμα άρθρου. Επεξεργάσου το ή διέγραψέ το από τον πίνακα ελέγχου.\n\nΗ ζήτηση μετατοπίζεται και μαζί της οι αγωγοί και οι συμμαχίες.\n\n## Συμπέρασμα\nΟ Νότιος Διάδρομος Αερίου παραμένει κρίσιμος για την ευρωπαϊκή διαφοροποίηση."},
+  {id:"frozen-conflicts",title:"Frozen, then shattered: the end of the post-Soviet status quo",author:"Timoleon Ilias",
+   date:"2025-11-22",lang:"en",type:"internal",featured:false,tags:["Caucasus","De facto states"],photo:"",
+   excerpt:"Why the region's unresolved conflicts are unfreezing — and what comes next.",
+   body:"## The thaw\nSample text — edit in the control panel.\n\nThe label \"frozen conflict\" always flattered a fragile reality. Recent years have shown how quickly these arrangements can collapse."}
+];
+
+/* ---------- de facto states (verified mid-2026) ---------- */
+const DEFACTO={
+  abkhazia:{
+    name:"Abkhazia",status:"Active de facto state",color:"#C065A8",
+    capital:"Sukhumi",claimed:"Georgia",
+    recog:"Russia + 4 UN states",
+    recognisedBy:[
+      {name:"Russia",flag:FLAG_RU},
+      {name:"Venezuela",flag:FLAG_VE},
+      {name:"Syria",flag:FLAG_SY},
+      {name:"Nauru",flag:FLAG_NR},
+      {name:"Nicaragua",flag:FLAG_NI}
+    ],
+    nextElections:"2026 (parliamentary, expected)",
+    freedomHouse:{score:22,label:"Not Free"},
+    info:"De facto independent since the 1992–93 war. Recognised by Russia, Venezuela, Syria, Nauru and Nicaragua; the rest of the world treats it as part of Georgia. Increasingly dependent on Moscow, with a small economy and a population of roughly 240,000.",
+    tags:["Caucasus","De facto states"]
+  },
+  s_ossetia:{
+    name:"South Ossetia",status:"Active de facto state",color:"#E0B53A",
+    capital:"Tskhinvali",claimed:"Georgia",
+    recog:"Russia + 4 UN states",
+    recognisedBy:[
+      {name:"Russia",flag:FLAG_RU},
+      {name:"Venezuela",flag:FLAG_VE},
+      {name:"Syria",flag:FLAG_SY},
+      {name:"Nauru",flag:FLAG_NR},
+      {name:"Nicaragua",flag:FLAG_NI}
+    ],
+    nextElections:"2026 (presidential, expected)",
+    freedomHouse:{score:8,label:"Not Free"},
+    info:"Broke away from Georgia in the early 1990s; Russian-backed and effectively sealed off after the 2008 war. Recognised by the same handful of states as Abkhazia. Most ethnic Ossetians actually live in North Ossetia, within Russia. Georgia abolished its own exile administration of the region in early 2026.",
+    tags:["Caucasus","De facto states"]
+  },
+  artsakh:{
+    name:"Nagorno-Karabakh (Artsakh)",status:"Dissolved · January 2024",color:"#C0493C",dashed:true,
+    capital:"Stepanakert (former)",claimed:"Azerbaijan",
+    recog:"None — dissolved",
+    recognisedBy:[],
+    nextElections:"N/A — dissolved",
+    freedomHouse:{score:null,label:"Dissolved"},
+    info:"A self-declared Armenian republic from 1991. Azerbaijan's September 2023 offensive forced the surrender of its forces; over 100,000 ethnic Armenians fled within days. The Republic of Artsakh formally dissolved on 1 January 2024 and the territory is now fully under Azerbaijani control. A peace-treaty text between Armenia and Azerbaijan was agreed in 2025 but remains unsigned.",
+    tags:["Caucasus","De facto states"]
+  }
+};
+
+/* ---------- energy routes ---------- */
+const PIPELINES=[
+  {id:"btc",name:"Baku–Tbilisi–Ceyhan (BTC)",color:"#2E8B57",kind:"Oil · operational",
+   note:"The flagship route: Caspian crude from Baku to the Turkish Mediterranean port of Ceyhan, bypassing Russia and the Bosphorus."},
+  {id:"supsa",name:"Baku–Supsa (Western Route)",color:"#D44C5C",kind:"Oil · operational",
+   note:"An earlier export line carrying oil to the Georgian Black Sea terminal at Supsa."},
+  {id:"novo",name:"Baku–Novorossiysk (Northern Route)",color:"#3A6FB0",kind:"Oil · operational",
+   note:"The Russia-routed line to the Black Sea port of Novorossiysk — the option that keeps Moscow in the transit picture."},
+  {id:"scp",name:"South Caucasus Pipeline (BTE gas)",color:"#E0A93A",kind:"Gas · operational",
+   note:"The gas backbone paralleling BTC to Erzurum, feeding the Southern Gas Corridor toward Europe."},
+  {id:"sgc",name:"Onward: Southern Gas Corridor",color:"#8A93A8",kind:"Gas · schematic",
+   note:"Schematic onward leg: TANAP across Turkey and TAP into south-eastern Europe."}
+];
+
+/* ---------- state + storage ---------- */
+const KEY="tilias_pubs_v3";
+let PUBS=[];
+function load(){try{const r=localStorage.getItem(KEY);PUBS=r?JSON.parse(r):SEED.slice();}catch(e){PUBS=SEED.slice();}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(PUBS));}catch(e){alert("Storage is blocked in this preview. Download & host the file, or use Export JSON.");}}
+function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function fmt(d){if(!d)return"";const dt=new Date(d);return isNaN(dt)?d:dt.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}
+function bodyHtml(t){return (t||"").split(/\n{2,}/).map(b=>{b=b.trim();if(!b)return"";return b.startsWith("## ")?"<h3>"+esc(b.slice(3))+"</h3>":"<p>"+esc(b).replace(/\n/g,"<br>")+"</p>";}).join("");}
+function allTags(){const s=new Set();PUBS.forEach(p=>(p.tags||[]).forEach(x=>s.add(x)));return[...s];}
+
+/* ---------- card markup ---------- */
+function coverHtml(p){
+  if(p.photo){
+    return `<img src="${esc(p.photo)}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="cover-fallback" style="display:none"></div>`;
+  }
+  return `<div class="cover-fallback"></div>`;
+}
+function card(p){
+  const ext=p.type==="external";
+  const href=ext?p.url:("#/article/"+p.id);
+  const target=ext?` target="_blank" rel="noopener"`:"";
+  const extBadge=ext?`<span class="ext">↗ External</span>`:"";
+  const tags=(p.tags||[]).slice(0,3).map(x=>`<span>${esc(x)}</span>`).join("");
+  return `<a class="card" href="${href}"${target}>
+    <div class="cover">${coverHtml(p)}<span class="tag">${esc((p.tags&&p.tags[0])||"Analysis")}</span>${extBadge}</div>
+    <div class="cbody">
+      <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span></div>
+      <h3 class="t">${esc(p.title)}</h3>
+      <p class="ex">${esc(p.excerpt||"")}</p>
+      <div class="tags">${tags}</div>
+    </div></a>`;
+}
+
+/* ---------- views ---------- */
+function viewHome(){
+  const sorted=PUBS.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  const featured=sorted.find(p=>p.featured)||sorted[0];
+  const latest=sorted.filter(p=>!featured||p.id!==featured.id).slice(0,3);
+  const spotHtml=featured?`
+  <section class="section" style="padding-top:0;padding-bottom:16px"><div class="wrap">
+    <div class="spotlight">
+      <div class="sl-text">
+        <div class="sl-label">Featured</div>
+        <h3>${esc(featured.title)}</h3>
+        <p>${esc(featured.excerpt||"")}</p>
+        <div class="sl-meta">
+          ${flagFor(featured.lang)}
+          <span>${esc(featured.author||"Timoleon Ilias")}</span>
+          <span class="sl-date">· ${fmt(featured.date)}</span>
+        </div>
+      </div>
+      <div>
+        <a class="btn primary" ${featured.type==="external"?`href="${esc(featured.url)}" target="_blank" rel="noopener"`:`href="#/article/${esc(featured.id)}"`}>Read ${featured.type==="external"?"article ↗":"article →"}</a>
+      </div>
+    </div>
+  </div></section>`:"";
+
+  return `
+  <section class="hero"><div class="wrap">
+    <span class="eyebrow">Geopolitics · Security · Regional affairs</span>
+    <h1>Timoleon Ilias</h1>
+    <div class="role">Analysis on geopolitics, security and the post-Soviet space</div>
+    <p>Long-form publications alongside interactive maps and stats — reading the region soberly and with evidence.</p>
+    <div class="cta">
+      <a class="btn primary" href="#/publications">Read publications</a>
+      <a class="btn ghost" href="#/maps">Explore the maps</a>
+      <a class="btn ghost" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+        LinkedIn
+      </a>
+    </div>
+  </div></section>
+
+  <div class="stat-band">
+    <div class="wrap">
+      <div class="sstat"><div class="sv">${PUBS.length}</div><div class="sk">Publications</div></div>
+      <div class="sstat"><div class="sv">2</div><div class="sk">Active de facto states tracked</div></div>
+      <div class="sstat"><div class="sv">5</div><div class="sk">Energy routes mapped</div></div>
+      <div class="sstat"><div class="sv">2</div><div class="sk">Languages</div></div>
+    </div>
+  </div>
+
+  ${spotHtml}
+
+  <section class="section" style="padding-top:36px"><div class="wrap">
+    <div class="sec-head"><div><span class="kicker">What's here</span><h2>Three ways to explore</h2></div></div>
+    <div class="feature-grid">
+      <a class="fcard" href="#/publications">
+        <div class="fbar" style="background:var(--blue)"></div>
+        <div class="fbody">
+          <div class="ficon" style="background:var(--cyan)">
+            <svg width="22" height="22" fill="none" stroke="var(--navy)" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10"/></svg>
+          </div>
+          <span class="ftag">Publications · ${PUBS.length} pieces</span>
+          <h3>Written analysis</h3>
+          <p>Articles in English and Greek on geopolitics, security and the post-Soviet space — some hosted here in full, others featured in external outlets like <em>The Perspective</em>.</p>
+          <span class="go">Browse all publications →</span>
+        </div>
+      </a>
+      <a class="fcard" href="#/maps">
+        <div class="fbar" style="background:var(--sky)"></div>
+        <div class="fbody">
+          <div class="ficon" style="background:#e0f0ff">
+            <svg width="22" height="22" fill="none" stroke="var(--blue)" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7l6-3 6 3 6-3v13l-6 3-6-3-6 3z"/><path d="M9 4v13M15 7v13"/></svg>
+          </div>
+          <span class="ftag">Maps · De facto states + Energy</span>
+          <h3>Interactive maps</h3>
+          <p>Two clickable vector maps of the South Caucasus: unrecognised territories with recognition status and Freedom House data, and the five major Caspian energy corridors.</p>
+          <span class="go">Open the maps →</span>
+        </div>
+      </a>
+      <a class="fcard" href="#/maps">
+        <div class="fbar" style="background:#C065A8"></div>
+        <div class="fbody">
+          <div class="ficon" style="background:#f5e8f5">
+            <svg width="22" height="22" fill="none" stroke="#C065A8" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10A15.3 15.3 0 0 1 8 12a15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <span class="ftag">Caucasus · De facto states</span>
+          <h3>De facto states</h3>
+          <p>Abkhazia and South Ossetia remain Russian-backed and unrecognised by the UN. Artsakh dissolved in January 2024. Click any territory for elections, Freedom House scores and recognition data.</p>
+          <span class="go">Explore de facto states →</span>
+        </div>
+      </a>
+    </div>
+  </div></section>
+
+  <section class="section" style="padding-top:8px"><div class="wrap">
+    <div class="sec-head"><div><span class="kicker">Latest</span><h2>Recent publications</h2></div>
+      <a class="more" href="#/publications">View all →</a></div>
+    <div class="pub-grid home">${latest.map(card).join("")}</div>
+  </div></section>`;
+}
+
+function viewPublications(){
+  return `<section class="section"><div class="wrap">
+    <div class="sec-head"><div><span class="kicker">Portfolio</span><h2>Publications</h2>
+      <p>Click an article to open it. External pieces open in their original outlet.</p></div></div>
+    <div class="filters" id="filters"></div>
+    <div class="pub-grid" id="pubGrid"></div>
+  </div></section>`;
+}
+let activeFilter="all";
+function renderFilters(){
+  const f=document.getElementById("filters");if(!f)return;
+  let h=`<button class="chip ${activeFilter==='all'?'active':''}" data-f="all">All</button>`;
+  h+=`<button class="chip ${activeFilter==='external'?'active':''}" data-f="external">External</button>`;
+  allTags().forEach(t=>{h+=`<button class="chip ${activeFilter===t?'active':''}" data-f="${esc(t)}">${esc(t)}</button>`;});
+  f.innerHTML=h;
+  f.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{activeFilter=c.dataset.f;renderFilters();renderPubGrid();});
+}
+function renderPubGrid(){
+  const g=document.getElementById("pubGrid");if(!g)return;
+  let list=PUBS.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||""));
+  if(activeFilter==="external")list=list.filter(p=>p.type==="external");
+  else if(activeFilter!=="all")list=list.filter(p=>(p.tags||[]).includes(activeFilter));
+  g.innerHTML=list.length?list.map(card).join(""):`<div class="empty">No publications in this category yet.</div>`;
+}
+
+function viewArticle(id){
+  const p=PUBS.find(x=>x.id===id);
+  if(!p)return `<div class="article"><a class="back" href="#/publications">← Publications</a><h1>Not found</h1><p>This article doesn't exist or was removed.</p></div>`;
+  if(p.type==="external"&&p.url){window.open(p.url,"_blank","noopener");location.hash="#/publications";return viewPublications();}
+  return `<article class="article">
+    <a class="back" href="#/publications">← All publications</a>
+    <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span></div>
+    <h1>${esc(p.title)}</h1>
+    ${p.excerpt?`<p class="lead">${esc(p.excerpt)}</p>`:""}
+    <div class="content">${bodyHtml(p.body)||"<p>(No content yet.)</p>"}</div>
+    <div class="share"><span>Share this article:</span>
+      <button class="btn line" id="copyLink">Copy link</button>
+      ${(p.tags||[]).map(t=>`<span class="chip" style="cursor:default">${esc(t)}</span>`).join("")}
+    </div>
+  </article>`;
+}
+
+/* ---------- Maps page ---------- */
+function viewMaps(sub){
+  const tabs=`<div class="map-tabs">
+    <a class="${sub==='de-facto'?'active':''}" href="#/maps/de-facto">De facto states</a>
+    <a class="${sub==='energy'?'active':''}" href="#/maps/energy">Energy routes</a>
+  </div>`;
+  const head=sub==="energy"
+    ?{k:"Info · Stats",t:"Energy routes in the South Caucasus",d:"The pipelines carrying Caspian oil and gas to market. Click a route or label for detail."}
+    :{k:"Info · Stats",t:"De facto states of the Caucasus",d:"Click a territory for its status, recognition and current situation (verified mid-2026)."};
+  const side=sub==="energy"
+    ?`<h3>Pipelines</h3><div id="legend"></div><small>Routes are drawn over real geography. Click any pipeline for detail.</small>`
+    :`<h3>Territories</h3><div id="legend"></div><small>Boundaries are approximate. Status verified mid-2026: Abkhazia and South Ossetia remain Russian-backed de facto states; Artsakh dissolved 1 January 2024.</small>`;
+  return `<section class="section map-page"><div class="wrap">
+    <div class="sec-head"><div><span class="kicker">${head.k}</span><h2>${head.t}</h2><p>${head.d}</p></div></div>
+    ${tabs}
+    <div class="map-layout">
+      <div id="svgmap-wrap"></div>
+      <aside class="map-side">${side}</aside>
+    </div>
+  </div></section>`;
+}
+
+/* =====================================================================
+   SVG Vector Map Engine
+   Caucasus bounding box: lon 38..52, lat 38..47
+   We project to a 800×500 SVG canvas.
+   ===================================================================== */
+const MAP_W=800,MAP_H=500;
+const LON0=38,LON1=53,LAT0=38,LAT1=47.5;
+function proj(lat,lon){
+  const x=((lon-LON0)/(LON1-LON0))*MAP_W;
+  const y=((LAT1-lat)/(LAT1-LAT0))*MAP_H;
+  return [x,y];
+}
+function polyPoints(coords){return coords.map(([lat,lon])=>proj(lat,lon).join(",")).join(" ");}
+function pathD(coords){return coords.map(([lat,lon],i)=>{const [x,y]=proj(lat,lon);return(i===0?`M${x},${y}`:`L${x},${y}`);}).join(" ")+"Z";}
+
+/* Country outlines (simplified) */
+const COUNTRIES=[
+  {id:"russia",name:"Russia",d:[
+    [47.5,38],[47.5,53],[45.5,53],[45.8,49],[46.0,46],[45.2,44],[44.8,41],[45.5,38]
+  ],fill:"#d4dce8"},
+  {id:"georgia",name:"Georgia",d:[
+    [43.0,40.0],[43.6,40.4],[43.5,40.9],[43.3,41.3],[43.1,41.8],[42.8,42.0],[42.5,42.6],
+    [41.9,43.8],[41.7,44.9],[41.3,45.4],[41.0,45.6],[40.8,44.8],[41.0,43.4],[41.1,42.5],
+    [41.4,41.5],[41.6,40.5],[41.5,40.0],[42.0,39.7],[42.4,39.9],[43.0,40.0]
+  ],fill:"#c8d8ec"},
+  {id:"armenia",name:"Armenia",d:[
+    [41.3,43.4],[41.1,44.5],[40.8,44.8],[40.9,45.6],[40.5,45.6],[39.9,45.0],[38.9,44.5],
+    [38.8,43.5],[39.0,43.2],[39.5,43.0],[40.0,43.4],[40.5,43.5],[41.3,43.4]
+  ],fill:"#c8d8ec"},
+  {id:"azerbaijan",name:"Azerbaijan",d:[
+    [41.7,44.9],[41.3,45.4],[41.0,45.6],[40.8,44.8],[40.5,45.6],[39.9,45.0],[38.8,47.0],
+    [38.5,48.0],[38.4,49.0],[39.0,49.8],[39.5,50.5],[40.1,50.2],[40.5,49.6],[40.8,49.2],
+    [41.2,48.6],[41.5,47.0],[41.7,46.3],[41.5,45.9],[41.7,44.9]
+  ],fill:"#c8d8ec"},
+  {id:"turkey",name:"Turkey",d:[
+    [42.0,38.0],[41.6,38.5],[41.5,39.5],[41.1,40.5],[40.8,41.5],[40.5,42.0],[40.0,43.0],
+    [39.5,43.5],[38.8,43.5],[38.5,42.0],[38.0,41.0],[38.0,38.0],[42.0,38.0]
+  ],fill:"#d4dce8"},
+  {id:"iran",name:"Iran",d:[
+    [38.5,44.0],[38.8,44.5],[39.0,45.0],[38.8,46.0],[38.5,47.0],[38.0,48.0],[38.0,53],[38.0,44.0]
+  ],fill:"#d4dce8"},
+];
+
+const TERRITORIES_POLY={
+  abkhazia:[[43.39,40.01],[43.55,40.35],[43.50,40.85],[43.35,41.30],[43.10,41.75],[42.85,41.90],[42.60,41.75],[42.51,41.55],[42.70,41.20],[42.95,40.80],[43.15,40.40]],
+  s_ossetia:[[42.65,43.50],[42.70,44.00],[42.60,44.45],[42.35,44.55],[42.10,44.20],[42.12,43.80],[42.25,43.50]],
+  artsakh:[[40.18,46.55],[40.10,46.85],[39.90,47.05],[39.60,46.95],[39.45,46.65],[39.55,46.40],[39.85,46.40]]
+};
+
+/* Pipeline paths (lat,lon waypoints) */
+const PIPELINE_PATHS={
+  btc:[[40.41,49.87],[41.0,47.0],[41.5,45.6],[41.72,44.78],[41.2,43.0],[40.3,42.0],[39.90,41.27],[38.6,39.5],[37.5,37.5],[36.93,35.87]],
+  supsa:[[40.41,49.87],[41.0,47.0],[41.72,44.78],[42.0,43.0],[42.03,41.76]],
+  novo:[[40.41,49.87],[41.5,48.4],[43.0,47.0],[43.4,45.6],[44.0,43.0],[44.6,40.0],[44.72,37.77]],
+  scp:[[40.41,49.87],[41.05,47.0],[41.76,44.78],[41.25,43.0],[40.35,42.0],[39.90,41.27]],
+  sgc:[[39.90,41.27],[39.8,38.5],[39.9,35.0],[40.2,31.0],[40.6,27.5]]
+};
+
+const CITY_POINTS={
+  Baku:[40.41,49.87],Tbilisi:[41.72,44.78],Yerevan:[40.18,44.51],
+  Supsa:[42.03,41.76],Ceyhan:[36.93,35.87],Novorossiysk:[44.72,37.77],
+  Erzurum:[39.90,41.27]
+};
+
+function makeSVGDeFacto(){
+  const ns="http://www.w3.org/2000/svg";
+  const svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox",`0 0 ${MAP_W} ${MAP_H}`);
+  svg.setAttribute("xmlns",ns);
+
+  // Sea background
+  const bg=document.createElementNS(ns,"rect");
+  bg.setAttribute("width",MAP_W);bg.setAttribute("height",MAP_H);
+  bg.setAttribute("fill","#b8d4e8");svg.appendChild(bg);
+
+  // Countries
+  COUNTRIES.forEach(c=>{
+    const p=document.createElementNS(ns,"path");
+    p.setAttribute("d",pathD(c.d));
+    p.setAttribute("fill",c.fill);
+    p.setAttribute("stroke","#8fa8c4");
+    p.setAttribute("stroke-width","0.8");
+    svg.appendChild(p);
+  });
+
+  // Territory fills
+  Object.entries(TERRITORIES_POLY).forEach(([k,coords])=>{
+    const d=DEFACTO[k];if(!d)return;
+    const poly=document.createElementNS(ns,"polygon");
+    poly.setAttribute("points",polyPoints(coords));
+    poly.setAttribute("fill",d.color);
+    poly.setAttribute("fill-opacity","0.72");
+    poly.setAttribute("stroke",d.color);
+    poly.setAttribute("stroke-width","1.5");
+    poly.setAttribute("stroke-dasharray",d.dashed?"6 4":"none");
+    poly.style.cursor="pointer";
+    poly.setAttribute("data-k",k);
+    // hover
+    poly.addEventListener("mouseenter",()=>{poly.setAttribute("fill-opacity","0.9");});
+    poly.addEventListener("mouseleave",()=>{poly.setAttribute("fill-opacity","0.72");});
+    poly.addEventListener("click",()=>openState(k));
+    svg.appendChild(poly);
+
+    // centroid label
+    const cx=coords.reduce((s,[lt,ln])=>s+proj(lt,ln)[0],0)/coords.length;
+    const cy=coords.reduce((s,[lt,ln])=>s+proj(lt,ln)[1],0)/coords.length;
+    const lbl=document.createElementNS(ns,"text");
+    lbl.setAttribute("x",cx);lbl.setAttribute("y",cy);
+    lbl.setAttribute("text-anchor","middle");
+    lbl.setAttribute("font-size","10");
+    lbl.setAttribute("font-weight","700");
+    lbl.setAttribute("fill","#fff");
+    lbl.setAttribute("pointer-events","none");
+    lbl.setAttribute("paint-order","stroke");
+    lbl.setAttribute("stroke","rgba(0,0,0,.35)");
+    lbl.setAttribute("stroke-width","2");
+    lbl.textContent=d.name.length>16?d.name.split(" ")[0]:d.name;
+    svg.appendChild(lbl);
+  });
+
+  // Country name labels
+  const countryLabels=[
+    {name:"Georgia",lat:42.0,lon:43.5},
+    {name:"Armenia",lat:40.2,lon:44.5},
+    {name:"Azerbaijan",lat:40.0,lon:47.5},
+    {name:"Russia",lat:46.0,lon:44.0},
+    {name:"Turkey",lat:39.5,lon:40.0},
+    {name:"Iran",lat:38.2,lon:46.5},
+  ];
+  countryLabels.forEach(({name,lat,lon})=>{
+    const [x,y]=proj(lat,lon);
+    const lbl=document.createElementNS(ns,"text");
+    lbl.setAttribute("x",x);lbl.setAttribute("y",y);
+    lbl.setAttribute("text-anchor","middle");
+    lbl.setAttribute("font-size","9");
+    lbl.setAttribute("font-weight","600");
+    lbl.setAttribute("fill","#4a6080");
+    lbl.setAttribute("letter-spacing","0.08em");
+    lbl.setAttribute("text-transform","uppercase");
+    lbl.setAttribute("pointer-events","none");
+    lbl.textContent=name.toUpperCase();
+    svg.appendChild(lbl);
+  });
+
+  // Caspian Sea label
+  const [cx2,cy2]=proj(41.0,51.5);
+  const caspLbl=document.createElementNS(ns,"text");
+  caspLbl.setAttribute("x",cx2);caspLbl.setAttribute("y",cy2);
+  caspLbl.setAttribute("text-anchor","middle");
+  caspLbl.setAttribute("font-size","9");
+  caspLbl.setAttribute("fill","#5080a0");
+  caspLbl.setAttribute("font-style","italic");
+  caspLbl.setAttribute("pointer-events","none");
+  caspLbl.textContent="Caspian Sea";
+  svg.appendChild(caspLbl);
+
+  // Black Sea label
+  const [bsx,bsy]=proj(43.2,34.5);
+  const bsLbl=document.createElementNS(ns,"text");
+  bsLbl.setAttribute("x",bsx);bsLbl.setAttribute("y",bsy);
+  bsLbl.setAttribute("text-anchor","middle");
+  bsLbl.setAttribute("font-size","9");
+  bsLbl.setAttribute("fill","#5080a0");
+  bsLbl.setAttribute("font-style","italic");
+  bsLbl.setAttribute("pointer-events","none");
+  bsLbl.textContent="Black Sea";
+  svg.appendChild(bsLbl);
+
+  return svg;
+}
+
+function makeSVGEnergy(){
+  const ns="http://www.w3.org/2000/svg";
+  const svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox",`0 0 ${MAP_W} ${MAP_H}`);
+  svg.setAttribute("xmlns",ns);
+
+  const bg=document.createElementNS(ns,"rect");
+  bg.setAttribute("width",MAP_W);bg.setAttribute("height",MAP_H);
+  bg.setAttribute("fill","#b8d4e8");svg.appendChild(bg);
+
+  COUNTRIES.forEach(c=>{
+    const p=document.createElementNS(ns,"path");
+    p.setAttribute("d",pathD(c.d));
+    p.setAttribute("fill",c.fill);
+    p.setAttribute("stroke","#8fa8c4");
+    p.setAttribute("stroke-width","0.8");
+    svg.appendChild(p);
+  });
+
+  // Pipelines
+  PIPELINES.forEach(pip=>{
+    const coords=PIPELINE_PATHS[pip.id];if(!coords)return;
+    const pts=coords.map(([lat,lon])=>proj(lat,lon).join(",")).join(" ");
+    const line=document.createElementNS(ns,"polyline");
+    line.setAttribute("points",pts);
+    line.setAttribute("fill","none");
+    line.setAttribute("stroke",pip.color);
+    line.setAttribute("stroke-width","3.5");
+    line.setAttribute("stroke-linecap","round");
+    line.setAttribute("stroke-linejoin","round");
+    if(pip.id==="sgc")line.setAttribute("stroke-dasharray","8 5");
+    line.style.cursor="pointer";
+    line.addEventListener("click",()=>openEnergyPopup(pip.id));
+    svg.appendChild(line);
+  });
+
+  // City dots + labels
+  Object.entries(CITY_POINTS).forEach(([name,[lat,lon]])=>{
+    const [x,y]=proj(lat,lon);
+    const g=document.createElementNS(ns,"g");
+
+    const ring=document.createElementNS(ns,"circle");
+    ring.setAttribute("cx",x);ring.setAttribute("cy",y);ring.setAttribute("r","5");
+    ring.setAttribute("fill","#0F2854");ring.setAttribute("stroke","#fff");ring.setAttribute("stroke-width","2");
+    g.appendChild(ring);
+
+    const lbl=document.createElementNS(ns,"text");
+    lbl.setAttribute("x",x+8);lbl.setAttribute("y",y+4);
+    lbl.setAttribute("font-size","10");lbl.setAttribute("font-weight","700");
+    lbl.setAttribute("fill","#0F2854");
+    lbl.setAttribute("paint-order","stroke");
+    lbl.setAttribute("stroke","rgba(232,238,246,.8)");
+    lbl.setAttribute("stroke-width","3");
+    lbl.textContent=name;
+    g.appendChild(lbl);
+    svg.appendChild(g);
+  });
+
+  // Sea labels
+  [[41.0,51.5,"Caspian Sea"],[43.2,34.5,"Black Sea"]].forEach(([lat,lon,txt])=>{
+    const [x,y]=proj(lat,lon);
+    const lbl=document.createElementNS(ns,"text");
+    lbl.setAttribute("x",x);lbl.setAttribute("y",y);
+    lbl.setAttribute("text-anchor","middle");lbl.setAttribute("font-size","9");
+    lbl.setAttribute("fill","#5080a0");lbl.setAttribute("font-style","italic");
+    lbl.setAttribute("pointer-events","none");lbl.textContent=txt;
+    svg.appendChild(lbl);
+  });
+
+  return svg;
+}
+
+function initDeFacto(){
+  const wrap=document.getElementById("svgmap-wrap");if(!wrap)return;
+  const svg=makeSVGDeFacto();wrap.appendChild(svg);
+  const leg=document.getElementById("legend");
+  let lh="";
+  Object.entries(DEFACTO).forEach(([k,d])=>{
+    lh+=`<button class="legrow" data-k="${k}">
+      <span class="sw" style="background:${d.color}"></span>
+      <span style="flex:1">${d.name}</span>
+      <span style="font-size:11px;color:var(--muted)">${d.status.split(' · ')[0]}</span>
+    </button>`;
+  });
+  leg.innerHTML=lh;
+  leg.querySelectorAll(".legrow").forEach(b=>b.onclick=()=>openState(b.dataset.k));
+}
+
+function initEnergy(){
+  const wrap=document.getElementById("svgmap-wrap");if(!wrap)return;
+  const svg=makeSVGEnergy();wrap.appendChild(svg);
+  const leg=document.getElementById("legend");
+  leg.innerHTML=PIPELINES.map(p=>
+    `<button class="legrow" data-pip="${p.id}">
+      <span class="ln" style="background:${p.color}${p.id==='sgc'?';opacity:.6':''}"></span>
+      <span style="flex:1">${p.name}</span>
+    </button>`).join("");
+  leg.querySelectorAll(".legrow").forEach(b=>b.onclick=()=>openEnergyPopup(b.dataset.pip));
+}
+
+function openState(k){
+  const d=DEFACTO[k];if(!d)return;
+  const active=d.status.startsWith("Active");
+  const inner=document.getElementById("ethInner");
+
+  // Freedom House bar
+  let fhHtml="";
+  if(d.freedomHouse.score!==null){
+    const pct=Math.round((d.freedomHouse.score/100)*100);
+    const barColor=pct<40?"#C0493C":pct<60?"#E0A93A":"#2E8B57";
+    fhHtml=`<div class="f" style="grid-column:1/-1">
+      <div class="k">Freedom House score</div>
+      <div class="v">${d.freedomHouse.score}/100 — ${d.freedomHouse.label}</div>
+      <div class="fh-bar"><div class="fh-fill" style="width:${pct}%;background:${barColor}"></div></div>
+    </div>`;
+  } else {
+    fhHtml=`<div class="f"><div class="k">Freedom House</div><div class="v">${d.freedomHouse.label}</div></div>`;
+  }
+
+  // Recognised by flags
+  let recogHtml="";
+  if(d.recognisedBy.length>0){
+    recogHtml=`<div class="recog-list">`+d.recognisedBy.map(r=>`<div class="recog-item">${r.flag}<span>${r.name}</span></div>`).join("")+`</div>`;
+  }
+
+  // Related publications
+  const relPubs=PUBS.filter(p=>(p.tags||[]).some(t=>d.tags.includes(t))).slice(0,3);
+  let relHtml="";
+  if(relPubs.length){
+    relHtml=`<div class="modal-pubs"><h4>Related publications</h4>`+
+      relPubs.map(p=>{
+        const href=p.type==="external"?p.url:`#/article/${p.id}`;
+        const target=p.type==="external"?` target="_blank" rel="noopener"`:"";
+        return `<a class="mpub" href="${href}"${target}>
+          <div class="mpimg">${p.photo?`<img src="${esc(p.photo)}" alt="">`:`<div class="mpfb"></div>`}</div>
+          <div><div class="mpt">${esc(p.title)}</div><div class="mpd">${fmt(p.date)}${p.type==="external"?" · External":""}</div></div>
+        </a>`;
+      }).join("")+`</div>`;
+  }
+
+  inner.innerHTML=`<button class="x" aria-label="Close">×</button>
+    <div class="eth-head" style="background:${d.color}">
+      <div class="fam">De facto state</div>
+      <h2>${esc(d.name)}</h2>
+      <div class="sub">Internationally part of ${esc(d.claimed)}</div>
+    </div>
+    <div class="eth-body">
+      <span class="status-pill" style="background:${active?'#E6F4EC':'#FBEAE7'};color:${active?'#2E8B57':'#C0493C'}">${esc(d.status)}</span>
+      <div class="eth-facts">
+        <div class="f"><div class="k">Capital</div><div class="v">${esc(d.capital)}</div></div>
+        <div class="f"><div class="k">Claimed by</div><div class="v">${esc(d.claimed)}</div></div>
+        <div class="f">
+          <div class="k">Recognition</div>
+          <div class="v">${esc(d.recog)}</div>
+          ${recogHtml}
+        </div>
+        <div class="f"><div class="k">Next elections</div><div class="v">${esc(d.nextElections)}</div></div>
+        ${fhHtml}
+      </div>
+      <p>${esc(d.info)}</p>
+      ${relHtml}
+    </div>`;
+  inner.querySelector(".x").onclick=()=>closeModal("ethModal");
+  if(relHtml){
+    inner.querySelectorAll(".mpub").forEach(a=>{
+      if(a.getAttribute("href").startsWith("#")){
+        a.addEventListener("click",()=>closeModal("ethModal"));
+      }
+    });
+  }
+  openModal("ethModal");
+}
+
+function openEnergyPopup(pipId){
+  const pip=PIPELINES.find(p=>p.id===pipId);if(!pip)return;
+  const popup=document.getElementById("energyPopup");
+  popup.innerHTML=`<button class="x" aria-label="Close">×</button>
+    <div class="epop-head">
+      <div class="ek">${pip.kind}</div>
+      <h3><span class="pip-dot" style="background:${pip.color}"></span>${esc(pip.name)}</h3>
+    </div>
+    <div class="epop-body"><p>${esc(pip.note)}</p></div>`;
+  popup.querySelector(".x").onclick=()=>closeModal("energyModal");
+  openModal("energyModal");
+}
+
+/* ---------- modal helpers ---------- */
+function openModal(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden";}
+function closeModal(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
+document.querySelectorAll(".modal-bg").forEach(bg=>bg.addEventListener("click",e=>{if(e.target===bg)closeModal(bg.id);}));
+document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-bg.open").forEach(m=>closeModal(m.id));});
+
+/* ---------- admin ---------- */
+let unlocked=false,editingId=null;
+function openAdmin(){renderAdmin();openModal("adminModal");}
+function renderAdmin(){
+  const inner=document.getElementById("adminInner");
+  if(!unlocked){
+    inner.innerHTML=`<button class="x">×</button>
+      <div class="gate"><h2 style="color:var(--navy);font-size:23px">Control panel</h2>
+        <p>Enter the passcode to manage your publications.</p>
+        <div class="field" style="max-width:280px;margin:0 auto 14px"><input type="password" id="pc" placeholder="Passcode"></div>
+        <button class="btn primary" id="gateBtn">Enter</button>
+        <div id="gateErr" style="color:#C0493C;margin-top:12px;font-size:14px"></div></div>`;
+    inner.querySelector(".x").onclick=()=>closeModal("adminModal");
+    const tryG=()=>{if(document.getElementById("pc").value===PASSCODE){unlocked=true;renderAdmin();}else document.getElementById("gateErr").textContent="Wrong passcode.";};
+    inner.querySelector("#gateBtn").onclick=tryG;
+    inner.querySelector("#pc").onkeydown=e=>{if(e.key==="Enter")tryG();};
+    return;
+  }
+  const ed=editingId?PUBS.find(p=>p.id===editingId):null;
+  const v=f=>ed?esc(ed[f]||""):"";
+  inner.innerHTML=`<button class="x">×</button>
+    <div class="admin-head"><h2>Control panel</h2><span class="pill">localStorage</span></div>
+    <div class="admin-body">
+      <div class="toolbar">
+        <button class="btn primary" id="newBtn">+ New publication</button>
+        <button class="mini" id="exportBtn">Export JSON</button>
+        <button class="mini" id="importBtn">Import JSON</button>
+        <input type="file" id="importFile" accept="application/json" style="display:none">
+        <button class="mini danger" id="logoutBtn" style="margin-left:auto">Log out</button>
+      </div>
+      <div class="field"><label>Title</label><input id="f_title" value="${v('title')}"></div>
+      <div class="row2">
+        <div class="field"><label>Author</label><input id="f_author" value="${ed?esc(ed.author||''):'Timoleon Ilias'}"></div>
+        <div class="field"><label>Date</label><input id="f_date" type="date" value="${ed?esc(ed.date||''):new Date().toISOString().slice(0,10)}"></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>Language</label><select id="f_lang">
+          <option value="en" ${!ed||ed.lang==='en'?'selected':''}>English 🇬🇧</option>
+          <option value="el" ${ed&&ed.lang==='el'?'selected':''}>Greek 🇬🇷</option></select></div>
+        <div class="field"><label>Type</label><select id="f_type">
+          <option value="internal" ${!ed||ed.type==='internal'?'selected':''}>Full text (own page)</option>
+          <option value="external" ${ed&&ed.type==='external'?'selected':''}>External link</option></select></div>
+      </div>
+      <div class="field" id="urlField" style="display:none"><label>External URL</label><input id="f_url" value="${v('url')}" placeholder="https://..."></div>
+      <div class="field"><label>Tags (comma separated — used for filters &amp; map matching)</label><input id="f_tags" value="${ed?esc((ed.tags||[]).join(', ')):''}"></div>
+      <div class="field"><label>Cover photo URL (optional)</label><input id="f_photo" value="${v('photo')}" placeholder="https://..."></div>
+      <div class="field"><label>Excerpt</label><input id="f_excerpt" value="${v('excerpt')}"></div>
+      <div class="field" id="bodyField"><label>Article text</label><textarea id="f_body">${ed?esc(ed.body||''):''}</textarea><div class="hint">Blank line = new paragraph. A line starting with ## becomes a subheading.</div></div>
+      <div class="field"><label style="font-weight:500"><input type="checkbox" id="f_feat" ${ed&&ed.featured?'checked':''} style="width:auto;margin-right:8px">Mark as featured (shown as spotlight on home)</label></div>
+      <div class="admin-actions"><button class="btn primary" id="saveBtn">Save</button>${ed?'<button class="mini" id="cancelBtn">Cancel</button>':''}</div>
+      <h3 style="margin-top:24px;border-bottom:1px solid var(--line);padding-bottom:8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--navy)">Published (${PUBS.length})</h3>
+      <div class="admin-list" id="adminList"></div>
+    </div>`;
+  inner.querySelector(".x").onclick=()=>closeModal("adminModal");
+  const typeSel=inner.querySelector("#f_type");
+  const sync=()=>{const x=typeSel.value==="external";inner.querySelector("#urlField").style.display=x?"block":"none";inner.querySelector("#bodyField").style.display=x?"none":"block";};
+  typeSel.onchange=sync;sync();
+  inner.querySelector("#newBtn").onclick=()=>{editingId=null;renderAdmin();};
+  inner.querySelector("#logoutBtn").onclick=()=>{unlocked=false;editingId=null;closeModal("adminModal");};
+  inner.querySelector("#exportBtn").onclick=exportJSON;
+  inner.querySelector("#importBtn").onclick=()=>inner.querySelector("#importFile").click();
+  inner.querySelector("#importFile").onchange=importJSON;
+  if(ed)inner.querySelector("#cancelBtn").onclick=()=>{editingId=null;renderAdmin();};
+  inner.querySelector("#saveBtn").onclick=()=>{
+    const g=id=>inner.querySelector("#"+id).value.trim();
+    const title=g("f_title");if(!title){alert("A title is required.");return;}
+    let id=ed?ed.id:title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,48)||("p"+Date.now());
+    if(!ed&&PUBS.some(p=>p.id===id))id+="-"+Date.now().toString().slice(-4);
+    const obj={id,title,author:g("f_author")||"Timoleon Ilias",date:g("f_date"),lang:g("f_lang"),type:g("f_type"),
+      url:g("f_url"),tags:g("f_tags").split(",").map(s=>s.trim()).filter(Boolean),
+      photo:g("f_photo"),
+      excerpt:g("f_excerpt"),body:inner.querySelector("#f_body").value,featured:inner.querySelector("#f_feat").checked};
+    if(obj.featured)PUBS.forEach(p=>{if(p.id!==obj.id)p.featured=false;});
+    if(ed){PUBS[PUBS.findIndex(p=>p.id===ed.id)]=obj;}else PUBS.unshift(obj);
+    save();editingId=null;renderAdmin();
+  };
+  const list=inner.querySelector("#adminList");
+  list.innerHTML=PUBS.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(p=>
+    `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':'text'} · ${(p.tags||[]).join(', ')}</small></div>
+      <button class="mini" data-edit="${p.id}">Edit</button><button class="mini danger" data-del="${p.id}">Delete</button></div>`).join("");
+  list.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editingId=b.dataset.edit;renderAdmin();});
+  list.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(confirm("Delete this publication?")){PUBS=PUBS.filter(p=>p.id!==b.dataset.del);save();renderAdmin();}});
+}
+function exportJSON(){const blob=new Blob([JSON.stringify(PUBS,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="publications.json";a.click();URL.revokeObjectURL(a.href);}
+function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){PUBS=d;save();renderAdmin();}else alert("JSON must be an array.");}catch(x){alert("Invalid JSON.");}};r.readAsText(f);}
+
+/* ---------- router ---------- */
+function setActiveNav(path){
+  document.querySelectorAll("nav.main a[data-route]").forEach(a=>{
+    const r=a.dataset.route;a.classList.toggle("active",r==="/"?path==="/":path.indexOf(r)===0);
+  });
+}
+function router(){
+  const hash=location.hash.replace(/^#/,"")||"/";
+  const parts=hash.split("/").filter(Boolean);
+  const app=document.getElementById("app");
+  setActiveNav("/"+(parts[0]||""));
+  document.getElementById("nav").classList.remove("open");
+
+  if(parts[0]==="admin"){app.innerHTML=viewHome();openAdmin();window.scrollTo(0,0);return;}
+  if(parts[0]==="publications"){app.innerHTML=viewPublications();renderFilters();renderPubGrid();window.scrollTo(0,0);return;}
+  if(parts[0]==="article"){app.innerHTML=viewArticle(parts[1]);wireArticle();window.scrollTo(0,0);return;}
+  if(parts[0]==="maps"){
+    // default to de-facto if no sub given
+    const sub=parts[1]||"de-facto";
+    if(!parts[1]){location.replace("#/maps/de-facto");return;}
+    app.innerHTML=viewMaps(sub);
+    if(sub==="energy")initEnergy();else initDeFacto();
+    window.scrollTo(0,0);return;
+  }
+  app.innerHTML=viewHome();window.scrollTo(0,0);
+}
+function wireArticle(){
+  const b=document.getElementById("copyLink");
+  if(b)b.onclick=()=>{navigator.clipboard?.writeText(location.href);b.textContent="Link copied ✓";setTimeout(()=>b.textContent="Copy link",1600);};
+}
+document.getElementById("menuBtn").onclick=()=>document.getElementById("nav").classList.toggle("open");
+window.addEventListener("hashchange",router);
+
+/* ---------- boot ---------- */
+load();router();
+</script>
+</body>
+</html>
