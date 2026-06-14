@@ -86,15 +86,16 @@ main{min-height:60vh}
 .fcard .ftag{display:inline-block;font-size:11px;background:var(--wash);color:var(--muted);border-radius:4px;padding:2px 7px;font-weight:600;margin-bottom:10px;border:1px solid var(--line)}
 
 /* ── home: spotlight ── */
-.spotlight{background:var(--navy);border-radius:16px;padding:34px 36px;color:#fff;display:flex;gap:36px;align-items:center;margin-bottom:24px}
-.spotlight .sl-text{flex:1}
-.spotlight .sl-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--sky);font-weight:700;margin-bottom:8px}
-.spotlight h3{font-size:22px;color:#fff;margin-bottom:10px;line-height:1.25}
-.spotlight p{color:#b5c5df;font-size:15px;margin:0 0 18px}
-.spotlight .sl-tags{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 16px}
-.spotlight .sl-tags span{font-size:11.5px;font-weight:600;color:#cfe0f5;background:rgba(255,255,255,.12);border-radius:5px;padding:3px 9px}
-.spotlight .sl-meta{font-size:13px;color:#7a96bc;display:flex;gap:10px;align-items:center}
-.spotlight .sl-date{color:#7a96bc}
+.spotlight{display:block;background:#102a52;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:30px 34px;color:#fff;margin-bottom:8px;transition:border-color .18s,box-shadow .18s,transform .18s}
+.spotlight:hover{border-color:rgba(255,255,255,.3);box-shadow:0 16px 40px -22px rgba(0,0,0,.6);transform:translateY(-2px)}
+.spotlight .sl-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--sky);font-weight:700;margin-bottom:10px}
+.spotlight h3{font-size:26px;color:#fff;margin-bottom:12px;line-height:1.2;max-width:32ch}
+.spotlight p{color:#b9c8e0;font-size:15.5px;margin:0 0 18px;max-width:72ch;line-height:1.6}
+.spotlight .sl-foot{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;margin-top:4px}
+.spotlight .sl-meta{font-size:13px;color:#93a8c8;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spotlight .sl-date{color:#93a8c8}
+.spotlight .sl-tag{font-size:11.5px;font-weight:600;color:#cfe0f5;background:rgba(255,255,255,.12);border-radius:5px;padding:3px 9px}
+.spotlight .btn{pointer-events:none}
 
 /* ── publications ── */
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
@@ -243,7 +244,7 @@ footer.foot small{color:#8ea2c2;font-size:13px;width:100%}
   nav.main.open{display:flex;position:absolute;top:52px;left:0;right:0;background:var(--navy);flex-direction:column;padding:10px 22px 16px;gap:2px;border-top:1px solid rgba(255,255,255,.1)}
   .pub-grid{grid-template-columns:1fr}
   .eth-facts{grid-template-columns:1fr}
-  .spotlight{flex-direction:column;gap:20px}
+  .spotlight{padding:24px 22px}
   .feature-grid{grid-template-columns:1fr}
   .stat-band .wrap{grid-template-columns:repeat(2,1fr)}
 }
@@ -282,9 +283,20 @@ a.chip{text-decoration:none}
 .lead-list li:last-child{border-bottom:0}
 .ln-name{color:var(--navy);font-weight:600}
 .ln-yr{color:var(--muted);font-size:13px;white-space:nowrap}
+.lead-item{cursor:pointer;transition:background .12s,padding .12s}
+.lead-item:hover{background:var(--wash);padding-left:8px;padding-right:8px;border-radius:7px}
+.lead-item:hover .ln-name{color:var(--blue)}
+.chero-row{display:flex;align-items:center;gap:20px}
+.chero-flag{flex:0 0 auto;width:94px;height:62px;border-radius:8px;overflow:hidden;display:block;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.55),0 8px 18px -8px rgba(0,0,0,.55)}
+.chero-flag svg{width:100%;height:100%;display:block}
+@media(max-width:560px){.chero-flag{width:74px;height:50px}.chero-row{gap:14px}}
 .home-map-sec{background:var(--wash);border-top:1px solid var(--line)}
 .leg-group{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:12px 0 2px}
 .leg-group:first-child{margin-top:0}
+.flag-cover{position:relative;overflow:hidden}
+.flag-cover .cflag{position:absolute;inset:0;width:100%;height:100%;display:block}
+.flag-cover:after{display:none}
+.flag-cover .tag{z-index:2}
 .home-map-wrap{display:grid;grid-template-columns:1.55fr 1fr;gap:26px;align-items:center}
 .home-map-box{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#cfe1ef}
 .home-map-box svg{display:block;width:100%;height:auto}
@@ -351,6 +363,11 @@ const FLAG_SY=`<svg class="rflag" viewBox="0 0 30 20"><rect width="30" height="7
 const FLAG_NR=`<svg class="rflag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#002B7F"/><rect y="8" width="30" height="4" fill="#FFC61E"/><circle cx="7" cy="10" r="4" fill="#DE2010"/></svg>`;
 const FLAG_NI=`<svg class="rflag" viewBox="0 0 30 20"><rect width="30" height="7" fill="#fff"/><rect y="7" width="30" height="6" fill="#3E68A8"/><rect y="13" width="30" height="7" fill="#fff"/></svg>`;
 const flagFor=l=>l==="el"?FLAG_EL:FLAG_EN;
+const COUNTRY_FLAGS={
+  georgia:`<svg class="cflag" viewBox="0 0 90 60" preserveAspectRatio="xMidYMid slice"><rect width="90" height="60" fill="#fff"/><rect x="39" width="12" height="60" fill="#F00"/><rect y="24" width="90" height="12" fill="#F00"/><g fill="#F00"><g transform="translate(19.5,12)"><rect x="-2" y="-6" width="4" height="12"/><rect x="-6" y="-2" width="12" height="4"/></g><g transform="translate(70.5,12)"><rect x="-2" y="-6" width="4" height="12"/><rect x="-6" y="-2" width="12" height="4"/></g><g transform="translate(19.5,48)"><rect x="-2" y="-6" width="4" height="12"/><rect x="-6" y="-2" width="12" height="4"/></g><g transform="translate(70.5,48)"><rect x="-2" y="-6" width="4" height="12"/><rect x="-6" y="-2" width="12" height="4"/></g></g></svg>`,
+  armenia:`<svg class="cflag" viewBox="0 0 90 60" preserveAspectRatio="xMidYMid slice"><rect width="90" height="20" fill="#D90012"/><rect y="20" width="90" height="20" fill="#0033A0"/><rect y="40" width="90" height="20" fill="#F2A800"/></svg>`,
+  azerbaijan:`<svg class="cflag" viewBox="0 0 90 45" preserveAspectRatio="xMidYMid slice"><rect width="90" height="15" fill="#00B5E2"/><rect y="15" width="90" height="15" fill="#EF3340"/><rect y="30" width="90" height="15" fill="#509E2F"/><circle cx="41" cy="22.5" r="6.2" fill="#fff"/><circle cx="43.2" cy="22.5" r="5" fill="#EF3340"/><path d="M52 22.5l1.5-2.4.3 2.8 2.6-1-1.8 2.2 2.6 1.1-2.8.3 1 2.6-2.2-1.8-1.1 2.6-.3-2.8-2.6 1 1.8-2.2-2.6-1.1 2.8-.3-1-2.6 2.2 1.8z" fill="#fff"/></svg>`
+};
 
 /* ---------- seed publications ---------- */
 const SEED=[
@@ -483,22 +500,16 @@ function viewHome(){
   let latest=(featured?sorted.filter(p=>p.id!==featured.id):sorted.slice()).slice(0,3);
   if(!latest.length&&featured)latest=[featured];
   const spotHtml=featured?`
-  <section class="section" style="padding-top:0;padding-bottom:16px"><div class="wrap">
-    <div class="spotlight">
-      <div class="sl-text">
-        <div class="sl-label">Featured</div>
-        <h3>${esc(featured.title)}</h3>
-        ${featured.excerpt?`<p>${esc(featured.excerpt)}</p>`:((featured.tags&&featured.tags.length)?`<div class="sl-tags">${featured.tags.slice(0,3).map(t=>`<span>${esc(t)}</span>`).join("")}</div>`:"")}
-        <div class="sl-meta">
-          ${flagFor(featured.lang)}
-          <span>${esc(featured.author||"Timoleon Ilias")}</span>
-          <span class="sl-date">· ${fmt(featured.date)}</span>
-        </div>
+  <section class="section" style="padding-top:30px;padding-bottom:10px"><div class="wrap">
+    <a class="spotlight" ${featured.type==="external"?`href="${esc(featured.url)}" target="_blank" rel="noopener"`:`href="#/article/${esc(featured.id)}"`}>
+      <div class="sl-label">Featured</div>
+      <h3>${esc(featured.title)}</h3>
+      ${featured.excerpt?`<p>${esc(featured.excerpt)}</p>`:""}
+      <div class="sl-foot">
+        <div class="sl-meta">${flagFor(featured.lang)}<span>${esc(featured.author||"Timoleon Ilias")}</span><span class="sl-date">· ${fmt(featured.date)}</span>${(featured.tags&&featured.tags.length)?`<span class="sl-tag">${esc(featured.tags[0])}</span>`:""}</div>
+        <span class="btn primary">Read ${featured.type==="external"?"article ↗":"article →"}</span>
       </div>
-      <div>
-        <a class="btn primary" ${featured.type==="external"?`href="${esc(featured.url)}" target="_blank" rel="noopener"`:`href="#/article/${esc(featured.id)}"`}>Read ${featured.type==="external"?"article ↗":"article →"}</a>
-      </div>
-    </div>
+    </a>
   </div></section>`:"";
 
   return `
@@ -557,6 +568,12 @@ function viewHome(){
     </div>
   </div></section>
 
+  <section class="section"><div class="wrap">
+    <div class="sec-head"><div><span class="kicker">Latest</span><h2>Recent publications</h2></div>
+      <a class="more" href="#/publications">View all →</a></div>
+    <div class="pub-grid home">${latest.map(card).join("")||'<div class="empty">No publications yet.</div>'}</div>
+  </div></section>
+
   <section class="section home-map-sec"><div class="wrap">
     <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>The map at a glance</h2></div>
       <a class="more" href="#/maps">Open full map →</a></div>
@@ -570,10 +587,11 @@ function viewHome(){
     </div>
   </div></section>
 
-  <section class="section" style="padding-top:8px"><div class="wrap">
-    <div class="sec-head"><div><span class="kicker">Latest</span><h2>Recent publications</h2></div>
-      <a class="more" href="#/publications">View all →</a></div>
-    <div class="pub-grid home">${latest.map(card).join("")||'<div class="empty">No publications yet.</div>'}</div>
+  <section class="section"><div class="wrap">
+    <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>The three states up close</h2>
+      <p>Key facts and full leadership histories for each South Caucasus country.</p></div>
+      <a class="more" href="#/countries">All countries →</a></div>
+    <div class="pub-grid">${Object.keys(COUNTRIES_INFO).map(countryCard).join("")}</div>
   </div></section>
 
   <section class="section home-about"><div class="wrap">
@@ -665,14 +683,17 @@ function viewArticle(id){
   </article>`;
 }
 
+function countryCard(k){
+  const c=COUNTRIES_INFO[k];
+  return `<a class="card" href="#/country/${k}">
+    <div class="cover flag-cover">${COUNTRY_FLAGS[k]||""}<span class="tag">${esc(c.capital)}</span></div>
+    <div class="cbody"><div class="meta"><span>${esc(c.government)}</span></div>
+      <h3 class="t">${esc(c.name)}</h3>
+      <p class="ex">Freedom House ${c.fh.score}/100 · ${esc(c.fh.label)}. ${esc(c.population)}.</p>
+      <div class="tags"><span>Profile</span><span>Leadership history</span></div></div></a>`;
+}
 function viewCountries(){
-  const cards=Object.entries(COUNTRIES_INFO).map(([k,c])=>
-    `<a class="card" href="#/country/${k}">
-      <div class="cover" style="background:${c.color}"><span class="tag">${esc(c.capital)}</span></div>
-      <div class="cbody"><div class="meta"><span>${esc(c.government)}</span></div>
-        <h3 class="t">${esc(c.name)}</h3>
-        <p class="ex">Freedom House ${c.fh.score}/100 · ${esc(c.fh.label)}. ${esc(c.population)}.</p>
-        <div class="tags"><span>Profile</span><span>Leadership history</span></div></div></a>`).join("");
+  const cards=Object.keys(COUNTRIES_INFO).map(countryCard).join("");
   return `<section class="section"><div class="wrap">
     <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>Countries</h2>
       <p>Profiles of the three South Caucasus states, with key facts and a timeline of leadership across the years.</p></div></div>
@@ -683,13 +704,16 @@ function viewCountry(key){
   const c=COUNTRIES_INFO[key];
   if(!c)return `<div class="article"><a class="back" href="#/countries">← Countries</a><h1>Not found</h1></div>`;
   const rel=publicPubs().filter(p=>(p.tags||[]).some(t=>c.match.includes(t))).sort(byDate).slice(0,4);
-  const leaders=Object.entries(c.leaders).map(([role,list])=>
+  const roles=Object.keys(c.leaders);
+  const leaders=roles.map((role,ri)=>
     `<div class="lead-col"><h4>${esc(role)}</h4><ul class="lead-list">`+
-    list.map(p=>`<li><span class="ln-name">${esc(p.n)}</span><span class="ln-yr">${esc(p.y)}</span></li>`).join("")+
+    c.leaders[role].map((p,li)=>`<li class="lead-item" data-ck="${key}" data-ri="${ri}" data-li="${li}"><span class="ln-name">${esc(p.n)}</span><span class="ln-yr">${esc(p.y)}</span></li>`).join("")+
     `</ul></div>`).join("");
-  return `<section class="hero" style="padding:42px 0 46px;background:${c.color}"><div class="wrap">
-    <span class="eyebrow" style="color:#fff;opacity:.85">Country profile</span>
-    <h1>${esc(c.name)}</h1><div class="role" style="color:#fff;opacity:.92">${esc(c.capital)} · ${esc(c.government)}</div>
+  return `<section class="hero country-hero" style="padding:36px 0 40px;background:${c.color}"><div class="wrap">
+    <div class="chero-row"><span class="chero-flag">${COUNTRY_FLAGS[key]||""}</span>
+      <div><span class="eyebrow" style="color:#fff;opacity:.85">Country profile</span>
+        <h1>${esc(c.name)}</h1><div class="role" style="color:#fff;opacity:.92">${esc(c.capital)} · ${esc(c.government)}</div></div>
+    </div>
   </div></section>
   <section class="section"><div class="wrap">
     <a class="back" href="#/countries" style="display:inline-flex;gap:6px;font-weight:600;color:var(--blue);margin-bottom:22px">← All countries</a>
@@ -704,7 +728,7 @@ function viewCountry(key){
     <p class="country-desc">${esc(c.desc)}</p>
 
     <div class="sec-head" style="margin-top:34px"><div><span class="kicker">Leadership</span><h2>Office-holders over the years</h2>
-      <p>Heads of state, heads of government and foreign ministers. A demo dataset — extend it in your own records.</p></div></div>
+      <p>Heads of state, heads of government and foreign ministers — tap any name for details. A demo dataset, extend it in your own records.</p></div></div>
     <div class="leaders-grid">${leaders}</div>
 
     ${rel.length?`<div class="sec-head" style="margin-top:34px"><div><span class="kicker">Reading</span><h2>Related publications</h2></div></div>
@@ -739,15 +763,15 @@ const COUNTRIES_INFO={
     desc:"An EU candidate since December 2023, though accession is effectively frozen amid the ruling Georgian Dream party's authoritarian turn and sustained protests since 2024. Tbilisi does not control Abkhazia or South Ossetia.",
     leaders:{
       "Heads of state (President)":[
-        {n:"Mikheil Kavelashvili",y:"2024–present"},{n:"Salome Zourabichvili",y:"2018–2024"},
-        {n:"Giorgi Margvelashvili",y:"2013–2018"},{n:"Mikheil Saakashvili",y:"2008–2013"},
+        {n:"Mikheil Kavelashvili",y:"2024–present",i:"Former footballer and far-right MP; elected president by an electoral college in December 2024, in a vote the opposition and the outgoing president rejected as illegitimate."},{n:"Salome Zourabichvili",y:"2018–2024",i:"French-born career diplomat and Georgia's first woman president. She broke with the ruling party and disputed the legitimacy of the 2024 transition."},
+        {n:"Giorgi Margvelashvili",y:"2013–2018"},{n:"Mikheil Saakashvili",y:"2008–2013",i:"Leader of the 2003 Rose Revolution who modernised the state, but whose later years brought authoritarian drift and the 2008 war with Russia. Later imprisoned."},
         {n:"Mikheil Saakashvili",y:"2004–2007"}],
       "Heads of government (PM)":[
-        {n:"Irakli Kobakhidze",y:"2024–present"},{n:"Irakli Garibashvili",y:"2021–2024"},
+        {n:"Irakli Kobakhidze",y:"2024–present",i:"Georgian Dream chairman and prime minister, associated with the 'foreign agents' law and the turn away from the EU accession path."},{n:"Irakli Garibashvili",y:"2021–2024",i:"Two-term prime minister (2013–2015, 2021–2024) and a close ally of party founder Bidzina Ivanishvili."},
         {n:"Giorgi Gakharia",y:"2019–2021"},{n:"Mamuka Bakhtadze",y:"2018–2019"},
         {n:"Giorgi Kvirikashvili",y:"2015–2018"}],
       "Foreign ministers":[
-        {n:"Maka Bochorishvili",y:"2024–present"},{n:"Ilia Darchiashvili",y:"2022–2024"},
+        {n:"Maka Bochorishvili",y:"2024–present",i:"Career diplomat serving as foreign minister since late 2024, and later also deputy prime minister."},{n:"Ilia Darchiashvili",y:"2022–2024"},
         {n:"David Zalkaliani",y:"2018–2022"},{n:"Mikheil Janelidze",y:"2016–2018"}]
     }},
   armenia:{iso:"ARM",name:"Armenia",color:"#4E8D6E",capital:"Yerevan",population:"~2.7 million",
@@ -757,13 +781,13 @@ const COUNTRIES_INFO={
     desc:"Under PM Nikol Pashinyan, Armenia has pivoted westward and away from Russia since 2022, especially after losing Nagorno-Karabakh in 2023. A peace-treaty text with Azerbaijan was agreed in 2025 but remains unsigned; the June 2026 election was framed as a referendum on that course.",
     leaders:{
       "Heads of state (President)":[
-        {n:"Vahagn Khachaturyan",y:"2022–present"},{n:"Armen Sarkissian",y:"2018–2022"},
-        {n:"Serzh Sargsyan",y:"2008–2018"},{n:"Robert Kocharyan",y:"1998–2008"}],
+        {n:"Vahagn Khachaturyan",y:"2022–present",i:"Economist and former Yerevan mayor who holds the largely ceremonial presidency."},{n:"Armen Sarkissian",y:"2018–2022"},
+        {n:"Serzh Sargsyan",y:"2008–2018",i:"President 2008–2018; his bid to stay on as prime minister triggered the 2018 protests that brought Pashinyan to power."},{n:"Robert Kocharyan",y:"1998–2008",i:"President 1998–2008 and earlier the de facto leader of Nagorno-Karabakh; later a leading opposition figure."}],
       "Heads of government (PM)":[
-        {n:"Nikol Pashinyan",y:"2018–present"},{n:"Karen Karapetyan",y:"2016–2018"},
+        {n:"Nikol Pashinyan",y:"2018–present",i:"Journalist-turned-prime-minister who came to power in the 2018 Velvet Revolution. He has steered Armenia westward and agreed the 2025 peace-treaty text with Azerbaijan."},{n:"Karen Karapetyan",y:"2016–2018"},
         {n:"Hovik Abrahamyan",y:"2014–2016"},{n:"Tigran Sargsyan",y:"2008–2014"}],
       "Foreign ministers":[
-        {n:"Ararat Mirzoyan",y:"2021–present"},{n:"Ara Aivazian",y:"2020–2021"},
+        {n:"Ararat Mirzoyan",y:"2021–present",i:"Foreign minister since 2021, central to the normalisation talks with Azerbaijan and Turkiye."},{n:"Ara Aivazian",y:"2020–2021"},
         {n:"Zohrab Mnatsakanyan",y:"2018–2020"},{n:"Edward Nalbandian",y:"2008–2018"}]
     }},
   azerbaijan:{iso:"AZE",name:"Azerbaijan",color:"#2E6E8E",capital:"Baku",population:"~10.2 million",
@@ -773,13 +797,13 @@ const COUNTRIES_INFO={
     desc:"A hydrocarbon-rich, tightly controlled state run by the Aliyev family. Baku regained full control of Nagorno-Karabakh in 2023 and negotiates with Armenia from a position of strength while resisting compromise.",
     leaders:{
       "Heads of state (President)":[
-        {n:"Ilham Aliyev",y:"2003–present"},{n:"Heydar Aliyev",y:"1993–2003"},
+        {n:"Ilham Aliyev",y:"2003–present",i:"President since 2003, succeeding his father Heydar. He oversaw the 2020 and 2023 campaigns that returned Nagorno-Karabakh to Azerbaijani control."},{n:"Heydar Aliyev",y:"1993–2003",i:"Soviet-era Politburo member who ruled independent Azerbaijan from 1993 to 2003, founding the dynasty that still governs."},
         {n:"Abulfaz Elchibey",y:"1992–1993"}],
       "Heads of government (PM)":[
-        {n:"Ali Asadov",y:"2019–present"},{n:"Novruz Mammadov",y:"2018–2019"},
+        {n:"Ali Asadov",y:"2019–present",i:"Prime minister since 2019, in a system where executive power rests with the president."},{n:"Novruz Mammadov",y:"2018–2019"},
         {n:"Artur Rasizade",y:"2003–2018"}],
       "Foreign ministers":[
-        {n:"Jeyhun Bayramov",y:"2020–present"},{n:"Elmar Mammadyarov",y:"2004–2020"}]
+        {n:"Jeyhun Bayramov",y:"2020–present",i:"Foreign minister since 2020, leading the negotiations with Armenia."},{n:"Elmar Mammadyarov",y:"2004–2020"}]
     }}
 };
 const VIEW={lonMin:39.2,lonMax:50.8,latMin:38.2,latMax:44.3,W:900};
@@ -982,6 +1006,31 @@ function openCountry(key){
   openModal("ethModal");
 }
 
+function openLeader(ckey,role,p){
+  const c=COUNTRIES_INFO[ckey];if(!c)return;
+  const current=/present/i.test(p.y||"");
+  const body=p.i?esc(p.i):esc(`${p.n} — ${role}, ${c.name}. In office ${p.y}.`);
+  const inner=document.getElementById("ethInner");
+  inner.innerHTML=`<button class="x" aria-label="Close">×</button>
+    <div class="eth-head" style="background:${c.color}">
+      <div class="fam">${esc(role)} · ${esc(c.name)}</div>
+      <h2>${esc(p.n)}</h2><div class="sub">${esc(p.y)}${current?" · currently in office":""}</div>
+    </div>
+    <div class="eth-body"><p class="desc">${body}</p>
+      <a class="btn line" style="margin-top:16px" href="#/country/${ckey}" data-nav="1">${esc(c.name)} profile →</a>
+    </div>`;
+  inner.querySelector(".x").onclick=()=>closeModal("ethModal");
+  inner.querySelectorAll('a[data-nav="1"]').forEach(a=>a.addEventListener("click",()=>closeModal("ethModal")));
+  openModal("ethModal");
+}
+function wireCountry(){
+  document.querySelectorAll(".lead-item").forEach(li=>li.onclick=()=>{
+    const c=COUNTRIES_INFO[li.dataset.ck];if(!c)return;
+    const role=Object.keys(c.leaders)[+li.dataset.ri];const p=c.leaders[role][+li.dataset.li];
+    if(p)openLeader(li.dataset.ck,role,p);
+  });
+}
+
 /* ---------- modal helpers ---------- */
 function openModal(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden";}
 function closeModal(id){document.getElementById(id).classList.remove("open");document.body.style.overflow="";}
@@ -1099,7 +1148,7 @@ function router(){
   if(parts[0]==="publications"){app.innerHTML=viewPublications();window.scrollTo(0,0);return;}
   if(parts[0]==="category"){app.innerHTML=viewCategory(parts.slice(1).join("/"));window.scrollTo(0,0);return;}
   if(parts[0]==="countries"){app.innerHTML=viewCountries();window.scrollTo(0,0);return;}
-  if(parts[0]==="country"){app.innerHTML=viewCountry(parts[1]);window.scrollTo(0,0);return;}
+  if(parts[0]==="country"){app.innerHTML=viewCountry(parts[1]);wireCountry();window.scrollTo(0,0);return;}
   if(parts[0]==="about"){app.innerHTML=viewAbout();window.scrollTo(0,0);return;}
   if(parts[0]==="article"){app.innerHTML=viewArticle(parts[1]);wireArticle();window.scrollTo(0,0);return;}
   if(parts[0]==="maps"){app.innerHTML=viewMaps();initDeFacto();window.scrollTo(0,0);return;}
