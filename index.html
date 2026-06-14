@@ -645,6 +645,12 @@ function rteAddCol(rte){
   });
 }
 function allTags(){const s=new Set();publicPubs().forEach(p=>(p.tags||[]).forEach(x=>s.add(x)));return[...s];}
+function allCategories(){const s=new Set();publicPubs().forEach(p=>{if(p.category)s.add(p.category);});return[...s].sort((a,b)=>a.localeCompare(b));}
+function pubMatchesCountry(p,c){
+  const terms=[...(p.tags||[]),p.category].filter(Boolean).map(s=>s.toLowerCase());
+  const want=[...(c.match||[]),c.name].filter(Boolean).map(s=>s.toLowerCase());
+  return terms.some(t=>want.includes(t));
+}
 
 /* ---------- card markup ---------- */
 function coverHtml(p){
@@ -661,7 +667,7 @@ function card(p){
   const badge=ext?`<span class="ext" title="Opens on an external outlet">↗ Featured elsewhere</span>`:"";
   const tags=(p.tags||[]).slice(0,3).map(x=>`<span>${esc(x)}</span>`).join("");
   return `<a class="card" href="${href}"${target}>
-    <div class="cover">${coverHtml(p)}<span class="tag">${esc((p.tags&&p.tags[0])||"Analysis")}</span>${badge}</div>
+    <div class="cover">${coverHtml(p)}<span class="tag">${esc(p.category||(p.tags&&p.tags[0])||"Analysis")}</span>${badge}</div>
     <div class="cbody">
       <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span></div>
       <h3 class="t">${esc(p.title)}</h3>
@@ -745,7 +751,7 @@ function viewHome(){
 function chipsRow(active){
   let h=`<a class="chip ${!active?'active':''}" href="#/publications">All</a>`;
   h+=`<a class="chip ${active==='external'?'active':''}" href="#/category/external">Featured elsewhere</a>`;
-  allTags().forEach(t=>{h+=`<a class="chip ${active===t?'active':''}" href="#/category/${encodeURIComponent(t)}">${esc(t)}</a>`;});
+  allCategories().forEach(c=>{h+=`<a class="chip ${active===c?'active':''}" href="#/category/${encodeURIComponent(c)}">${esc(c)}</a>`;});
   return h;
 }
 function viewPublications(){
@@ -761,7 +767,7 @@ function viewCategory(raw){
   const tag=decodeURIComponent(raw||"");
   let list=publicPubs().slice().sort(byDate),title;
   if(tag==="external"){list=list.filter(p=>p.type==="external");title="Featured elsewhere";}
-  else{list=list.filter(p=>(p.tags||[]).includes(tag));title=tag;}
+  else{list=list.filter(p=>p.category===tag||(p.tags||[]).includes(tag));title=tag;}
   return `<section class="section"><div class="wrap">
     <div class="sec-head"><div><span class="kicker cat-kicker"><a href="#/publications">Publications</a> · Category</span><h2>${esc(title)}</h2>
       <p>${list.length} publication${list.length===1?"":"s"} in this category.</p></div>
@@ -847,7 +853,7 @@ function viewCountries(){
 function viewCountry(key){
   const c=COUNTRIES_INFO[key];
   if(!c)return `<div class="article"><a class="back" href="#/countries">← Countries</a><h1>Not found</h1></div>`;
-  const rel=publicPubs().filter(p=>(p.tags||[]).some(t=>c.match.includes(t))).sort(byDate).slice(0,4);
+  const rel=publicPubs().filter(p=>pubMatchesCountry(p,c)).sort(byDate).slice(0,4);
   const roles=Object.keys(c.leaders);
   const leaders=roles.map((role,ri)=>
     `<div class="lead-col"><h4>${esc(role)}</h4><ul class="lead-list">`+
@@ -1202,7 +1208,7 @@ function openState(k){
 
 function openCountry(key){
   const c=COUNTRIES_INFO[key];if(!c)return;
-  const rel=publicPubs().filter(p=>(p.tags||[]).some(t=>c.match.includes(t))).slice(0,3);
+  const rel=publicPubs().filter(p=>pubMatchesCountry(p,c)).slice(0,3);
   let relHtml="";
   if(rel.length){
     relHtml=`<div class="modal-pubs"><h4>Related publications</h4>`+rel.map(p=>{
@@ -1314,7 +1320,11 @@ function renderAdmin(){
       <div class="field" id="pdfField" style="display:none"><label>PDF URL</label>
         <input id="f_pdfurl" value="${v('pdfUrl')}" placeholder="https://…/document.pdf or a Google Drive link">
         <div class="hint">Only this link is saved to the database, never the file itself. Host the PDF anywhere public (your own site, Cloudflare R2, Google Drive…) and paste its link. Google Drive links are converted automatically; the file must be shared “Anyone with the link → Viewer”.</div></div>
-      <div class="field"><label>Tags (comma separated, used for filters &amp; map matching)</label><input id="f_tags" value="${ed?esc((ed.tags||[]).join(', ')):''}"></div>
+      <div class="field"><label>Main category (drives the Publications filter)</label>
+        <input id="f_category" list="catList" value="${v('category')}" placeholder="e.g. South Caucasus">
+        <datalist id="catList"><option value="South Caucasus"></option><option value="Middle East"></option><option value="Post-Soviet space"></option><option value="Caucasus"></option><option value="Europe"></option><option value="Energy"></option><option value="Global"></option></datalist>
+        <div class="hint">One main region or topic. The Publications page builds its filter chips from these.</div></div>
+      <div class="field"><label>Tags (comma separated)</label><input id="f_tags" value="${ed?esc((ed.tags||[]).join(', ')):''}"><div class="hint">Add a country name (Georgia, Armenia, Azerbaijan) to make this article appear in that country's related publications. Tags are also clickable filters.</div></div>
       <div class="field"><label>Cover photo URL (optional)</label><input id="f_photo" value="${v('photo')}" placeholder="https://..."></div>
       <div class="field"><label>Excerpt</label><input id="f_excerpt" value="${v('excerpt')}"></div>
       <div class="field" id="bodyField"><label>Article text</label>
@@ -1396,7 +1406,7 @@ function renderAdmin(){
     if(!ed&&PUBS.some(p=>p.id===id))id+="-"+Date.now().toString().slice(-4);
     const refs=inner.querySelector("#f_refs").value.split("\n").map(s=>s.trim()).filter(Boolean);
     const obj={id,title,author:g("f_author")||"Timoleon Ilias",date:g("f_date"),lang:g("f_lang"),type:g("f_type"),
-      url:g("f_url"),pdfUrl:g("f_pdfurl"),tags:g("f_tags").split(",").map(s=>s.trim()).filter(Boolean),
+      url:g("f_url"),pdfUrl:g("f_pdfurl"),category:g("f_category"),tags:g("f_tags").split(",").map(s=>s.trim()).filter(Boolean),
       photo:g("f_photo"),excerpt:g("f_excerpt"),body:inner.querySelector("#f_body").innerHTML.trim(),
       references:refs,featured:inner.querySelector("#f_feat").checked,draft:inner.querySelector("#f_draft").checked};
     let demoted=null;
