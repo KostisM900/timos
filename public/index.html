@@ -15,6 +15,12 @@
 <meta name="twitter:title" id="tw-title" content="t.ilias · Geopolitics & Security Analysis">
 <meta name="twitter:description" id="tw-desc" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.">
 <meta name="twitter:image" id="tw-image" content="">
+<!-- ANALYTICS: paste one beacon below.
+  • Cloudflare Web Analytics (free, no cookies): enable in the Cloudflare dashboard for this Pages project (zero code), or paste:
+      <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"YOUR_TOKEN"}'></script>
+  • Plausible: <script defer data-domain="YOURDOMAIN.com" src="https://plausible.io/js/script.js"></script>
+  • Umami: <script defer src="https://YOUR-UMAMI/script.js" data-website-id="YOUR_ID"></script>
+-->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -530,6 +536,27 @@ const GOOGLE_APP_ID="";
 const GDRIVE_ON=!!(GOOGLE_CLIENT_ID&&GOOGLE_API_KEY);
 const KEY="tilias_pubs_v3";
 let PUBS=[];
+let VIEWS={};
+function viewCount(id){return VIEWS[id]||0;}
+function fmtViews(n){return (n||0)+" "+((n===1)?"view":"views");}
+function readingTime(p){
+  if(!p||p.type!=="internal"||!p.body)return"";
+  const text=String(p.body).replace(/<[^>]+>/g," ").replace(/&[a-z#0-9]+;/gi," ").replace(/\s+/g," ").trim();
+  const words=text?text.split(" ").length:0;
+  if(words<20)return"";
+  return Math.max(1,Math.round(words/200))+" min read";
+}
+async function loadViews(){
+  if(!SUPA_ON)return;
+  try{const r=await fetch(`${SB_BASE}/rest/v1/pubviews?select=id,views`,{headers:supaHeaders()});
+    if(r.ok){VIEWS={};(await r.json()).forEach(x=>{VIEWS[x.id]=x.views||0;});}}catch(e){}
+}
+async function bumpView(id){
+  if(!id)return;
+  VIEWS[id]=(VIEWS[id]||0)+1;
+  if(!SUPA_ON)return;
+  try{await fetch(`${SB_BASE}/rest/v1/rpc/bump_view`,{method:"POST",headers:supaHeaders(),body:JSON.stringify({pid:id})});}catch(e){}
+}
 function supaHeaders(extra){return Object.assign({apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},extra||{});}
 async function load(){
   if(SUPA_ON){
@@ -816,7 +843,7 @@ function viewArticle(id){
     :`<div class="content">${renderBody(p.body)||"<p>(No content yet.)</p>"}</div>`;
   return `<article class="article ${isPdf?'article-wide':''}">
     <a class="back" href="#/publications">← All publications</a>
-    <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span></div>
+    <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span>${readingTime(p)?`<span>·</span><span>${readingTime(p)}</span>`:""}<span>·</span><span id="viewCount">${fmtViews(viewCount(p.id))}</span></div>
     <h1>${esc(p.title)}</h1>
     ${p.excerpt?`<p class="lead">${esc(p.excerpt)}</p>`:""}
     ${(!isPdf&&p.photo)?`<div class="art-hero"><div class="cover-bg" style="background-image:url('${esc(p.photo)}')"></div><img src="${esc(p.photo)}" alt="" onerror="this.closest('.art-hero').style.display='none'"></div>`:""}
@@ -1418,7 +1445,7 @@ function renderAdmin(){
   };
   const list=inner.querySelector("#adminList");
   list.innerHTML=PUBS.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(p=>
-    `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${p.draft?'<span class="dbadge">Draft</span>':''}${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':p.type==='pdf'?'PDF':'text'} · ${(p.tags||[]).join(', ')}</small></div>
+    `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${p.draft?'<span class="dbadge">Draft</span>':''}${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':p.type==='pdf'?'PDF':'text'} · 👁 ${viewCount(p.id)} · ${(p.tags||[]).join(', ')}</small></div>
       <button class="mini" data-edit="${p.id}">Edit</button><button class="mini danger" data-del="${p.id}">Delete</button></div>`).join("");
   list.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editingId=b.dataset.edit;renderAdmin();});
   list.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("Delete this publication?")){const id=b.dataset.del;PUBS=PUBS.filter(p=>p.id!==id);await removeOne(id);const app=document.getElementById("app");if(app){app.innerHTML=viewHome();initHomeMap();}renderAdmin();}});
@@ -1448,7 +1475,10 @@ function router(){
   if(parts[0]==="countries"){app.innerHTML=viewCountries();window.scrollTo(0,0);return;}
   if(parts[0]==="country"){app.innerHTML=viewCountry(parts[1]);wireCountry();window.scrollTo(0,0);return;}
   if(parts[0]==="about"){app.innerHTML=viewAbout();window.scrollTo(0,0);return;}
-  if(parts[0]==="article"){const ap=PUBS.find(x=>x.id===parts[1]);app.innerHTML=viewArticle(parts[1]);setShareMeta(ap||null);wireArticle();window.scrollTo(0,0);return;}
+  if(parts[0]==="article"){const ap=PUBS.find(x=>x.id===parts[1]);app.innerHTML=viewArticle(parts[1]);setShareMeta(ap||null);wireArticle();
+    if(ap){let fresh=true;try{const sk="seen:"+ap.id;if(sessionStorage.getItem(sk))fresh=false;else sessionStorage.setItem(sk,"1");}catch(e){}
+      if(fresh)bumpView(ap.id).then(()=>{const el=document.getElementById("viewCount");if(el)el.textContent=fmtViews(viewCount(ap.id));});}
+    window.scrollTo(0,0);return;}
   if(parts[0]==="maps"){setShareMeta(null);app.innerHTML=viewMaps();initDeFacto();window.scrollTo(0,0);return;}
   setShareMeta(null);app.innerHTML=viewHome();initHomeMap();window.scrollTo(0,0);
 }
@@ -1459,7 +1489,9 @@ function setShareMeta(p){
   document.title=t;
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.setAttribute("content",v);};
   set("og-title",t);set("tw-title",t);set("og-desc",d);set("tw-desc",d);
-  set("og-image",img);set("tw-image",img);set("og-url",location.href);
+  set("og-image",img);set("tw-image",img);
+  const u=p?(location.origin+location.pathname+"?p="+encodeURIComponent(p.id)+"#/article/"+p.id):location.href;
+  set("og-url",u);
   const md=document.querySelector('meta[name="description"]');if(md)md.setAttribute("content",d);
 }
 function openShare(href){
@@ -1468,7 +1500,8 @@ function openShare(href){
   window.open(href,"shareWin","noopener,width="+w+",height="+h+",top="+Math.max(0,y)+",left="+Math.max(0,x));
 }
 function wireArticle(){
-  const url=location.href;
+  const aid=(location.hash.match(/#\/article\/(.+)$/)||[])[1]||"";
+  const url=location.origin+location.pathname+(aid?("?p="+encodeURIComponent(aid)):"")+(location.hash||"");
   const title=(document.querySelector(".article h1")||{}).textContent||document.title;
   const enc=encodeURIComponent;
   const link=(id,href)=>{const el=document.getElementById(id);if(el){el.href=href;el.addEventListener("click",e=>{e.preventDefault();openShare(href);});}};
@@ -1492,7 +1525,8 @@ window.addEventListener("hashchange",router);
 })();
 
 /* ---------- boot ---------- */
-load().then(router);
+(function(){try{const pp=new URLSearchParams(location.search).get("p");if(pp&&!/^#\/article\//.test(location.hash))location.hash="#/article/"+pp;}catch(e){}})();
+load().then(loadViews).then(router);
 </script>
 </body>
 </html>
