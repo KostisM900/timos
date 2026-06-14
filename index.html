@@ -16,12 +16,14 @@
   --maxw:1240px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;font-family:var(--body);color:var(--ink);background:var(--paper);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
-#app{flex:1 0 auto}
-h1,h2,h3,h4{font-family:var(--display);line-height:1.13;margin:0;letter-spacing:-.01em}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{margin:0;font-family:var(--body);color:var(--ink);background:var(--paper);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden;width:100%}
+#app{flex:1 0 auto;min-width:0}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.13;margin:0;letter-spacing:-.01em;overflow-wrap:break-word}
 a{color:var(--blue);text-decoration:none}a:hover{color:var(--sky)}
+img,svg,iframe,video{max-width:100%}
 img{max-width:100%;display:block}
+input,textarea,select,.rte{max-width:100%}
 button{font-family:var(--body);cursor:pointer}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
@@ -107,8 +109,13 @@ main{min-height:60vh}
 .pub-grid.home{margin-top:4px}
 .card{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;transition:box-shadow .18s,transform .18s;cursor:pointer;display:flex;flex-direction:column}
 .card:hover{box-shadow:0 14px 34px -18px rgba(15,40,84,.45);transform:translateY(-2px)}
-.card .cover{aspect-ratio:16/8;background:var(--blue);position:relative;overflow:hidden}
-.card .cover img{width:100%;height:100%;object-fit:cover;display:block}
+.card .cover{aspect-ratio:16/8;background:var(--navy);position:relative;overflow:hidden}
+.card .cover img{width:100%;height:100%;object-fit:contain;display:block;position:relative;z-index:1}
+.cover-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(16px) brightness(.62);transform:scale(1.2);z-index:0}
+.art-hero{position:relative;margin:8px 0 20px;border-radius:14px;overflow:hidden;background:var(--navy);display:flex;justify-content:center}
+.art-hero img{position:relative;z-index:1;width:auto;max-width:100%;max-height:480px;object-fit:contain;display:block}
+.art-hero .cover-bg{filter:blur(28px) brightness(.5)}
+@media(max-width:560px){.art-hero img{max-height:300px}}
 .card .cover .cover-fallback{width:100%;height:100%;background:linear-gradient(135deg,var(--blue) 0%,var(--navy) 100%)}
 .card .cover:after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:var(--sky)}
 .card .cover .tag{position:absolute;left:12px;top:12px;background:rgba(255,255,255,.92);color:var(--navy);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;padding:3px 9px;border-radius:5px}
@@ -248,6 +255,22 @@ footer.foot small{color:#8ea2c2;font-size:13px;width:100%}
   .spotlight{padding:24px 22px}
   .feature-grid{grid-template-columns:1fr}
   .stat-band .wrap{grid-template-columns:repeat(2,1fr)}
+  .wrap{padding:0 16px}
+  .section{padding:30px 0}
+  .hero{padding:30px 0 34px}
+  .cfacts{grid-template-columns:1fr 1fr}
+  .modal-bg{padding:14px 8px}
+  .modal{border-radius:14px}
+  .eth-head,.admin-head,.admin-body,.eth-body{padding-left:18px;padding-right:18px}
+  .admin-head{padding-right:54px}
+  .content,.rte{overflow-wrap:break-word;word-break:break-word}
+  .content .a-table,.rte .a-table{table-layout:fixed}
+  .rte{min-height:240px}
+  .cta{flex-wrap:wrap}
+  .cta .btn{flex:1 1 auto;text-align:center}
+}
+@media(max-width:420px){
+  .rte-toolbar button{min-width:28px;height:28px;padding:0 7px;font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -299,6 +322,8 @@ a.chip{text-decoration:none}
 .rte .a-table th,.rte .a-table td,.content .a-table th,.content .a-table td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
 .rte .a-table th,.content .a-table th{background:var(--wash);font-weight:700;color:var(--navy)}
 .rte a,.content a{color:var(--blue);text-decoration:underline}
+.content .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:18px 0}
+.content .table-wrap .a-table{margin:0}
 .cfacts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
 .cf{background:var(--wash);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
 .cf .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -551,7 +576,9 @@ function _gpShow(onPick,onCancel){
 function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function fmt(d){if(!d)return"";const dt=new Date(d);return isNaN(dt)?d:dt.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}
 function bodyHtml(t){return (t||"").split(/\n{2,}/).map(b=>{b=b.trim();if(!b)return"";return b.startsWith("## ")?"<h3>"+esc(b.slice(3))+"</h3>":"<p>"+esc(b).replace(/\n/g,"<br>")+"</p>";}).join("");}
-function renderBody(b){b=b||"";return /<[a-z][\s\S]*>/i.test(b)?b:bodyHtml(b);}
+function renderBody(b){b=b||"";let html=/<[a-z][\s\S]*>/i.test(b)?b:bodyHtml(b);
+  html=html.replace(/<table class="a-table">/g,'<div class="table-wrap"><table class="a-table">').replace(/<\/table>/g,'</table></div>');
+  return html;}
 function rteImage(rte){
   rte.focus();
   const url=prompt("Image URL (https://...):");if(!url)return;
@@ -572,12 +599,35 @@ function rteTable(rte){
   h+="</tbody></table><p><br></p>";
   document.execCommand("insertHTML",false,h);
 }
+function rteCurrentTable(rte){
+  const sel=window.getSelection();if(!sel||!sel.anchorNode)return null;
+  let n=sel.anchorNode;
+  while(n&&n!==rte){if(n.nodeType===1&&n.tagName==="TABLE"&&n.classList.contains("a-table"))return n;n=n.parentNode;}
+  return null;
+}
+function rteAddRow(rte){
+  const t=rteCurrentTable(rte);if(!t){alert("Put the cursor inside a table first, then press Row +.");return;}
+  const body=t.tBodies[0]||t;const cols=t.rows[0]?t.rows[0].cells.length:1;
+  const tr=document.createElement("tr");
+  for(let i=0;i<cols;i++){const td=document.createElement("td");td.innerHTML="&nbsp;";tr.appendChild(td);}
+  body.appendChild(tr);
+}
+function rteAddCol(rte){
+  const t=rteCurrentTable(rte);if(!t){alert("Put the cursor inside a table first, then press Col +.");return;}
+  Array.from(t.rows).forEach(row=>{
+    const isHead=row.cells[0]&&row.cells[0].tagName==="TH";
+    const cell=document.createElement(isHead?"th":"td");
+    cell.innerHTML=isHead?"Heading":"&nbsp;";
+    row.appendChild(cell);
+  });
+}
 function allTags(){const s=new Set();publicPubs().forEach(p=>(p.tags||[]).forEach(x=>s.add(x)));return[...s];}
 
 /* ---------- card markup ---------- */
 function coverHtml(p){
   if(p.photo){
-    return `<img src="${esc(p.photo)}" alt="" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="cover-fallback" style="display:none"></div>`;
+    const u=esc(p.photo);
+    return `<div class="cover-bg" style="background-image:url('${u}')"></div><img src="${u}" alt="" loading="lazy" onerror="this.previousElementSibling.style.display='none';this.style.display='none';this.nextElementSibling.style.display='block'"><div class="cover-fallback" style="display:none"></div>`;
   }
   return `<div class="cover-fallback"></div>`;
 }
@@ -740,6 +790,7 @@ function viewArticle(id){
     <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span></div>
     <h1>${esc(p.title)}</h1>
     ${p.excerpt?`<p class="lead">${esc(p.excerpt)}</p>`:""}
+    ${(!isPdf&&p.photo)?`<div class="art-hero"><div class="cover-bg" style="background-image:url('${esc(p.photo)}')"></div><img src="${esc(p.photo)}" alt="" onerror="this.closest('.art-hero').style.display='none'"></div>`:""}
     ${main}
     ${(p.references&&p.references.length)?`<div class="refbox"><h4>References</h4><ol>${p.references.map(r=>`<li>${esc(r)}</li>`).join("")}</ol></div>`:""}
     <div class="share"><span>Share this article:</span>
@@ -1241,22 +1292,34 @@ function renderAdmin(){
       <div class="field"><label>Excerpt</label><input id="f_excerpt" value="${v('excerpt')}"></div>
       <div class="field" id="bodyField"><label>Article text</label>
         <div class="rte-toolbar" id="rteToolbar">
+          <button type="button" data-cmd="undo" title="Undo">↶</button>
+          <button type="button" data-cmd="redo" title="Redo">↷</button>
+          <span class="rte-sep"></span>
           <button type="button" data-cmd="bold" title="Bold"><b>B</b></button>
           <button type="button" data-cmd="italic" title="Italic"><i>I</i></button>
           <button type="button" data-cmd="underline" title="Underline"><u>U</u></button>
+          <button type="button" data-cmd="strikeThrough" title="Strikethrough"><s>S</s></button>
+          <button type="button" data-act="hilite" title="Highlight"><span style="background:#fde68a;padding:0 3px;border-radius:2px">H</span></button>
           <span class="rte-sep"></span>
           <button type="button" data-block="h2" title="Subtitle">H2</button>
           <button type="button" data-block="h3" title="Smaller subtitle">H3</button>
           <button type="button" data-block="blockquote" title="Quote">&ldquo;&rdquo;</button>
           <button type="button" data-block="p" title="Normal paragraph">¶</button>
           <span class="rte-sep"></span>
-          <button type="button" data-cmd="insertUnorderedList" title="Bulleted list">&bull; List</button>
-          <button type="button" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+          <button type="button" data-cmd="insertUnorderedList" title="Bulleted list">&bull;&nbsp;List</button>
+          <button type="button" data-cmd="insertOrderedList" title="Numbered list">1.&nbsp;List</button>
+          <button type="button" data-cmd="justifyLeft" title="Align left">⇤</button>
+          <button type="button" data-cmd="justifyCenter" title="Align center">↔</button>
+          <button type="button" data-cmd="justifyRight" title="Align right">⇥</button>
           <span class="rte-sep"></span>
           <button type="button" data-act="link" title="Insert link">Link</button>
+          <button type="button" data-cmd="unlink" title="Remove link">Unlink</button>
           <button type="button" data-act="hr" title="Divider line">Divider</button>
           <button type="button" data-act="image" title="Insert image">Image</button>
+          <span class="rte-sep"></span>
           <button type="button" data-act="table" title="Insert table">Table</button>
+          <button type="button" data-act="row" title="Add row to current table">Row +</button>
+          <button type="button" data-act="col" title="Add column to current table">Col +</button>
           <span class="rte-sep"></span>
           <button type="button" data-cmd="removeFormat" title="Clear formatting">Clear</button>
         </div>
@@ -1288,9 +1351,12 @@ function renderAdmin(){
       if(b.dataset.cmd){document.execCommand(b.dataset.cmd,false,null);}
       else if(b.dataset.block){document.execCommand("formatBlock",false,b.dataset.block);}
       else if(b.dataset.act==="hr"){document.execCommand("insertHorizontalRule",false,null);}
+      else if(b.dataset.act==="hilite"){document.execCommand("hiliteColor",false,"#fde68a");}
       else if(b.dataset.act==="link"){const u=prompt("Link URL (https://...):");if(u)document.execCommand("createLink",false,u);}
       else if(b.dataset.act==="image"){rteImage(rte);}
       else if(b.dataset.act==="table"){rteTable(rte);}
+      else if(b.dataset.act==="row"){rteAddRow(rte);}
+      else if(b.dataset.act==="col"){rteAddCol(rte);}
     });
   })();
   inner.querySelector("#newBtn").onclick=()=>{editingId=null;renderAdmin();};
