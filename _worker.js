@@ -33,8 +33,8 @@ export default {
 
     let html = await res.text();
 
-    const SB = (env.SUPABASE_URL || "https://YOUR-PROJECT.supabase.co").replace(/\/+$/, ""); // FALLBACK
-    const KEY = env.SUPABASE_KEY || "YOUR_ANON_KEY"; // FALLBACK
+    const SB = (env.SUPABASE_URL || "SUPABASE_URL = https://lvrkldiszeujgcetlozh.supabase.co").replace(/\/+$/, ""); // FALLBACK
+    const KEY = env.SUPABASE_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2cmtsZGlzemV1amdjZXRsb3poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzODA4MTcsImV4cCI6MjA5Njk1NjgxN30.cNSsoWwWdUkscey80FzWB_Ly5QLfTTSS8PGfvQtQmE8"; // FALLBACK
 
     let title = "t.ilias · Geopolitics & Security Analysis";
     let desc  = "Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.";
