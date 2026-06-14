@@ -271,6 +271,14 @@ a.chip{text-decoration:none}
 .home-about{background:var(--wash);border-top:1px solid var(--line)}
 #svgmap-wrap svg text{font-family:"IBM Plex Sans","Inter",system-ui,sans-serif}
 .home-map-box svg text{font-family:"IBM Plex Sans","Inter",system-ui,sans-serif}
+.article-wide{max-width:1000px}
+.pdf-wrap{margin:10px 0 14px}
+.pdf-obj{width:100%;height:80vh;min-height:560px;border:1px solid var(--line);border-radius:12px;background:var(--wash);display:block}
+.pdf-fallback{padding:50px 22px;text-align:center;color:var(--muted)}
+.pdf-fallback p{margin:0 0 14px}
+.pdf-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.pdf-pill{font-size:11px;font-weight:700;letter-spacing:.05em;background:var(--cyan);color:var(--blue);border-radius:5px;padding:2px 8px;margin-left:2px}
+@media(max-width:760px){.pdf-obj{height:68vh;min-height:420px}}
 .cfacts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
 .cf{background:var(--wash);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
 .cf .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -350,9 +358,20 @@ a.chip{text-decoration:none}
 /* =====================================================================
    t.ilias — single-file site (hash router + SVG vector map)
    Publications persist in this browser via localStorage.
-   Admin URL: <your-site>#/admin    Passcode below.
+   Admin URL: <your-site>#/admin
+   The passcode is NOT stored in plaintext — only its SHA-256 hash.
+   To set a NEW passcode, open the browser console on the site and run:
+     crypto.subtle.digest("SHA-256",new TextEncoder().encode("YOUR_NEW_PASSCODE"))
+       .then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")))
+   then paste the printed hash below.  (The hash below is the one you set.)
+   NOTE: this only hides the admin UI; it is not real security. Anyone can
+   read this file's source. Real write-protection requires Supabase Auth + RLS.
    ===================================================================== */
-const PASSCODE = "ilias2026";
+const PASSCODE_HASH = "476e738658584e884b6f65eebf8f1201c38050896dcb5b971102f7137899c1e8";
+async function sha256hex(s){
+  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
 
 /* ---------- flags ---------- */
 const FLAG_EN=`<svg class="flag" viewBox="0 0 60 40" aria-label="English"><clipPath id="ukc"><rect width="60" height="40" rx="2"/></clipPath><g clip-path="url(#ukc)"><rect width="60" height="40" fill="#012169"/><path d="M0 0 60 40M60 0 0 40" stroke="#fff" stroke-width="8"/><path d="M0 0 60 40M60 0 0 40" stroke="#C8102E" stroke-width="4"/><path d="M30 0v40M0 20h60" stroke="#fff" stroke-width="13"/><path d="M30 0v40M0 20h60" stroke="#C8102E" stroke-width="7"/></g></svg>`;
@@ -371,6 +390,10 @@ const COUNTRY_FLAGS={
 
 /* ---------- seed publications ---------- */
 const SEED=[
+  {id:"caucasus-pdf-brief",title:"Sample PDF brief (viewed in-page)",author:"Timoleon Ilias",
+   date:"2026-02-10",lang:"en",type:"pdf",featured:false,photo:"",
+   pdfUrl:"https://www.theperspective.se/wp-content/uploads/2026/02/Perspective_Jan26.pdf",
+   tags:["Published","PDF"],excerpt:"A demo of a PDF publication rendered directly inside the page. Replace the PDF URL from the admin panel.",body:""},
   {id:"perspective-jan26",title:"Featured analysis in The Perspective — January 2026",author:"Timoleon Ilias",
    date:"2026-02-01",lang:"en",type:"external",featured:true,
    url:"https://www.theperspective.se/wp-content/uploads/2026/02/Perspective_Jan26.pdf#page=45",
@@ -463,6 +486,20 @@ async function removeOne(id){
   if(SUPA_ON){try{const r=await fetch(`${SB_BASE}/rest/v1/publications?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:supaHeaders()});if(!r.ok)alert("Supabase rejected the delete ("+r.status+").");}catch(e){alert("Backend unreachable.");}}
   else save();
 }
+async function uploadPdf(file){
+  if(!SUPA_ON){alert("Configure Supabase to upload, or paste a PDF URL from any host.");return null;}
+  if(file.size>40*1024*1024&&!confirm("This file is large ("+(file.size/1048576).toFixed(1)+" MB). Upload anyway?"))return null;
+  const safe=file.name.replace(/[^a-zA-Z0-9.\-_]/g,"_");
+  const path=Date.now()+"-"+safe;
+  try{
+    const r=await fetch(`${SB_BASE}/storage/v1/object/pdfs/${encodeURIComponent(path)}`,{
+      method:"POST",
+      headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":file.type||"application/pdf","x-upsert":"true"},
+      body:file});
+    if(!r.ok){alert("Upload failed ("+r.status+"). Create a public Storage bucket named 'pdfs' with an insert policy.");return null;}
+    return `${SB_BASE}/storage/v1/object/public/pdfs/${path}`;
+  }catch(e){alert("Upload failed — backend unreachable.");return null;}
+}
 function publicPubs(){return PUBS.filter(p=>!p.draft);}
 const byDate=(a,b)=>(b.date||"").localeCompare(a.date||"");
 function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -479,12 +516,13 @@ function coverHtml(p){
 }
 function card(p){
   const ext=p.type==="external";
+  const pdf=p.type==="pdf";
   const href=ext?p.url:("#/article/"+p.id);
   const target=ext?` target="_blank" rel="noopener"`:"";
-  const extBadge=ext?`<span class="ext" title="Opens on an external outlet">↗ Featured elsewhere</span>`:"";
+  const badge=ext?`<span class="ext" title="Opens on an external outlet">↗ Featured elsewhere</span>`:(pdf?`<span class="ext">PDF</span>`:"");
   const tags=(p.tags||[]).slice(0,3).map(x=>`<span>${esc(x)}</span>`).join("");
   return `<a class="card" href="${href}"${target}>
-    <div class="cover">${coverHtml(p)}<span class="tag">${esc((p.tags&&p.tags[0])||"Analysis")}</span>${extBadge}</div>
+    <div class="cover">${coverHtml(p)}<span class="tag">${esc((p.tags&&p.tags[0])||"Analysis")}</span>${badge}</div>
     <div class="cbody">
       <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span></div>
       <h3 class="t">${esc(p.title)}</h3>
@@ -669,12 +707,25 @@ function viewArticle(id){
   const p=PUBS.find(x=>x.id===id);
   if(!p)return `<div class="article"><a class="back" href="#/publications">← Publications</a><h1>Not found</h1><p>This article doesn't exist or was removed.</p></div>`;
   if(p.type==="external"&&p.url){window.open(p.url,"_blank","noopener");location.hash="#/publications";return viewPublications();}
-  return `<article class="article">
+  const isPdf=p.type==="pdf"&&p.pdfUrl;
+  const main=isPdf
+    ?`<div class="pdf-wrap">
+        <object class="pdf-obj" data="${esc(p.pdfUrl)}#view=FitH" type="application/pdf">
+          <div class="pdf-fallback"><p>Your browser can't display the PDF inline.</p>
+            <a class="btn primary" href="${esc(p.pdfUrl)}" target="_blank" rel="noopener">Open the PDF ↗</a></div>
+        </object>
+      </div>
+      <div class="pdf-actions">
+        <a class="btn line" href="${esc(p.pdfUrl)}" target="_blank" rel="noopener">Open in new tab ↗</a>
+        <a class="btn line" href="${esc(p.pdfUrl)}" download>Download PDF</a>
+      </div>`
+    :`<div class="content">${bodyHtml(p.body)||"<p>(No content yet.)</p>"}</div>`;
+  return `<article class="article ${isPdf?'article-wide':''}">
     <a class="back" href="#/publications">← All publications</a>
-    <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span></div>
+    <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span>${isPdf?'<span class="pdf-pill">PDF</span>':''}</div>
     <h1>${esc(p.title)}</h1>
     ${p.excerpt?`<p class="lead">${esc(p.excerpt)}</p>`:""}
-    <div class="content">${bodyHtml(p.body)||"<p>(No content yet.)</p>"}</div>
+    ${main}
     ${(p.references&&p.references.length)?`<div class="refbox"><h4>References</h4><ol>${p.references.map(r=>`<li>${esc(r)}</li>`).join("")}</ol></div>`:""}
     <div class="share"><span>Share this article:</span>
       <button class="btn line" id="copyLink">Copy link</button>
@@ -1050,7 +1101,12 @@ function renderAdmin(){
         <button class="btn primary" id="gateBtn">Enter</button>
         <div id="gateErr" style="color:#C0493C;margin-top:12px;font-size:14px"></div></div>`;
     inner.querySelector(".x").onclick=()=>closeModal("adminModal");
-    const tryG=()=>{if(document.getElementById("pc").value===PASSCODE){unlocked=true;renderAdmin();}else document.getElementById("gateErr").textContent="Wrong passcode.";};
+    const tryG=async()=>{
+      let ok=false;
+      try{ok=(await sha256hex(document.getElementById("pc").value))===PASSCODE_HASH;}catch(e){ok=false;}
+      if(ok){unlocked=true;renderAdmin();}
+      else document.getElementById("gateErr").textContent="Wrong passcode.";
+    };
     inner.querySelector("#gateBtn").onclick=tryG;
     inner.querySelector("#pc").onkeydown=e=>{if(e.key==="Enter")tryG();};
     return;
@@ -1078,9 +1134,15 @@ function renderAdmin(){
           <option value="el" ${ed&&ed.lang==='el'?'selected':''}>Greek 🇬🇷</option></select></div>
         <div class="field"><label>Type</label><select id="f_type">
           <option value="internal" ${!ed||ed.type==='internal'?'selected':''}>Full text (own page)</option>
+          <option value="pdf" ${ed&&ed.type==='pdf'?'selected':''}>PDF (viewed in-page)</option>
           <option value="external" ${ed&&ed.type==='external'?'selected':''}>External link</option></select></div>
       </div>
       <div class="field" id="urlField" style="display:none"><label>External URL</label><input id="f_url" value="${v('url')}" placeholder="https://..."></div>
+      <div class="field" id="pdfField" style="display:none"><label>PDF URL</label>
+        <input id="f_pdfurl" value="${v('pdfUrl')}" placeholder="https://…/document.pdf">
+        <div class="hint">Only this URL is saved to the database — the PDF file itself never goes into it. Host the file on your own site, Cloudflare R2, a Google Drive preview link, or a Supabase Storage bucket.
+          <span style="display:inline-flex;gap:8px;align-items:center;margin-top:6px"><button type="button" class="mini" id="pdfUploadBtn">⤓ Upload to Supabase Storage</button><span id="pdfUploadMsg" style="color:var(--muted)"></span></span>
+          <input type="file" id="pdfFile" accept="application/pdf" style="display:none"></div></div>
       <div class="field"><label>Tags (comma separated — used for filters &amp; map matching)</label><input id="f_tags" value="${ed?esc((ed.tags||[]).join(', ')):''}"></div>
       <div class="field"><label>Cover photo URL (optional)</label><input id="f_photo" value="${v('photo')}" placeholder="https://..."></div>
       <div class="field"><label>Excerpt</label><input id="f_excerpt" value="${v('excerpt')}"></div>
@@ -1094,8 +1156,23 @@ function renderAdmin(){
     </div>`;
   inner.querySelector(".x").onclick=()=>closeModal("adminModal");
   const typeSel=inner.querySelector("#f_type");
-  const sync=()=>{const x=typeSel.value==="external";inner.querySelector("#urlField").style.display=x?"block":"none";inner.querySelector("#bodyField").style.display=x?"none":"block";inner.querySelector("#refField").style.display=x?"none":"block";};
+  const sync=()=>{const t=typeSel.value,ext=t==="external",pdf=t==="pdf";
+    inner.querySelector("#urlField").style.display=ext?"block":"none";
+    inner.querySelector("#pdfField").style.display=pdf?"block":"none";
+    inner.querySelector("#bodyField").style.display=(ext||pdf)?"none":"block";
+    inner.querySelector("#refField").style.display=ext?"none":"block";};
   typeSel.onchange=sync;sync();
+  const pdfBtn=inner.querySelector("#pdfUploadBtn");
+  if(pdfBtn){
+    pdfBtn.onclick=()=>inner.querySelector("#pdfFile").click();
+    inner.querySelector("#pdfFile").onchange=async(e)=>{
+      const f=e.target.files[0];if(!f)return;
+      const msg=inner.querySelector("#pdfUploadMsg");msg.textContent="Uploading…";
+      const url=await uploadPdf(f);
+      if(url){inner.querySelector("#f_pdfurl").value=url;msg.textContent="✓ uploaded";}
+      else msg.textContent="";
+    };
+  }
   inner.querySelector("#newBtn").onclick=()=>{editingId=null;renderAdmin();};
   inner.querySelector("#logoutBtn").onclick=()=>{unlocked=false;editingId=null;closeModal("adminModal");};
   inner.querySelector("#exportBtn").onclick=exportJSON;
@@ -1109,7 +1186,7 @@ function renderAdmin(){
     if(!ed&&PUBS.some(p=>p.id===id))id+="-"+Date.now().toString().slice(-4);
     const refs=inner.querySelector("#f_refs").value.split("\n").map(s=>s.trim()).filter(Boolean);
     const obj={id,title,author:g("f_author")||"Timoleon Ilias",date:g("f_date"),lang:g("f_lang"),type:g("f_type"),
-      url:g("f_url"),tags:g("f_tags").split(",").map(s=>s.trim()).filter(Boolean),
+      url:g("f_url"),pdfUrl:g("f_pdfurl"),tags:g("f_tags").split(",").map(s=>s.trim()).filter(Boolean),
       photo:g("f_photo"),excerpt:g("f_excerpt"),body:inner.querySelector("#f_body").value,
       references:refs,featured:inner.querySelector("#f_feat").checked,draft:inner.querySelector("#f_draft").checked};
     let demoted=null;
@@ -1120,7 +1197,7 @@ function renderAdmin(){
   };
   const list=inner.querySelector("#adminList");
   list.innerHTML=PUBS.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(p=>
-    `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${p.draft?'<span class="dbadge">Draft</span>':''}${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':'text'} · ${(p.tags||[]).join(', ')}</small></div>
+    `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${p.draft?'<span class="dbadge">Draft</span>':''}${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':p.type==='pdf'?'PDF':'text'} · ${(p.tags||[]).join(', ')}</small></div>
       <button class="mini" data-edit="${p.id}">Edit</button><button class="mini danger" data-del="${p.id}">Delete</button></div>`).join("");
   list.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editingId=b.dataset.edit;renderAdmin();});
   list.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("Delete this publication?")){const id=b.dataset.del;PUBS=PUBS.filter(p=>p.id!==id);await removeOne(id);renderAdmin();}});
