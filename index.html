@@ -32,6 +32,9 @@ body{margin:0;font-family:var(--body);color:var(--ink);background:var(--paper);f
 body{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2712%27%20r%3D%278%27%20fill%3D%27none%27%20stroke%3D%27%231C4D8D%27%20stroke-width%3D%271.8%27%2F%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%2712%27%20r%3D%271.1%27%20fill%3D%27%231C4D8D%27%2F%3E%3C%2Fsvg%3E") 12 12, auto}
 a,button,.card,.chip,.tag,.ext,.sbtn,.btn,.more,.leader-item,.lead-item,summary,label,select,[role='button']{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2730%27%20height%3D%2730%27%20viewBox%3D%270%200%2030%2030%27%3E%3Ccircle%20cx%3D%2715%27%20cy%3D%2715%27%20r%3D%2710%27%20fill%3D%27rgba%2828%2C77%2C141%2C0.16%29%27%20stroke%3D%27%231C4D8D%27%20stroke-width%3D%272%27%2F%3E%3Ccircle%20cx%3D%2715%27%20cy%3D%2715%27%20r%3D%273%27%20fill%3D%27%231C4D8D%27%2F%3E%3C%2Fsvg%3E") 15 15, pointer}
 input,textarea,[contenteditable],.rte{cursor:text}
+body{-webkit-user-select:none;-ms-user-select:none;user-select:none}
+input,textarea,select,[contenteditable],.rte,#adminModal,#adminModal *{-webkit-user-select:text;-ms-user-select:text;user-select:text}
+img{-webkit-user-drag:none;user-drag:none}
 h1,h2,h3,h4{font-family:var(--display);line-height:1.13;margin:0;letter-spacing:-.01em;overflow-wrap:break-word}
 a{color:var(--blue);text-decoration:none}a:hover{color:var(--sky)}
 img,svg,iframe,video{max-width:100%}
@@ -975,7 +978,7 @@ const COUNTRIES_INFO={
         {n:"Gagik Harutyunyan",y:"1991-1992 (acting)"},
         {n:"Vazgen Manukyan",y:"1990-1991"}],
       "Foreign ministers":[
-        {n:"Ararat Mirzoyan",y:"2021-present",i:"Foreign minister since 2021, central to the normalisation talks with Azerbaijan and Turkiye."},
+        {n:"Ararat Mirzoyan",y:"2021-present",i:"Foreign minister since 2021, central to the normalisation talks with Azerbaijan and Turkey."},
         {n:"Ara Aivazian",y:"2020-2021"},
         {n:"Zohrab Mnatsakanyan",y:"2018-2020"},
         {n:"Edward Nalbandian",y:"2008-2018"},
@@ -1469,6 +1472,14 @@ function wireArticle(){
 }
 document.getElementById("menuBtn").onclick=()=>document.getElementById("nav").classList.toggle("open");
 window.addEventListener("hashchange",router);
+
+/* ---- content protection (deterrent only) ---- */
+(function(){
+  function editable(el){return !!(el&&el.closest&&el.closest('input,textarea,select,[contenteditable],.rte,#adminModal'));}
+  ["copy","cut"].forEach(ev=>document.addEventListener(ev,e=>{if(!editable(e.target))e.preventDefault();}));
+  document.addEventListener("contextmenu",e=>{if(!editable(e.target))e.preventDefault();});
+  document.addEventListener("dragstart",e=>{if(e.target&&e.target.tagName==="IMG")e.preventDefault();});
+})();
 
 /* ---------- boot ---------- */
 load().then(router);
