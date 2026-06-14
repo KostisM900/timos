@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>t.ilias — Geopolitics & Security Analysis</title>
-<meta name="description" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space — by Timoleon Ilias.">
+<title>t.ilias · Geopolitics & Security Analysis</title>
+<meta name="description" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -278,6 +278,27 @@ a.chip{text-decoration:none}
 .pdf-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
 .pdf-note{font-size:12.5px;color:var(--muted);margin:0 0 6px}
 @media(max-width:760px){.pdf-frame{height:68vh;min-height:420px}}
+.rte-toolbar{display:flex;flex-wrap:wrap;gap:4px;border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;padding:7px;background:var(--wash)}
+.rte-toolbar button{min-width:30px;height:30px;padding:0 9px;border:1px solid transparent;background:#fff;border-radius:6px;font-size:13px;color:var(--navy);cursor:pointer;line-height:1}
+.rte-toolbar button:hover{border-color:var(--line)}
+.rte-sep{width:1px;background:var(--line);margin:2px 4px}
+.rte{min-height:300px;max-height:560px;overflow-y:auto;border:1px solid var(--line);border-radius:0 0 10px 10px;padding:16px 18px;font-size:15px;line-height:1.65;color:var(--ink);background:#fff}
+.rte:focus{outline:none;border-color:var(--sky)}
+.rte:empty:before{content:"Write the article here…";color:var(--muted)}
+.rte h2,.content h2{font-size:24px;color:var(--navy);margin:22px 0 10px;line-height:1.25}
+.rte h3,.content h3{font-size:19px;color:var(--navy);margin:18px 0 8px}
+.rte p,.content p{margin:0 0 14px}
+.rte ul,.rte ol,.content ul,.content ol{margin:0 0 14px;padding-left:24px}
+.rte li,.content li{margin:4px 0}
+.rte blockquote,.content blockquote{margin:16px 0;padding:8px 18px;border-left:3px solid var(--sky);color:var(--muted);font-style:italic}
+.rte hr,.content hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+.rte img,.content img{max-width:100%;height:auto;border-radius:8px;display:block}
+.rte .a-fig,.content .a-fig{margin:18px 0}
+.rte figcaption,.content figcaption{font-size:13px;color:var(--muted);margin-top:7px;text-align:center}
+.rte .a-table,.content .a-table{border-collapse:collapse;width:100%;margin:18px 0;font-size:14px}
+.rte .a-table th,.rte .a-table td,.content .a-table th,.content .a-table td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.rte .a-table th,.content .a-table th{background:var(--wash);font-weight:700;color:var(--navy)}
+.rte a,.content a{color:var(--blue);text-decoration:underline}
 .cfacts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
 .cf{background:var(--wash);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
 .cf .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -355,10 +376,10 @@ a.chip{text-decoration:none}
 
 <script>
 /* =====================================================================
-   t.ilias — single-file site (hash router + SVG vector map)
+   t.ilias, single-file site (hash router + SVG vector map)
    Publications persist in this browser via localStorage.
    Admin URL: <your-site>#/admin
-   The passcode is NOT stored in plaintext — only its SHA-256 hash.
+   The passcode is NOT stored in plaintext, only its SHA-256 hash.
    To set a NEW passcode, open the browser console on the site and run:
      crypto.subtle.digest("SHA-256",new TextEncoder().encode("YOUR_NEW_PASSCODE"))
        .then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")))
@@ -388,30 +409,7 @@ const COUNTRY_FLAGS={
 };
 
 /* ---------- seed publications ---------- */
-const SEED=[
-  {id:"caucasus-pdf-brief",title:"Sample PDF brief (viewed in-page)",author:"Timoleon Ilias",
-   date:"2026-02-10",lang:"en",type:"pdf",featured:false,photo:"",
-   pdfUrl:"https://www.theperspective.se/wp-content/uploads/2026/02/Perspective_Jan26.pdf",
-   tags:["Published","PDF"],excerpt:"A demo of a PDF publication rendered directly inside the page. Replace the PDF URL from the admin panel.",body:""},
-  {id:"perspective-jan26",title:"Featured analysis in The Perspective — January 2026",author:"Timoleon Ilias",
-   date:"2026-02-01",lang:"en",type:"external",featured:true,
-   url:"https://www.theperspective.se/wp-content/uploads/2026/02/Perspective_Jan26.pdf#page=45",
-   tags:["Published","Security"],photo:"",
-   excerpt:"Published in The Perspective magazine (Jan 2026 issue, p. 45). Opens the external PDF.",body:""},
-  {id:"black-sea-security",title:"The Black Sea after the war: a contested commons",author:"Timoleon Ilias",
-   date:"2026-01-18",lang:"en",type:"internal",featured:false,tags:["Black Sea","Security","NATO"],photo:"",
-   excerpt:"How the post-war Black Sea is reshaping naval access, trade and deterrence.",
-   references:["NATO, “Black Sea Security”, official backgrounder, 2025.","International Crisis Group, regional briefing, 2025.","Author surname, Title of the report, Publisher, 2026, p. 12."],
-   body:"## A reordered sea\nThis is a sample article. Replace or delete it from the admin panel.\n\nThe Black Sea has moved from periphery to centre stage in European security. Control of access, ports and undersea infrastructure now shapes the balance between the littoral states.\n\n## What to watch\nThe coming year will test whether deterrence holds, and whether commercial shipping can be insulated from military risk."},
-  {id:"metavasi-energeias",title:"Η ενεργειακή μετάβαση και η γεωπολιτική του φυσικού αερίου",author:"Τιμολέων Ηλίας",
-   date:"2025-12-10",lang:"el",type:"internal",featured:false,tags:["Energy","Ανάλυση"],photo:"",
-   excerpt:"Πώς η μετάβαση αλλάζει τους δρόμους του αερίου και τις περιφερειακές ισορροπίες.",
-   body:"## Εισαγωγή\nΑυτό είναι δείγμα άρθρου. Επεξεργάσου το ή διέγραψέ το από τον πίνακα ελέγχου.\n\nΗ ζήτηση μετατοπίζεται και μαζί της οι αγωγοί και οι συμμαχίες.\n\n## Συμπέρασμα\nΟ Νότιος Διάδρομος Αερίου παραμένει κρίσιμος για την ευρωπαϊκή διαφοροποίηση."},
-  {id:"frozen-conflicts",title:"Frozen, then shattered: the end of the post-Soviet status quo",author:"Timoleon Ilias",
-   date:"2025-11-22",lang:"en",type:"internal",featured:false,tags:["Caucasus","De facto states"],photo:"",
-   excerpt:"Why the region's unresolved conflicts are unfreezing — and what comes next.",
-   body:"## The thaw\nSample text — edit in the control panel.\n\nThe label \"frozen conflict\" always flattered a fragile reality. Recent years have shown how quickly these arrangements can collapse."}
-];
+const SEED=[];
 
 /* ---------- de facto states (verified mid-2026) ---------- */
 const DEFACTO={
@@ -448,13 +446,13 @@ const DEFACTO={
     tags:["Caucasus","De facto states"]
   },
   artsakh:{
-    name:"Nagorno-Karabakh (Artsakh)",status:"Dissolved · January 2024",color:"#C0493C",dashed:true,
+    name:"Nagorno-Karabakh (Artsakh)",status:"Dissolved (2023)",color:"#9aa0aa",dashed:true,dissolved:true,
     capital:"Stepanakert (former)",claimed:"Azerbaijan",
-    recog:"None — dissolved",
+    recog:"None (dissolved)",
     recognisedBy:[],
-    nextElections:"N/A — dissolved",
-    freedomHouse:{score:null,label:"Dissolved"},
-    info:"A self-declared Armenian republic from 1991. Azerbaijan's September 2023 offensive forced the surrender of its forces; over 100,000 ethnic Armenians fled within days. The Republic of Artsakh formally dissolved on 1 January 2024 and the territory is now fully under Azerbaijani control. A peace-treaty text between Armenia and Azerbaijan was agreed in 2025 but remains unsigned.",
+    nextElections:"None (dissolved)",
+    freedomHouse:{score:37,label:"Partly Free",year:"2023"},
+    info:"A self-declared Armenian republic from 1991. Azerbaijan's September 2023 offensive forced the surrender of its forces, and over 100,000 ethnic Armenians fled within days. The Republic of Artsakh formally dissolved on 1 January 2024 and the territory is now fully under Azerbaijani control. A peace-treaty text between Armenia and Azerbaijan was agreed in 2025 but remains unsigned.",
     tags:["Caucasus","De facto states"]
   }
 };
@@ -477,7 +475,7 @@ const SUPA_ON=!!(SB_BASE&&SUPABASE_KEY);
      4. (Optional) GOOGLE_APP_ID = your project NUMBER (not the name).
    Leave blank to hide the Drive button (manual URL paste always works).
    NOTE: a picked file must still be shared publicly ("Anyone with the link")
-   for visitors to view it — the picker only selects, it does not change sharing. */
+   for visitors to view it, the picker only selects, it does not change sharing. */
 const GOOGLE_CLIENT_ID="";
 const GOOGLE_API_KEY="";
 const GOOGLE_APP_ID="";
@@ -494,7 +492,7 @@ async function load(){
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(PUBS));}catch(e){alert("Storage is blocked here. Host the file (or configure Supabase) to save.");}}
 async function persistOne(obj){
-  if(SUPA_ON){try{const r=await fetch(`${SB_BASE}/rest/v1/publications`,{method:"POST",headers:supaHeaders({Prefer:"resolution=merge-duplicates"}),body:JSON.stringify({id:obj.id,date:obj.date||"",data:obj})});if(!r.ok)alert("Supabase rejected the save ("+r.status+"). Check that the table and write policy exist.");}catch(e){alert("Backend unreachable — change not saved to the server.");}}
+  if(SUPA_ON){try{const r=await fetch(`${SB_BASE}/rest/v1/publications`,{method:"POST",headers:supaHeaders({Prefer:"resolution=merge-duplicates"}),body:JSON.stringify({id:obj.id,date:obj.date||"",data:obj})});if(!r.ok)alert("Supabase rejected the save ("+r.status+"). Check that the table and write policy exist.");}catch(e){alert("Backend unreachable, change not saved to the server.");}}
   else save();
 }
 async function removeOne(id){
@@ -513,7 +511,7 @@ async function uploadPdf(file){
       body:file});
     if(!r.ok){alert("Upload failed ("+r.status+"). Create a public Storage bucket named 'pdfs' with an insert policy.");return null;}
     return `${SB_BASE}/storage/v1/object/public/pdfs/${path}`;
-  }catch(e){alert("Upload failed — backend unreachable.");return null;}
+  }catch(e){alert("Upload failed, backend unreachable.");return null;}
 }
 function publicPubs(){return PUBS.filter(p=>!p.draft);}
 const byDate=(a,b)=>(b.date||"").localeCompare(a.date||"");
@@ -553,6 +551,27 @@ function _gpShow(onPick,onCancel){
 function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function fmt(d){if(!d)return"";const dt=new Date(d);return isNaN(dt)?d:dt.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}
 function bodyHtml(t){return (t||"").split(/\n{2,}/).map(b=>{b=b.trim();if(!b)return"";return b.startsWith("## ")?"<h3>"+esc(b.slice(3))+"</h3>":"<p>"+esc(b).replace(/\n/g,"<br>")+"</p>";}).join("");}
+function renderBody(b){b=b||"";return /<[a-z][\s\S]*>/i.test(b)?b:bodyHtml(b);}
+function rteImage(rte){
+  rte.focus();
+  const url=prompt("Image URL (https://...):");if(!url)return;
+  const cap=(prompt("Caption (optional):")||"").trim();
+  const safe=url.replace(/"/g,"&quot;");
+  const capHtml=cap?`<figcaption>${esc(cap)}</figcaption>`:"";
+  document.execCommand("insertHTML",false,`<figure class="a-fig"><img src="${safe}" alt="">${capHtml}</figure><p><br></p>`);
+}
+function rteTable(rte){
+  rte.focus();
+  let r=parseInt(prompt("Number of rows (including header):","3"),10);
+  let c=parseInt(prompt("Number of columns:","3"),10);
+  if(!r||!c||r<1||c<1)return;
+  let h='<table class="a-table"><thead><tr>';
+  for(let j=0;j<c;j++)h+="<th>Heading</th>";
+  h+="</tr></thead><tbody>";
+  for(let i=0;i<r-1;i++){h+="<tr>";for(let j=0;j<c;j++)h+="<td>&nbsp;</td>";h+="</tr>";}
+  h+="</tbody></table><p><br></p>";
+  document.execCommand("insertHTML",false,h);
+}
 function allTags(){const s=new Set();publicPubs().forEach(p=>(p.tags||[]).forEach(x=>s.add(x)));return[...s];}
 
 /* ---------- card markup ---------- */
@@ -598,10 +617,7 @@ function viewHome(){
 
   return `
   <section class="hero"><div class="wrap">
-    <span class="eyebrow">Geopolitics · Security · Regional affairs</span>
-    <h1>Independent analysis of a region in flux</h1>
-    <div class="role">Geopolitics, security and the post-Soviet space</div>
-    <p>Long-form publications alongside an interactive map and regional stats — reading the region soberly and with evidence.</p>
+    <h1>-</h1>
     <div class="cta">
       <a class="btn primary" href="#/publications">Read publications</a>
       <a class="btn ghost" href="#/maps">Explore the map</a>
@@ -610,48 +626,6 @@ function viewHome(){
 
   ${spotHtml}
 
-  <section class="section" style="padding-top:36px"><div class="wrap">
-    <div class="sec-head"><div><span class="kicker">What's here</span><h2>Three ways to explore</h2></div></div>
-    <div class="feature-grid">
-      <a class="fcard" href="#/publications">
-        <div class="fbar" style="background:var(--blue)"></div>
-        <div class="fbody">
-          <div class="ficon" style="background:var(--cyan)">
-            <svg width="22" height="22" fill="none" stroke="var(--navy)" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10"/></svg>
-          </div>
-          <span class="ftag">Publications · ${publicPubs().length} pieces</span>
-          <h3>Written analysis</h3>
-          <p>Articles in English and Greek on geopolitics, security and the post-Soviet space — some hosted here in full, others featured in external outlets like <em>The Perspective</em>.</p>
-          <span class="go">Browse all publications →</span>
-        </div>
-      </a>
-      <a class="fcard" href="#/maps">
-        <div class="fbar" style="background:var(--sky)"></div>
-        <div class="fbody">
-          <div class="ficon" style="background:#e0f0ff">
-            <svg width="22" height="22" fill="none" stroke="var(--blue)" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7l6-3 6 3 6-3v13l-6 3-6-3-6 3z"/><path d="M9 4v13M15 7v13"/></svg>
-          </div>
-          <span class="ftag">Maps &amp; Stats · De facto states</span>
-          <h3>States of the Caucasus</h3>
-          <p>A clickable vector map of the South Caucasus. Open any country or breakaway territory for recognition status, Freedom House scores and the next elections.</p>
-          <span class="go">Open the map →</span>
-        </div>
-      </a>
-      <a class="fcard" href="#/about">
-        <div class="fbar" style="background:#C065A8"></div>
-        <div class="fbody">
-          <div class="ficon" style="background:#f5e8f5">
-            <svg width="22" height="22" fill="none" stroke="#C065A8" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-          </div>
-          <span class="ftag">About · Timoleon Ilias</span>
-          <h3>About the author</h3>
-          <p>Who's behind t.ilias, the focus areas — security, minorities and regional geopolitics — and how to get in touch.</p>
-          <span class="go">Read more →</span>
-        </div>
-      </a>
-    </div>
-  </div></section>
-
   <section class="section"><div class="wrap">
     <div class="sec-head"><div><span class="kicker">Latest</span><h2>Recent publications</h2></div>
       <a class="more" href="#/publications">View all →</a></div>
@@ -659,12 +633,12 @@ function viewHome(){
   </div></section>
 
   <section class="section home-map-sec"><div class="wrap">
-    <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>The map at a glance</h2></div>
+    <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>Maps &amp; states</h2></div>
       <a class="more" href="#/maps">Open full map →</a></div>
     <div class="home-map-wrap">
       <div class="home-map-box" id="home-map"></div>
       <div class="home-map-txt">
-        <h3>States of the Caucasus</h3>
+        <h3>State entities of the South Caucasus</h3>
         <p>A clickable vector map of the South Caucasus. Tap any country or breakaway territory for recognition status, Freedom House scores, election calendars and leadership history.</p>
         <a class="btn primary" href="#/maps">Open the full map</a>
       </div>
@@ -683,8 +657,7 @@ function viewHome(){
       <a class="more" href="#/about">Full profile →</a></div>
     <div class="about-wrap">
       <div>
-        <p class="lead">t.ilias is the analytical platform of Timoleon Ilias — covering security, ethnic minorities and the geopolitics of the South Caucasus and the wider post-Soviet space.</p>
-        <p>The aim is sober, evidence-led reading of a fast-moving region: written analysis on one side, and interactive reference data — recognition status, Freedom House scores, election calendars — on the other.</p>
+        <p class="lead">-</p>
         <div class="cta"><a class="btn primary" href="#/about">More about the author</a>
           <a class="btn line" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">LinkedIn ↗</a></div>
       </div>
@@ -726,15 +699,12 @@ function viewCategory(raw){
 }
 function viewAbout(){
   return `<section class="hero" style="padding:46px 0 50px"><div class="wrap">
-    <span class="eyebrow">About</span><h1>Timoleon Ilias</h1>
-    <div class="role">Geopolitics &amp; security analyst — South Caucasus and the post-Soviet space</div>
+    <span class="eyebrow">About</span><h1 style="font-size:34px">Timoleon Ilias</h1>
   </div></section>
   <section class="section"><div class="wrap">
     <div class="about-wrap">
       <div>
-        <p class="lead">t.ilias is an independent platform for analysis of the South Caucasus and the wider post-Soviet space — its security dynamics, its de facto and breakaway states, its energy geopolitics and its ethnic minorities.</p>
-        <p>The work pairs long-form writing with interactive reference material: a clickable map of the region's recognised and unrecognised states, each annotated with recognition status, Freedom House ratings and election calendars. Some publications appear here in full; others are featured in external outlets such as <em>The Perspective</em>.</p>
-        <p>Writing in both English and Greek, the aim is the same throughout: a calm, evidence-led reading of a region where events move quickly and narratives move faster.</p>
+        <p class="lead">-</p>
         <div class="cta"><a class="btn primary" href="#/publications">Read the publications</a>
           <a class="btn line" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">Connect on LinkedIn ↗</a></div>
       </div>
@@ -764,7 +734,7 @@ function viewArticle(id){
   const main=isPdf
     ?`<div class="pdf-wrap"><iframe class="pdf-frame" src="${esc(pdfEmbedUrl(p.pdfUrl))}" title="${esc(p.title)}" allow="autoplay" loading="lazy"></iframe></div>
       <div class="pdf-actions"><a class="btn line" href="${esc(p.pdfUrl)}" target="_blank" rel="noopener">Open original ↗</a></div>`
-    :`<div class="content">${bodyHtml(p.body)||"<p>(No content yet.)</p>"}</div>`;
+    :`<div class="content">${renderBody(p.body)||"<p>(No content yet.)</p>"}</div>`;
   return `<article class="article ${isPdf?'article-wide':''}">
     <a class="back" href="#/publications">← All publications</a>
     <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span></div>
@@ -824,7 +794,7 @@ function viewCountry(key){
     <p class="country-desc">${esc(c.desc)}</p>
 
     <div class="sec-head" style="margin-top:34px"><div><span class="kicker">Leadership</span><h2>Office-holders over the years</h2>
-      <p>Heads of state, heads of government and foreign ministers — tap any name for details. A demo dataset, extend it in your own records.</p></div></div>
+      <p>Heads of state, heads of government and foreign ministers, tap any name for details. A demo dataset, extend it in your own records.</p></div></div>
     <div class="leaders-grid">${leaders}</div>
 
     ${rel.length?`<div class="sec-head" style="margin-top:34px"><div><span class="kicker">Reading</span><h2>Related publications</h2></div></div>
@@ -835,7 +805,7 @@ function viewCountry(key){
 /* ---------- Maps page ---------- */
 function viewMaps(){
   return `<section class="section map-page"><div class="wrap">
-    <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>States of the Caucasus</h2>
+    <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>State entities of the South Caucasus</h2>
       <p>Click a country or a breakaway territory for its status, recognition, Freedom House score, next elections and related publications (verified mid-2026).</p></div></div>
     <div class="map-layout">
       <div id="svgmap-wrap"></div>
@@ -846,7 +816,7 @@ function viewMaps(){
 }
 
 /* =====================================================================
-   SVG Vector Map Engine — real boundaries, aspect-correct projection
+   SVG Vector Map Engine, real boundaries, aspect-correct projection
    ===================================================================== */
 const COUNTRIES_GEO={"GEO":{"name":"Georgia","geometry":{"type":"Polygon","coordinates":[[[43.439,41.107],[43.433,41.156],[43.402,41.177],[43.205,41.199],[43.153,41.236],[43.141,41.265],[43.171,41.288],[43.149,41.307],[43.057,41.353],[42.907,41.467],[42.822,41.492],[42.788,41.564],[42.754,41.579],[42.607,41.579],[42.567,41.559],[42.508,41.47],[42.466,41.44],[42.211,41.487],[41.926,41.496],[41.824,41.432],[41.51,41.517],[41.702,41.705],[41.759,41.817],[41.763,41.97],[41.663,42.147],[41.489,42.659],[41.419,42.738],[41.129,42.828],[41.062,42.931],[40.837,43.063],[40.524,43.121],[40.462,43.146],[40.191,43.312],[39.978,43.42],[40.085,43.553],[40.15,43.57],[40.519,43.512],[40.648,43.534],[41.083,43.374],[41.358,43.333],[41.581,43.219],[42.05,43.19],[42.28,43.228],[42.419,43.224],[42.566,43.155],[42.761,43.17],[42.992,43.092],[43.0,43.05],[43.089,42.989],[43.348,42.897],[43.558,42.844],[43.783,42.747],[43.799,42.728],[43.795,42.703],[43.75,42.658],[43.738,42.617],[43.76,42.594],[43.826,42.572],[43.957,42.567],[44.005,42.596],[44.103,42.616],[44.329,42.704],[44.506,42.749],[44.644,42.735],[44.692,42.71],[44.771,42.617],[44.85,42.747],[44.871,42.756],[45.16,42.675],[45.344,42.53],[45.563,42.536],[45.656,42.518],[45.728,42.475],[45.634,42.235],[45.639,42.205],[45.846,42.11],[45.954,42.035],[46.213,41.99],[46.43,41.891],[46.348,41.79],[46.303,41.757],[46.202,41.737],[46.184,41.702],[46.191,41.625],[46.255,41.602],[46.305,41.508],[46.619,41.344],[46.673,41.287],[46.626,41.16],[46.534,41.089],[46.458,41.07],[46.171,41.198],[46.031,41.167],[45.793,41.224],[45.696,41.289],[45.716,41.338],[45.422,41.425],[45.281,41.45],[44.976,41.277],[44.811,41.259],[44.849,41.22],[44.841,41.211],[44.565,41.208],[44.473,41.191],[44.227,41.213],[43.793,41.131],[43.439,41.107]]]}},"ARM":{"name":"Armenia","geometry":{"type":"MultiPolygon","coordinates":[[[[44.768,39.704],[44.56,39.888],[44.4,39.996],[44.289,40.04],[44.005,40.014],[43.792,40.07],[43.666,40.126],[43.71,40.167],[43.608,40.357],[43.616,40.393],[43.569,40.482],[43.668,40.574],[43.713,40.648],[43.723,40.72],[43.632,40.929],[43.592,40.968],[43.517,41.005],[43.455,41.065],[43.439,41.107],[43.793,41.131],[44.227,41.213],[44.473,41.191],[44.565,41.208],[44.841,41.211],[44.849,41.22],[44.811,41.259],[45.001,41.291],[45.023,41.246],[45.085,41.195],[45.189,41.147],[45.19,41.126],[45.071,41.101],[45.071,41.076],[45.273,41.006],[45.369,41.005],[45.419,40.986],[45.444,40.948],[45.587,40.847],[45.579,40.804],[45.401,40.707],[45.379,40.674],[45.376,40.638],[45.454,40.532],[45.57,40.417],[45.965,40.234],[45.968,40.175],[45.886,40.025],[45.858,40.011],[45.63,40.014],[45.596,40.003],[45.58,39.978],[45.662,39.956],[45.79,39.881],[45.863,39.808],[45.94,39.777],[46.202,39.594],[46.322,39.617],[46.481,39.555],[46.478,39.475],[46.378,39.434],[46.365,39.402],[46.585,39.224],[46.55,39.201],[46.42,39.207],[46.4,39.192],[46.401,39.168],[46.475,39.111],[46.49,39.069],[46.491,38.907],[46.318,38.913],[46.17,38.869],[46.114,38.878],[45.952,39.178],[45.977,39.244],[45.766,39.378],[45.796,39.488],[45.784,39.546],[45.75,39.563],[45.611,39.55],[45.457,39.494],[45.35,39.53],[45.253,39.595],[45.173,39.571],[45.153,39.583],[45.149,39.657],[45.125,39.696],[45.032,39.765],[44.768,39.704]],[[45.024,41.027],[45.021,41.078],[44.961,41.079],[44.969,41.027],[45.002,41.016],[45.024,41.027]]],[[[45.552,40.616],[45.514,40.6],[45.479,40.607],[45.479,40.648],[45.534,40.664],[45.562,40.649],[45.552,40.616]]]]}},"AZE":{"name":"Azerbaijan","geometry":{"type":"MultiPolygon","coordinates":[[[[45.0,39.424],[44.768,39.704],[45.032,39.765],[45.125,39.696],[45.149,39.657],[45.153,39.583],[45.173,39.571],[45.253,39.595],[45.35,39.53],[45.457,39.494],[45.687,39.564],[45.75,39.563],[45.784,39.546],[45.796,39.488],[45.766,39.378],[45.977,39.244],[45.952,39.178],[46.114,38.878],[45.575,38.973],[45.48,39.006],[45.336,39.139],[45.141,39.254],[45.072,39.363],[45.0,39.424]]],[[[48.869,38.435],[48.636,38.399],[48.593,38.411],[48.417,38.586],[48.381,38.606],[48.306,38.613],[48.261,38.642],[48.205,38.724],[48.023,38.819],[47.996,38.854],[47.993,38.884],[48.05,38.935],[48.242,38.979],[48.292,39.019],[48.274,39.099],[48.125,39.172],[48.104,39.241],[48.136,39.312],[48.257,39.355],[48.322,39.399],[48.282,39.448],[47.996,39.684],[47.892,39.685],[47.773,39.649],[47.476,39.498],[47.188,39.341],[46.989,39.18],[46.853,39.148],[46.555,38.904],[46.491,38.907],[46.49,39.069],[46.475,39.111],[46.401,39.168],[46.4,39.192],[46.42,39.207],[46.55,39.201],[46.585,39.224],[46.365,39.402],[46.378,39.434],[46.478,39.475],[46.481,39.555],[46.322,39.617],[46.202,39.594],[45.94,39.777],[45.863,39.808],[45.79,39.881],[45.662,39.956],[45.58,39.978],[45.596,40.003],[45.63,40.014],[45.858,40.011],[45.886,40.025],[45.968,40.175],[45.965,40.234],[45.57,40.417],[45.454,40.532],[45.376,40.638],[45.379,40.674],[45.401,40.707],[45.579,40.804],[45.587,40.847],[45.444,40.948],[45.419,40.986],[45.369,41.005],[45.273,41.006],[45.071,41.076],[45.071,41.101],[45.19,41.126],[45.189,41.147],[45.085,41.195],[45.023,41.246],[45.001,41.291],[45.281,41.45],[45.422,41.425],[45.716,41.338],[45.696,41.289],[45.725,41.262],[45.793,41.224],[45.922,41.187],[46.031,41.167],[46.171,41.198],[46.431,41.077],[46.534,41.089],[46.626,41.16],[46.673,41.287],[46.619,41.344],[46.305,41.508],[46.255,41.602],[46.204,41.613],[46.182,41.657],[46.202,41.737],[46.303,41.757],[46.348,41.79],[46.43,41.891],[46.538,41.87],[46.552,41.812],[46.571,41.8],[46.69,41.831],[46.749,41.813],[46.988,41.621],[47.01,41.587],[47.143,41.516],[47.205,41.456],[47.261,41.315],[47.318,41.282],[47.521,41.229],[47.791,41.199],[47.861,41.213],[48.056,41.459],[48.298,41.545],[48.391,41.602],[48.573,41.844],[48.665,41.787],[49.051,41.374],[49.107,41.302],[49.175,41.116],[49.226,41.026],[49.457,40.8],[49.556,40.716],[49.776,40.584],[49.991,40.577],[50.183,40.505],[50.307,40.412],[50.366,40.279],[50.143,40.323],[49.919,40.316],[49.669,40.249],[49.551,40.194],[49.477,40.087],[49.415,39.84],[49.324,39.608],[49.328,39.501],[49.367,39.398],[49.363,39.35],[49.269,39.285],[49.2,39.073],[49.165,39.03],[49.121,39.004],[49.111,39.085],[49.013,39.134],[48.962,39.079],[48.926,38.962],[48.854,38.839],[48.869,38.435]],[[45.552,40.616],[45.562,40.649],[45.534,40.664],[45.479,40.648],[45.479,40.607],[45.514,40.6],[45.552,40.616]]],[[[45.024,41.027],[45.002,41.016],[44.969,41.027],[44.961,41.079],[45.021,41.078],[45.024,41.027]]]]}},"TUR":{"name":"Turkey","geometry":{"type":"Polygon","coordinates":[[[41.51,41.517],[41.824,41.432],[41.926,41.496],[42.211,41.487],[42.466,41.44],[42.508,41.47],[42.567,41.559],[42.607,41.579],[42.682,41.586],[42.788,41.564],[42.822,41.492],[42.907,41.467],[43.057,41.353],[43.171,41.288],[43.141,41.265],[43.153,41.236],[43.205,41.199],[43.359,41.19],[43.433,41.156],[43.455,41.065],[43.632,40.929],[43.723,40.72],[43.713,40.648],[43.668,40.574],[43.569,40.482],[43.616,40.393],[43.608,40.357],[43.71,40.167],[43.666,40.126],[43.942,40.023],[44.005,40.014],[44.289,40.04],[44.4,39.996],[44.734,39.746],[44.817,39.65],[44.782,39.651],[44.587,39.769],[44.517,39.731],[44.456,39.667],[44.389,39.422],[44.335,39.396],[44.124,39.405],[44.023,39.377],[44.058,39.311],[44.079,39.218],[44.178,39.145],[44.172,39.056],[44.145,38.994],[44.171,38.934],[44.272,38.836],[44.257,38.701],[44.298,38.558],[44.299,38.386],[44.431,38.357],[44.45,38.334],[44.45,38.318],[44.381,38.255],[44.349,38.146],[44.268,38.039],[44.211,37.908],[44.223,37.88],[44.336,37.872],[44.561,37.745],[44.59,37.71],[44.545,37.658],[44.577,37.56],[44.574,37.435],[44.715,37.357],[44.794,37.29],[44.797,37.27],[44.758,37.217],[44.765,37.142],[44.731,37.165],[44.606,37.176],[44.282,36.978],[44.246,36.983],[44.202,37.052],[44.208,37.203],[44.192,37.25],[44.114,37.302],[44.013,37.314],[43.836,37.224],[43.676,37.227],[43.516,37.245],[43.092,37.367],[42.937,37.325],[42.775,37.372],[42.741,37.362],[42.635,37.249],[42.456,37.129],[42.359,37.109],[42.313,37.23],[42.269,37.277],[42.203,37.297],[42.168,37.289],[42.06,37.206],[41.887,37.156],[41.516,37.089],[41.265,37.069],[40.959,37.109],[40.706,37.098],[40.45,37.009],[40.016,36.826],[39.687,36.739],[39.357,36.682],[38.767,36.693],[38.689,36.715],[38.444,36.862],[38.192,36.902],[37.436,36.643],[37.066,36.653],[36.985,36.702],[36.942,36.758],[36.659,36.803],[36.628,36.778],[36.597,36.701],[36.538,36.457],[36.641,36.264],[36.637,36.234],[36.477,36.221],[36.375,36.171],[36.348,36.004],[36.0,36.0],[36.0,36.498],[36.188,36.659],[36.18,36.807],[36.049,36.911],[36.0,36.889],[36.0,41.698],[36.052,41.683],[36.179,41.427],[36.278,41.336],[36.405,41.275],[36.51,41.263],[36.587,41.327],[36.647,41.353],[36.778,41.363],[36.992,41.275],[37.066,41.184],[37.431,41.114],[37.766,41.079],[37.91,41.002],[38.381,40.925],[38.557,40.937],[38.852,41.018],[39.426,41.106],[39.808,40.983],[39.911,40.966],[40.0,40.977],[40.128,40.943],[40.265,40.961],[40.688,41.107],[40.82,41.19],[40.959,41.212],[41.084,41.261],[41.414,41.424],[41.51,41.517]]]}},"IRN":{"name":"Iran","geometry":{"type":"Polygon","coordinates":[[[52.2,36.0],[45.362,36.015],[45.241,36.356],[45.207,36.397],[45.112,36.409],[45.084,36.43],[45.031,36.526],[45.034,36.659],[45.019,36.698],[44.881,36.799],[44.765,37.135],[44.758,37.217],[44.797,37.27],[44.794,37.29],[44.715,37.357],[44.574,37.435],[44.577,37.56],[44.545,37.658],[44.59,37.71],[44.561,37.745],[44.336,37.872],[44.223,37.88],[44.211,37.908],[44.268,38.039],[44.349,38.146],[44.381,38.255],[44.45,38.318],[44.45,38.334],[44.431,38.357],[44.299,38.386],[44.298,38.558],[44.257,38.701],[44.272,38.836],[44.171,38.934],[44.145,38.994],[44.172,39.056],[44.178,39.145],[44.079,39.218],[44.058,39.311],[44.023,39.377],[44.124,39.405],[44.335,39.396],[44.389,39.422],[44.456,39.667],[44.517,39.731],[44.587,39.769],[44.782,39.651],[44.817,39.65],[45.0,39.424],[45.072,39.363],[45.141,39.254],[45.336,39.139],[45.48,39.006],[45.575,38.973],[46.17,38.869],[46.318,38.913],[46.555,38.904],[46.853,39.148],[46.989,39.18],[47.188,39.341],[47.338,39.424],[47.773,39.649],[47.892,39.685],[47.996,39.684],[48.282,39.448],[48.322,39.399],[48.257,39.355],[48.136,39.312],[48.104,39.241],[48.125,39.172],[48.274,39.099],[48.292,39.019],[48.242,38.979],[48.05,38.935],[47.993,38.884],[47.996,38.854],[48.023,38.819],[48.205,38.724],[48.261,38.642],[48.306,38.613],[48.381,38.606],[48.417,38.586],[48.593,38.411],[48.636,38.399],[48.869,38.435],[48.901,38.144],[48.96,37.89],[49.081,37.668],[49.171,37.601],[49.372,37.52],[49.47,37.497],[49.727,37.481],[49.981,37.445],[50.13,37.407],[50.214,37.34],[50.338,37.149],[50.533,37.014],[50.927,36.81],[51.119,36.743],[51.762,36.615],[52.2,36.624],[52.2,36.0]]]}},"RUS":{"name":"Russia","geometry":{"type":"MultiPolygon","coordinates":[[[[46.609,48.574],[46.661,48.412],[46.853,48.324],[47.004,48.284],[47.065,48.232],[47.119,48.127],[47.093,47.948],[47.131,47.877],[47.202,47.792],[47.292,47.741],[47.482,47.804],[48.11,47.745],[48.167,47.709],[48.553,47.321],[48.959,46.775],[48.95,46.726],[48.884,46.705],[48.776,46.71],[48.605,46.766],[48.558,46.757],[48.519,46.734],[48.502,46.699],[48.509,46.65],[48.541,46.606],[48.61,46.566],[49.232,46.337],[49.246,46.292],[49.125,46.282],[49.111,46.228],[49.08,46.189],[48.81,46.1],[48.684,46.086],[48.703,45.976],[48.75,45.921],[48.73,45.897],[48.69,45.889],[48.589,45.935],[48.487,45.935],[48.258,45.778],[48.159,45.737],[47.83,45.663],[47.701,45.686],[47.65,45.657],[47.633,45.584],[47.508,45.674],[47.463,45.68],[47.524,45.602],[47.529,45.53],[47.515,45.491],[47.489,45.455],[47.413,45.421],[47.391,45.295],[47.351,45.218],[47.221,45.024],[47.115,44.906],[47.084,44.817],[47.003,44.876],[46.957,44.783],[46.755,44.657],[46.716,44.561],[46.707,44.503],[46.721,44.452],[46.753,44.421],[46.916,44.387],[47.024,44.343],[47.23,44.192],[47.307,44.103],[47.362,43.993],[47.429,43.78],[47.463,43.555],[47.563,43.835],[47.646,43.885],[47.509,43.51],[47.49,43.382],[47.513,43.219],[47.463,43.035],[47.529,42.967],[47.635,42.903],[47.709,42.811],[47.728,42.681],[47.822,42.613],[48.08,42.354],[48.229,42.181],[48.384,41.953],[48.573,41.844],[48.391,41.602],[48.298,41.545],[48.056,41.459],[47.861,41.213],[47.791,41.199],[47.592,41.218],[47.318,41.282],[47.261,41.315],[47.205,41.456],[47.143,41.516],[47.01,41.587],[46.988,41.621],[46.749,41.813],[46.69,41.831],[46.571,41.8],[46.552,41.812],[46.538,41.87],[46.43,41.891],[46.213,41.99],[45.954,42.035],[45.846,42.11],[45.639,42.205],[45.634,42.235],[45.728,42.475],[45.705,42.498],[45.563,42.536],[45.344,42.53],[45.16,42.675],[44.871,42.756],[44.85,42.747],[44.771,42.617],[44.692,42.71],[44.644,42.735],[44.506,42.749],[44.329,42.704],[44.103,42.616],[44.005,42.596],[43.957,42.567],[43.826,42.572],[43.76,42.594],[43.738,42.617],[43.75,42.658],[43.795,42.703],[43.799,42.728],[43.783,42.747],[43.558,42.844],[43.348,42.897],[43.089,42.989],[43.0,43.05],[42.992,43.092],[42.761,43.17],[42.566,43.155],[42.419,43.224],[42.28,43.228],[42.05,43.19],[41.581,43.219],[41.358,43.333],[41.083,43.374],[40.648,43.534],[40.519,43.512],[40.15,43.57],[40.085,43.553],[39.978,43.42],[39.874,43.473],[39.517,43.728],[39.329,43.897],[38.717,44.288],[38.636,44.318],[38.312,44.374],[38.181,44.42],[37.851,44.699],[37.705,44.661],[37.572,44.671],[37.495,44.695],[37.411,44.735],[37.352,44.788],[37.284,44.905],[37.205,44.972],[36.944,45.07],[36.651,45.126],[36.628,45.151],[36.619,45.185],[36.873,45.252],[36.941,45.29],[36.72,45.372],[36.866,45.427],[36.978,45.384],[37.104,45.303],[37.214,45.272],[37.264,45.311],[37.647,45.377],[37.673,45.43],[37.672,45.488],[37.61,45.5],[37.612,45.565],[37.669,45.654],[37.841,45.8],[37.933,46.002],[38.014,46.048],[38.074,46.017],[38.08,45.935],[38.184,46.095],[38.4,46.08],[38.492,46.091],[38.315,46.242],[38.078,46.394],[37.978,46.383],[37.914,46.406],[37.81,46.532],[37.767,46.636],[37.968,46.618],[38.159,46.691],[38.23,46.701],[38.501,46.664],[38.488,46.732],[38.439,46.813],[38.631,46.873],[38.801,46.906],[39.127,47.023],[39.271,47.044],[39.293,47.106],[39.196,47.269],[39.024,47.272],[38.928,47.176],[38.668,47.144],[38.552,47.15],[38.644,47.212],[38.736,47.236],[38.762,47.262],[38.577,47.239],[38.485,47.176],[38.214,47.091],[38.201,47.175],[38.221,47.213],[38.265,47.237],[38.281,47.277],[38.208,47.297],[38.201,47.321],[38.257,47.409],[38.259,47.48],[38.287,47.559],[38.369,47.61],[38.511,47.622],[38.641,47.666],[38.719,47.714],[38.822,47.837],[38.9,47.855],[39.391,47.834],[39.736,47.845],[39.779,47.888],[39.776,47.964],[39.885,48.168],[39.961,48.238],[39.958,48.269],[39.847,48.303],[39.85,48.332],[39.89,48.36],[39.836,48.543],[39.648,48.6],[46.62,48.6],[46.609,48.574]]],[[[47.968,45.47],[47.92,45.562],[47.918,45.618],[47.947,45.647],[47.987,45.554],[47.983,45.488],[47.968,45.47]]],[[[36.0,45.374],[36.077,45.424],[36.171,45.453],[36.29,45.457],[36.575,45.394],[36.451,45.232],[36.393,45.065],[36.23,45.026],[36.0,45.023],[36.0,45.374]]]]}}};
 const FOCUS=new Set(["GEO","ARM","AZE"]);
@@ -855,52 +825,119 @@ const COUNTRY_ORDER=["armenia","azerbaijan","georgia"];
 const COUNTRIES_INFO={
   georgia:{iso:"GEO",name:"Georgia",color:"#1C4D8D",capital:"Tbilisi",population:"~3.7 million",
     government:"Parliamentary republic",fh:{score:51,label:"Partly Free"},
-    elections:"Parliamentary: 2028 (next) · last Oct 2024",status:"EU candidate (2023)",
+    elections:"Parliamentary: 2028 (next), last Oct 2024",status:"EU candidate (2023)",
     match:["Georgia","Black Sea","Caucasus","Abkhazia","South Ossetia"],
     desc:"An EU candidate since December 2023, though accession is effectively frozen amid the ruling Georgian Dream party's authoritarian turn and sustained protests since 2024. Tbilisi does not control Abkhazia or South Ossetia.",
     leaders:{
       "Heads of state (President)":[
-        {n:"Mikheil Kavelashvili",y:"2024–present",i:"Former footballer and far-right MP; elected president by an electoral college in December 2024, in a vote the opposition and the outgoing president rejected as illegitimate."},{n:"Salome Zourabichvili",y:"2018–2024",i:"French-born career diplomat and Georgia's first woman president. She broke with the ruling party and disputed the legitimacy of the 2024 transition."},
-        {n:"Giorgi Margvelashvili",y:"2013–2018"},{n:"Mikheil Saakashvili",y:"2008–2013",i:"Leader of the 2003 Rose Revolution who modernised the state, but whose later years brought authoritarian drift and the 2008 war with Russia. Later imprisoned."},
-        {n:"Mikheil Saakashvili",y:"2004–2007"}],
+        {n:"Mikheil Kavelashvili",y:"2024-present",i:"Former footballer and far-right MP; elected president by an electoral college in December 2024, in a vote the opposition and the outgoing president rejected as illegitimate."},
+        {n:"Salome Zourabichvili",y:"2018-2024",i:"French-born career diplomat and Georgia's first woman president. She broke with the ruling party and disputed the legitimacy of the 2024 transition."},
+        {n:"Giorgi Margvelashvili",y:"2013-2018"},
+        {n:"Nino Burjanadze",y:"2007-2008 (acting)"},
+        {n:"Mikheil Saakashvili",y:"2008-2013",i:"Leader of the 2003 Rose Revolution who modernised the state, but whose later years brought authoritarian drift and the 2008 war with Russia. Later imprisoned."},
+        {n:"Mikheil Saakashvili",y:"2004-2007"},
+        {n:"Nino Burjanadze",y:"2003-2004 (acting)"},
+        {n:"Eduard Shevardnadze",y:"1992-2003",i:"Former Soviet foreign minister who led Georgia through the turbulent 1990s, first as head of state and then as president, until the 2003 Rose Revolution forced him out."},
+        {n:"Zviad Gamsakhurdia",y:"1991-1992",i:"Dissident and Georgia's first post-Soviet president, ousted in an armed coup in January 1992."}],
       "Heads of government (PM)":[
-        {n:"Irakli Kobakhidze",y:"2024–present",i:"Georgian Dream chairman and prime minister, associated with the 'foreign agents' law and the turn away from the EU accession path."},{n:"Irakli Garibashvili",y:"2021–2024",i:"Two-term prime minister (2013–2015, 2021–2024) and a close ally of party founder Bidzina Ivanishvili."},
-        {n:"Giorgi Gakharia",y:"2019–2021"},{n:"Mamuka Bakhtadze",y:"2018–2019"},
-        {n:"Giorgi Kvirikashvili",y:"2015–2018"}],
+        {n:"Irakli Kobakhidze",y:"2024-present",i:"Georgian Dream chairman and prime minister, associated with the 'foreign agents' law and the turn away from the EU accession path."},
+        {n:"Irakli Garibashvili",y:"2021-2024",i:"Two-term prime minister (2013-2015, 2021-2024) and a close ally of party founder Bidzina Ivanishvili."},
+        {n:"Giorgi Gakharia",y:"2019-2021"},
+        {n:"Mamuka Bakhtadze",y:"2018-2019"},
+        {n:"Giorgi Kvirikashvili",y:"2015-2018"},
+        {n:"Irakli Garibashvili",y:"2013-2015"},
+        {n:"Bidzina Ivanishvili",y:"2012-2013",i:"Billionaire founder of Georgian Dream and the country's dominant political figure, widely seen as its informal ruler well beyond his year as PM."},
+        {n:"Vano Merabishvili",y:"2012"},
+        {n:"Nika Gilauri",y:"2009-2012"},
+        {n:"Grigol Mgaloblishvili",y:"2008-2009"},
+        {n:"Lado Gurgenidze",y:"2007-2008"},
+        {n:"Zurab Noghaideli",y:"2005-2007"},
+        {n:"Zurab Zhvania",y:"2004-2005",i:"Reformist first PM after the office was restored in 2004; died in office in February 2005 in disputed circumstances."},
+        {n:"Otar Patsatsia",y:"1993-1995"},
+        {n:"Tengiz Sigua",y:"1991-1992"}],
       "Foreign ministers":[
-        {n:"Maka Bochorishvili",y:"2024–present",i:"Career diplomat serving as foreign minister since late 2024, and later also deputy prime minister."},{n:"Ilia Darchiashvili",y:"2022–2024"},
-        {n:"David Zalkaliani",y:"2018–2022"},{n:"Mikheil Janelidze",y:"2016–2018"}]
+        {n:"Maka Bochorishvili",y:"2024-present",i:"Career diplomat serving as foreign minister since late 2024, and later also deputy prime minister."},
+        {n:"Ilia Darchiashvili",y:"2022-2024"},
+        {n:"David Zalkaliani",y:"2018-2022"},
+        {n:"Mikheil Janelidze",y:"2016-2018"},
+        {n:"Giorgi Kvirikashvili",y:"2015-2016"},
+        {n:"Tamar Beruchashvili",y:"2014-2015"},
+        {n:"Maia Panjikidze",y:"2012-2014"},
+        {n:"Grigol Vashadze",y:"2008-2012"},
+        {n:"Eka Tkeshelashvili",y:"2008"},
+        {n:"Gela Bezhuashvili",y:"2005-2008"},
+        {n:"Salome Zourabichvili",y:"2004-2005"},
+        {n:"Tedo Japaridze",y:"2003-2004"},
+        {n:"Irakli Menagarishvili",y:"1995-2003"},
+        {n:"Alexander Chikvaidze",y:"1992-1995"},
+        {n:"Giorgi Khoshtaria",y:"1991-1992"}]
     }},
   armenia:{iso:"ARM",name:"Armenia",color:"#4E8D6E",capital:"Yerevan",population:"~2.7 million",
     government:"Parliamentary republic",fh:{score:54,label:"Partly Free"},
-    elections:"Parliamentary: held 7 June 2026 · next ~2031",status:"CSTO member (participation frozen)",
+    elections:"Parliamentary: held 7 June 2026, next ~2031",status:"CSTO member (participation frozen)",
     match:["Armenia","Artsakh","Nagorno-Karabakh","Caucasus"],
     desc:"Under PM Nikol Pashinyan, Armenia has pivoted westward and away from Russia since 2022, especially after losing Nagorno-Karabakh in 2023. A peace-treaty text with Azerbaijan was agreed in 2025 but remains unsigned; the June 2026 election was framed as a referendum on that course.",
     leaders:{
       "Heads of state (President)":[
-        {n:"Vahagn Khachaturyan",y:"2022–present",i:"Economist and former Yerevan mayor who holds the largely ceremonial presidency."},{n:"Armen Sarkissian",y:"2018–2022"},
-        {n:"Serzh Sargsyan",y:"2008–2018",i:"President 2008–2018; his bid to stay on as prime minister triggered the 2018 protests that brought Pashinyan to power."},{n:"Robert Kocharyan",y:"1998–2008",i:"President 1998–2008 and earlier the de facto leader of Nagorno-Karabakh; later a leading opposition figure."}],
+        {n:"Vahagn Khachaturyan",y:"2022-present",i:"Economist and former Yerevan mayor who holds the largely ceremonial presidency."},
+        {n:"Armen Sarkissian",y:"2018-2022"},
+        {n:"Serzh Sargsyan",y:"2008-2018",i:"President 2008-2018; his bid to stay on as prime minister triggered the 2018 protests that brought Pashinyan to power."},
+        {n:"Robert Kocharyan",y:"1998-2008",i:"President 1998-2008 and earlier the de facto leader of Nagorno-Karabakh; later a leading opposition figure."},
+        {n:"Levon Ter-Petrosyan",y:"1991-1998",i:"Independence-era scholar and Armenia's first president, who resigned in 1998 over his comparatively conciliatory line on Nagorno-Karabakh."}],
       "Heads of government (PM)":[
-        {n:"Nikol Pashinyan",y:"2018–present",i:"Journalist-turned-prime-minister who came to power in the 2018 Velvet Revolution. He has steered Armenia westward and agreed the 2025 peace-treaty text with Azerbaijan."},{n:"Karen Karapetyan",y:"2016–2018"},
-        {n:"Hovik Abrahamyan",y:"2014–2016"},{n:"Tigran Sargsyan",y:"2008–2014"}],
+        {n:"Nikol Pashinyan",y:"2018-present",i:"Journalist-turned-prime-minister who came to power in the 2018 Velvet Revolution. He has steered Armenia westward and agreed the 2025 peace-treaty text with Azerbaijan."},
+        {n:"Karen Karapetyan",y:"2016-2018"},
+        {n:"Hovik Abrahamyan",y:"2014-2016"},
+        {n:"Tigran Sargsyan",y:"2008-2014"},
+        {n:"Serzh Sargsyan",y:"2007-2008"},
+        {n:"Andranik Margaryan",y:"2000-2007"},
+        {n:"Aram Sargsyan",y:"1999-2000"},
+        {n:"Vazgen Sargsyan",y:"1999",i:"Powerful defence minister and PM, assassinated alongside other officials in the October 1999 attack on the Armenian parliament."},
+        {n:"Armen Darbinyan",y:"1998-1999"},
+        {n:"Robert Kocharyan",y:"1997-1998"},
+        {n:"Hrant Bagratyan",y:"1993-1996"},
+        {n:"Khosrov Harutyunyan",y:"1992-1993"},
+        {n:"Gagik Harutyunyan",y:"1991-1992 (acting)"},
+        {n:"Vazgen Manukyan",y:"1990-1991"}],
       "Foreign ministers":[
-        {n:"Ararat Mirzoyan",y:"2021–present",i:"Foreign minister since 2021, central to the normalisation talks with Azerbaijan and Turkiye."},{n:"Ara Aivazian",y:"2020–2021"},
-        {n:"Zohrab Mnatsakanyan",y:"2018–2020"},{n:"Edward Nalbandian",y:"2008–2018"}]
+        {n:"Ararat Mirzoyan",y:"2021-present",i:"Foreign minister since 2021, central to the normalisation talks with Azerbaijan and Turkiye."},
+        {n:"Ara Aivazian",y:"2020-2021"},
+        {n:"Zohrab Mnatsakanyan",y:"2018-2020"},
+        {n:"Edward Nalbandian",y:"2008-2018"},
+        {n:"Vartan Oskanian",y:"1998-2008"},
+        {n:"Alexander Arzoumanian",y:"1996-1998"},
+        {n:"Vahan Papazian",y:"1993-1996"},
+        {n:"Raffi Hovannisian",y:"1991-1992",i:"US-born lawyer and Armenia's first foreign minister, later a prominent opposition leader."}]
     }},
   azerbaijan:{iso:"AZE",name:"Azerbaijan",color:"#2E6E8E",capital:"Baku",population:"~10.2 million",
     government:"Presidential republic (dominant-party)",fh:{score:6,label:"Not Free"},
-    elections:"Presidential: ~2031 · Parliamentary: ~2029",status:"Non-aligned · major energy exporter",
+    elections:"Presidential: ~2031, Parliamentary: ~2029",status:"Non-aligned, major energy exporter",
     match:["Azerbaijan","Energy","Caucasus"],
     desc:"A hydrocarbon-rich, tightly controlled state run by the Aliyev family. Baku regained full control of Nagorno-Karabakh in 2023 and negotiates with Armenia from a position of strength while resisting compromise.",
     leaders:{
       "Heads of state (President)":[
-        {n:"Ilham Aliyev",y:"2003–present",i:"President since 2003, succeeding his father Heydar. He oversaw the 2020 and 2023 campaigns that returned Nagorno-Karabakh to Azerbaijani control."},{n:"Heydar Aliyev",y:"1993–2003",i:"Soviet-era Politburo member who ruled independent Azerbaijan from 1993 to 2003, founding the dynasty that still governs."},
-        {n:"Abulfaz Elchibey",y:"1992–1993"}],
+        {n:"Ilham Aliyev",y:"2003-present",i:"President since 2003, succeeding his father Heydar. He oversaw the 2020 and 2023 campaigns that returned Nagorno-Karabakh to Azerbaijani control."},
+        {n:"Heydar Aliyev",y:"1993-2003",i:"Soviet-era Politburo member who ruled independent Azerbaijan from 1993 to 2003, founding the dynasty that still governs."},
+        {n:"Abulfaz Elchibey",y:"1992-1993",i:"Nationalist intellectual and first popularly elected president, ousted in a 1993 rebellion that paved the way for Heydar Aliyev."},
+        {n:"Ayaz Mutallibov",y:"1991-1992",i:"Last Soviet-era Communist leader of Azerbaijan and its first president, forced out amid defeats in the first Nagorno-Karabakh war."}],
       "Heads of government (PM)":[
-        {n:"Ali Asadov",y:"2019–present",i:"Prime minister since 2019, in a system where executive power rests with the president."},{n:"Novruz Mammadov",y:"2018–2019"},
-        {n:"Artur Rasizade",y:"2003–2018"}],
+        {n:"Ali Asadov",y:"2019-present",i:"Prime minister since 2019, in a system where executive power rests firmly with the president."},
+        {n:"Novruz Mammadov",y:"2018-2019"},
+        {n:"Artur Rasizade",y:"2003-2018"},
+        {n:"Ilham Aliyev",y:"2003"},
+        {n:"Artur Rasizade",y:"1996-2003"},
+        {n:"Fuad Guliyev",y:"1994-1996"},
+        {n:"Surat Huseynov",y:"1993-1994"},
+        {n:"Panah Huseynov",y:"1993"},
+        {n:"Rahim Huseynov",y:"1992-1993"},
+        {n:"Hasan Hasanov",y:"1991-1992"}],
       "Foreign ministers":[
-        {n:"Jeyhun Bayramov",y:"2020–present",i:"Foreign minister since 2020, leading the negotiations with Armenia."},{n:"Elmar Mammadyarov",y:"2004–2020"}]
+        {n:"Jeyhun Bayramov",y:"2020-present",i:"Foreign minister since 2020, leading the negotiations with Armenia."},
+        {n:"Elmar Mammadyarov",y:"2004-2020",i:"Long-serving foreign minister whose 2020 dismissal preceded that year's Nagorno-Karabakh war."},
+        {n:"Vilayat Guliyev",y:"1999-2004"},
+        {n:"Tofig Zulfugarov",y:"1998-1999"},
+        {n:"Hasan Hasanov",y:"1993-1998"},
+        {n:"Tofig Gasymov",y:"1992-1993"}]
     }}
 };
 const VIEW={lonMin:39.2,lonMax:50.8,latMin:38.2,latMax:44.3,W:900};
@@ -913,9 +950,9 @@ function ringsOf(g){if(g.type==="Polygon")return g.coordinates;const r=[];g.coor
 function geoPathD(g){return ringsOf(g).map(ring=>ring.map(([lon,lat],i)=>{const[x,y]=proj(lat,lon);return(i===0?"M":"L")+x.toFixed(1)+","+y.toFixed(1);}).join("")+"Z").join(" ");}
 
 const TERRITORIES_POLY={
-  abkhazia:[[43.39,40.01],[43.55,40.35],[43.50,40.85],[43.35,41.30],[43.10,41.75],[42.85,41.90],[42.60,41.75],[42.51,41.55],[42.70,41.20],[42.95,40.80],[43.15,40.40]],
-  s_ossetia:[[42.65,43.50],[42.70,44.00],[42.60,44.45],[42.35,44.55],[42.10,44.20],[42.12,43.80],[42.25,43.50]],
-  artsakh:[[40.18,46.55],[40.10,46.85],[39.90,47.05],[39.60,46.95],[39.45,46.65],[39.55,46.40],[39.85,46.40]]
+  abkhazia:[[43.217, 42.154], [43.168, 42.129], [43.111, 42.133], [43.017, 42.057], [42.987, 41.908], [42.965, 41.885], [42.861, 41.931], [42.82, 41.892], [42.715, 41.912], [42.679, 41.94], [42.618, 41.938], [42.522, 41.804], [42.406, 41.551], [42.641, 41.5], [42.74, 41.424], [42.802, 41.225], [42.796, 41.15], [42.99, 41.023], [42.983, 40.934], [43.063, 40.856], [43.094, 40.683], [43.086, 40.592], [43.127, 40.52], [43.162, 40.398], [43.165, 40.361], [43.141, 40.335], [43.216, 40.268], [43.248, 40.273], [43.319, 40.219], [43.389, 39.986], [43.551, 40.073], [43.576, 40.233], [43.505, 40.52], [43.539, 40.652], [43.456, 40.875], [43.375, 41.012], [43.38, 41.147], [43.333, 41.279], [43.335, 41.381], [43.291, 41.413], [43.215, 41.578], [43.206, 41.919], [43.181, 42.043], [43.217, 42.154]],
+  s_ossetia:[[42.753, 43.783], [42.717, 43.812], [42.654, 43.726], [42.625, 43.723], [42.599, 43.751], [42.579, 43.885], [42.552, 43.94], [42.615, 44.055], [42.64, 44.211], [42.58, 44.263], [42.584, 44.299], [42.48, 44.394], [42.455, 44.355], [42.43, 44.409], [42.435, 44.454], [42.375, 44.515], [42.33, 44.629], [42.28, 44.599], [42.225, 44.644], [42.14, 44.644], [42.115, 44.589], [42.094, 44.599], [42.069, 44.583], [42.0, 44.515], [41.99, 44.464], [42.01, 44.444], [41.99, 44.364], [42.01, 44.294], [42.06, 44.284], [42.1, 44.204], [42.055, 44.16], [42.145, 44.114], [42.19, 44.059], [42.145, 43.979], [42.154, 43.915], [42.1, 43.899], [42.105, 43.854], [42.08, 43.864], [42.055, 43.829], [42.08, 43.784], [42.11, 43.784], [42.115, 43.709], [42.08, 43.694], [42.125, 43.619], [42.21, 43.589], [42.289, 43.654], [42.31, 43.584], [42.33, 43.574], [42.355, 43.599], [42.38, 43.564], [42.53, 43.584], [42.584, 43.559], [42.645, 43.634], [42.655, 43.689], [42.69, 43.709], [42.69, 43.755], [42.753, 43.783]],
+  artsakh:[[39.538, 46.527], [39.568, 46.512], [39.579, 46.479], [39.633, 46.567], [39.705, 46.551], [39.716, 46.582], [39.847, 46.555], [39.921, 46.465], [39.966, 46.458], [40.034, 46.398], [40.041, 46.337], [40.103, 46.378], [40.105, 46.33], [40.162, 46.317], [40.156, 46.291], [40.188, 46.294], [40.2, 46.318], [40.243, 46.315], [40.234, 46.411], [40.35, 46.57], [40.413, 46.727], [40.392, 46.781], [40.313, 46.871], [40.297, 46.935], [40.247, 47.018], [40.252, 46.929], [40.214, 46.931], [40.179, 46.827], [40.155, 46.83], [40.153, 46.791], [40.1, 46.747], [40.079, 46.765], [40.044, 46.678], [40.027, 46.681], [40.02, 46.814], [39.977, 46.845], [39.921, 46.834], [39.918, 46.856], [39.955, 46.896], [39.938, 46.926], [39.886, 46.922], [39.821, 46.873], [39.845, 46.93], [39.888, 46.958], [39.897, 47.0], [39.89, 47.09], [39.853, 47.182], [39.813, 47.203], [39.696, 47.024], [39.731, 46.822], [39.72, 46.762], [39.669, 46.696], [39.665, 46.665], [39.611, 46.656], [39.538, 46.527]],
 };
 
 function makeSVGDeFacto(){
@@ -924,6 +961,12 @@ function makeSVGDeFacto(){
   svg.setAttribute("viewBox",`0 0 ${MAP_W} ${MAP_H}`);
   svg.setAttribute("xmlns",ns);
   const add=(tag,attrs,parent)=>{const el=document.createElementNS(ns,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);(parent||svg).appendChild(el);return el;};
+
+  // hatch pattern for dissolved territory
+  const defs=add("defs",{});
+  const pat=add("pattern",{id:"nk-hatch",width:"7",height:"7",patternTransform:"rotate(45)",patternUnits:"userSpaceOnUse"},defs);
+  add("rect",{width:"7",height:"7",fill:"#e1e3e7"},pat);
+  add("line",{x1:"0",y1:"0",x2:"0",y2:"7",stroke:"#9aa0aa","stroke-width":"2.2"},pat);
 
   // sea
   add("rect",{width:MAP_W,height:MAP_H,fill:"#cfe1ef"});
@@ -952,16 +995,24 @@ function makeSVGDeFacto(){
   // territories (de facto)
   Object.entries(TERRITORIES_POLY).forEach(([k,coords])=>{
     const d=DEFACTO[k];if(!d)return;
-    const poly=add("polygon",{points:polyPoints(coords),fill:d.color,"fill-opacity":"0.8",
-      stroke:"#ffffff","stroke-width":"1.6","stroke-linejoin":"round","stroke-dasharray":d.dashed?"5 4":"none"});
+    const gone=!!d.dissolved;
+    const poly=add("polygon",{points:polyPoints(coords),
+      fill:gone?"url(#nk-hatch)":d.color,"fill-opacity":gone?"1":"0.8",
+      stroke:gone?"#8b9098":"#ffffff","stroke-width":gone?"1.3":"1.6","stroke-linejoin":"round","stroke-dasharray":gone?"6 4":"none"});
     poly.style.cursor="pointer";
-    poly.addEventListener("mouseenter",()=>poly.setAttribute("fill-opacity","0.96"));
-    poly.addEventListener("mouseleave",()=>poly.setAttribute("fill-opacity","0.8"));
+    if(!gone){
+      poly.addEventListener("mouseenter",()=>poly.setAttribute("fill-opacity","0.96"));
+      poly.addEventListener("mouseleave",()=>poly.setAttribute("fill-opacity","0.8"));
+    }else{
+      poly.addEventListener("mouseenter",()=>poly.setAttribute("stroke","#5a5f66"));
+      poly.addEventListener("mouseleave",()=>poly.setAttribute("stroke","#8b9098"));
+    }
     poly.addEventListener("click",()=>openState(k));
     const cx=coords.reduce((s,[lt,ln])=>s+proj(lt,ln)[0],0)/coords.length;
     const cy=coords.reduce((s,[lt,ln])=>s+proj(lt,ln)[1],0)/coords.length;
     const t=add("text",{x:cx,y:cy+3,"text-anchor":"middle","font-size":"11","font-weight":"700",
-      fill:"#fff","pointer-events":"none","paint-order":"stroke",stroke:"rgba(0,0,0,.45)","stroke-width":"2.6"});
+      fill:gone?"#5a5f66":"#fff","pointer-events":"none","paint-order":"stroke",
+      stroke:gone?"rgba(255,255,255,.85)":"rgba(0,0,0,.45)","stroke-width":"2.6"});
     t.textContent=d.name.length>16?d.name.split(" ")[0]:d.name;
   });
 
@@ -1004,13 +1055,14 @@ function openState(k){
 
   // Freedom House bar
   let fhHtml="";
-  if(d.freedomHouse.score!==null){
-    const pct=Math.round((d.freedomHouse.score/100)*100);
-    const barColor=pct<40?"#C0493C":pct<60?"#E0A93A":"#2E8B57";
+  if(d.freedomHouse&&d.freedomHouse.score!==null){
+    const sc=d.freedomHouse.score;
+    const barColor=sc<40?"#C0493C":sc<60?"#E0A93A":"#2E8B57";
+    const yr=d.freedomHouse.year?` (${d.freedomHouse.year})`:"";
     fhHtml=`<div class="f" style="grid-column:1/-1">
-      <div class="k">Freedom House score</div>
-      <div class="v">${d.freedomHouse.score}/100 — ${d.freedomHouse.label}</div>
-      <div class="fh-bar"><div class="fh-fill" style="width:${pct}%;background:${barColor}"></div></div>
+      <div class="k">Freedom House${d.dissolved?" · last rating":""}</div>
+      <div class="v">${sc}/100 · ${d.freedomHouse.label}${yr}</div>
+      <div class="fh-bar"><div class="fh-fill" style="width:${sc}%;background:${barColor}"></div></div>
     </div>`;
   } else {
     fhHtml=`<div class="f"><div class="k">Freedom House</div><div class="v">${d.freedomHouse.label}</div></div>`;
@@ -1039,7 +1091,7 @@ function openState(k){
 
   inner.innerHTML=`<button class="x" aria-label="Close">×</button>
     <div class="eth-head" style="background:${d.color}">
-      <div class="fam">De facto state</div>
+      <div class="fam">${d.dissolved?"Former de facto state":"De facto state"}</div>
       <h2>${esc(d.name)}</h2>
       <div class="sub">Internationally part of ${esc(d.claimed)}</div>
     </div>
@@ -1091,7 +1143,7 @@ function openCountry(key){
         <div class="f"><div class="k">Population</div><div class="v">${esc(c.population)}</div></div>
         <div class="f"><div class="k">Government</div><div class="v" style="font-size:13px">${esc(c.government)}</div></div>
         <div class="f"><div class="k">Next elections</div><div class="v" style="font-size:13px">${esc(c.elections)}</div></div>
-        <div class="f" style="grid-column:1/-1"><div class="k">Freedom House</div><div class="v">${c.fh.score}/100 — ${esc(c.fh.label)}</div>
+        <div class="f" style="grid-column:1/-1"><div class="k">Freedom House</div><div class="v">${c.fh.score}/100 · ${esc(c.fh.label)}</div>
           <div class="fh-bar"><div class="fh-fill" style="width:${c.fh.score}%;background:${c.fh.score<40?'#C0493C':c.fh.score<60?'#E0A93A':'#2E8B57'}"></div></div></div>
       </div>
       <p>${esc(c.desc)}</p>
@@ -1106,7 +1158,7 @@ function openCountry(key){
 function openLeader(ckey,role,p){
   const c=COUNTRIES_INFO[ckey];if(!c)return;
   const current=/present/i.test(p.y||"");
-  const body=p.i?esc(p.i):esc(`${p.n} — ${role}, ${c.name}. In office ${p.y}.`);
+  const body=p.i?esc(p.i):esc(`${p.n}. ${role}, ${c.name}. In office ${p.y}.`);
   const inner=document.getElementById("ethInner");
   inner.innerHTML=`<button class="x" aria-label="Close">×</button>
     <div class="eth-head" style="background:${c.color}">
@@ -1183,11 +1235,34 @@ function renderAdmin(){
       <div class="field" id="urlField" style="display:none"><label>External URL</label><input id="f_url" value="${v('url')}" placeholder="https://..."></div>
       <div class="field" id="pdfField" style="display:none"><label>PDF URL</label>
         <input id="f_pdfurl" value="${v('pdfUrl')}" placeholder="https://…/document.pdf or a Google Drive link">
-        <div class="hint">Only this link is saved to the database — never the file itself. Host the PDF anywhere public (your own site, Cloudflare R2, Google Drive…) and paste its link. Google Drive links are converted automatically; the file must be shared “Anyone with the link → Viewer”.</div></div>
-      <div class="field"><label>Tags (comma separated — used for filters &amp; map matching)</label><input id="f_tags" value="${ed?esc((ed.tags||[]).join(', ')):''}"></div>
+        <div class="hint">Only this link is saved to the database, never the file itself. Host the PDF anywhere public (your own site, Cloudflare R2, Google Drive…) and paste its link. Google Drive links are converted automatically; the file must be shared “Anyone with the link → Viewer”.</div></div>
+      <div class="field"><label>Tags (comma separated, used for filters &amp; map matching)</label><input id="f_tags" value="${ed?esc((ed.tags||[]).join(', ')):''}"></div>
       <div class="field"><label>Cover photo URL (optional)</label><input id="f_photo" value="${v('photo')}" placeholder="https://..."></div>
       <div class="field"><label>Excerpt</label><input id="f_excerpt" value="${v('excerpt')}"></div>
-      <div class="field" id="bodyField"><label>Article text</label><textarea id="f_body">${ed?esc(ed.body||''):''}</textarea><div class="hint">Blank line = new paragraph. A line starting with ## becomes a subheading.</div></div>
+      <div class="field" id="bodyField"><label>Article text</label>
+        <div class="rte-toolbar" id="rteToolbar">
+          <button type="button" data-cmd="bold" title="Bold"><b>B</b></button>
+          <button type="button" data-cmd="italic" title="Italic"><i>I</i></button>
+          <button type="button" data-cmd="underline" title="Underline"><u>U</u></button>
+          <span class="rte-sep"></span>
+          <button type="button" data-block="h2" title="Subtitle">H2</button>
+          <button type="button" data-block="h3" title="Smaller subtitle">H3</button>
+          <button type="button" data-block="blockquote" title="Quote">&ldquo;&rdquo;</button>
+          <button type="button" data-block="p" title="Normal paragraph">¶</button>
+          <span class="rte-sep"></span>
+          <button type="button" data-cmd="insertUnorderedList" title="Bulleted list">&bull; List</button>
+          <button type="button" data-cmd="insertOrderedList" title="Numbered list">1. List</button>
+          <span class="rte-sep"></span>
+          <button type="button" data-act="link" title="Insert link">Link</button>
+          <button type="button" data-act="hr" title="Divider line">Divider</button>
+          <button type="button" data-act="image" title="Insert image">Image</button>
+          <button type="button" data-act="table" title="Insert table">Table</button>
+          <span class="rte-sep"></span>
+          <button type="button" data-cmd="removeFormat" title="Clear formatting">Clear</button>
+        </div>
+        <div class="rte" id="f_body" contenteditable="true">${ed?(ed.body||''):''}</div>
+        <div class="hint">Select text then apply a style. Use the buttons to add subtitles, lists, dividers, images (with optional caption) and tables.</div>
+      </div>
       <div class="field" id="refField"><label>References (one per line)</label><textarea id="f_refs" style="min-height:90px">${ed?esc((ed.references||[]).join("\n")):''}</textarea><div class="hint">Shown in a dedicated box at the end of the article.</div></div>
       <div class="field"><label style="font-weight:500"><input type="checkbox" id="f_feat" ${ed&&ed.featured?'checked':''} style="width:auto;margin-right:8px">Mark as featured (shown as spotlight on home)</label></div>
       <div class="field"><label style="font-weight:500"><input type="checkbox" id="f_draft" ${ed&&ed.draft?'checked':''} style="width:auto;margin-right:8px">Save as draft (hidden from the public site)</label></div>
@@ -1203,6 +1278,21 @@ function renderAdmin(){
     inner.querySelector("#bodyField").style.display=(ext||pdf)?"none":"block";
     inner.querySelector("#refField").style.display=ext?"none":"block";};
   typeSel.onchange=sync;sync();
+  (function(){
+    const tb=inner.querySelector("#rteToolbar"),rte=inner.querySelector("#f_body");
+    if(!tb||!rte)return;
+    tb.querySelectorAll("button").forEach(b=>b.addEventListener("mousedown",e=>e.preventDefault()));
+    tb.addEventListener("click",e=>{
+      const b=e.target.closest("button");if(!b)return;
+      rte.focus();
+      if(b.dataset.cmd){document.execCommand(b.dataset.cmd,false,null);}
+      else if(b.dataset.block){document.execCommand("formatBlock",false,b.dataset.block);}
+      else if(b.dataset.act==="hr"){document.execCommand("insertHorizontalRule",false,null);}
+      else if(b.dataset.act==="link"){const u=prompt("Link URL (https://...):");if(u)document.execCommand("createLink",false,u);}
+      else if(b.dataset.act==="image"){rteImage(rte);}
+      else if(b.dataset.act==="table"){rteTable(rte);}
+    });
+  })();
   inner.querySelector("#newBtn").onclick=()=>{editingId=null;renderAdmin();};
   inner.querySelector("#logoutBtn").onclick=()=>{unlocked=false;editingId=null;closeModal("adminModal");};
   if(ed)inner.querySelector("#cancelBtn").onclick=()=>{editingId=null;renderAdmin();};
@@ -1214,7 +1304,7 @@ function renderAdmin(){
     const refs=inner.querySelector("#f_refs").value.split("\n").map(s=>s.trim()).filter(Boolean);
     const obj={id,title,author:g("f_author")||"Timoleon Ilias",date:g("f_date"),lang:g("f_lang"),type:g("f_type"),
       url:g("f_url"),pdfUrl:g("f_pdfurl"),tags:g("f_tags").split(",").map(s=>s.trim()).filter(Boolean),
-      photo:g("f_photo"),excerpt:g("f_excerpt"),body:inner.querySelector("#f_body").value,
+      photo:g("f_photo"),excerpt:g("f_excerpt"),body:inner.querySelector("#f_body").innerHTML.trim(),
       references:refs,featured:inner.querySelector("#f_feat").checked,draft:inner.querySelector("#f_draft").checked};
     let demoted=null;
     if(obj.featured){const prev=PUBS.find(p=>p.featured&&p.id!==obj.id);if(prev){prev.featured=false;demoted=prev;}}
