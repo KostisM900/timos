@@ -277,6 +277,15 @@ a.chip{text-decoration:none}
 .pdf-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
 .pdf-note{font-size:12.5px;color:var(--muted);margin:0 0 6px}
 @media(max-width:760px){.pdf-frame{height:68vh;min-height:420px}}
+.recent-track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 14px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+.recent-track .card{flex:0 0 330px;scroll-snap-align:start}
+.recent-track::-webkit-scrollbar{height:8px}
+.recent-track::-webkit-scrollbar-track{background:transparent}
+.recent-track::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.slide-controls{display:flex;align-items:center;gap:10px}
+.slide-btn{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--navy);font-size:18px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;line-height:1;padding:0}
+.slide-btn:hover{background:var(--wash);border-color:var(--sky)}
+@media(max-width:560px){.recent-track .card{flex:0 0 84%}}
 .cfacts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
 .cf{background:var(--wash);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
 .cf .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -465,6 +474,22 @@ const SUPABASE_URL="https://lvrkldiszeujgcetlozh.supabase.co"; // your project U
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2cmtsZGlzemV1amdjZXRsb3poIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzODA4MTcsImV4cCI6MjA5Njk1NjgxN30.cNSsoWwWdUkscey80FzWB_Ly5QLfTTSS8PGfvQtQmE8"; // anon public key
 const SB_BASE=(SUPABASE_URL||"").trim().replace(/\/+$/,"").replace(/\/rest\/v1$/,""); // tolerate a pasted /rest/v1/ URL
 const SUPA_ON=!!(SB_BASE&&SUPABASE_KEY);
+
+/* ---- Optional: Google Drive Picker (let the admin choose a PDF from their Drive) ----
+   Create a project at console.cloud.google.com:
+     1. Enable "Google Picker API" and "Google Drive API".
+     2. Create an API key  -> paste as GOOGLE_API_KEY.
+     3. Create an OAuth 2.0 Client ID (type: Web application). Under
+        "Authorized JavaScript origins" add your site's origin (e.g. https://yoursite.com).
+        Paste the Client ID as GOOGLE_CLIENT_ID.
+     4. (Optional) GOOGLE_APP_ID = your project NUMBER (not the name).
+   Leave blank to hide the Drive button (manual URL paste always works).
+   NOTE: a picked file must still be shared publicly ("Anyone with the link")
+   for visitors to view it — the picker only selects, it does not change sharing. */
+const GOOGLE_CLIENT_ID="";
+const GOOGLE_API_KEY="";
+const GOOGLE_APP_ID="";
+const GDRIVE_ON=!!(GOOGLE_CLIENT_ID&&GOOGLE_API_KEY);
 const KEY="tilias_pubs_v3";
 let PUBS=[];
 function supaHeaders(extra){return Object.assign({apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},extra||{});}
@@ -500,6 +525,40 @@ async function uploadPdf(file){
 }
 function publicPubs(){return PUBS.filter(p=>!p.draft);}
 const byDate=(a,b)=>(b.date||"").localeCompare(a.date||"");
+function slideRecent(dir){const t=document.getElementById("recentTrack");if(t)t.scrollBy({left:dir*Math.min(t.clientWidth*0.9,360),behavior:"smooth"});}
+/* ---- Google Drive Picker ---- */
+let _gp={inited:false,token:null,client:null};
+function _loadScript(src){return new Promise((res,rej)=>{if(document.querySelector(`script[src="${src}"]`))return res();const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+async function _gpInit(){
+  if(_gp.inited)return;
+  await _loadScript("https://apis.google.com/js/api.js");
+  await new Promise(r=>gapi.load("picker",r));
+  await _loadScript("https://accounts.google.com/gsi/client");
+  _gp.client=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:"https://www.googleapis.com/auth/drive.readonly",callback:()=>{}});
+  _gp.inited=true;
+}
+function pickFromDrive(onPick,onCancel){
+  if(!GOOGLE_CLIENT_ID||!GOOGLE_API_KEY){alert("Google Drive picking isn't configured yet. Add GOOGLE_CLIENT_ID and GOOGLE_API_KEY near the top of the file (see the comment there). You can always paste a Drive link manually instead.");onCancel&&onCancel();return;}
+  _gpInit().then(()=>{
+    _gp.client.callback=(resp)=>{
+      if(resp&&resp.error){alert("Google sign-in failed or was cancelled.");onCancel&&onCancel();return;}
+      _gp.token=resp.access_token;_gpShow(onPick,onCancel);
+    };
+    _gp.client.requestAccessToken({prompt:_gp.token?"":"consent"});
+  }).catch(()=>{alert("Could not load the Google Picker.");onCancel&&onCancel();});
+}
+function _gpShow(onPick,onCancel){
+  const view=new google.picker.DocsView(google.picker.ViewId.DOCS)
+    .setMimeTypes("application/pdf").setSelectFolderEnabled(false).setMode(google.picker.DocsViewMode.LIST);
+  const b=new google.picker.PickerBuilder()
+    .setOAuthToken(_gp.token).setDeveloperKey(GOOGLE_API_KEY).addView(view)
+    .setCallback(d=>{
+      if(d.action===google.picker.Action.PICKED){const f=d.docs[0];onPick(`https://drive.google.com/file/d/${f.id}/preview`,f.name);}
+      else if(d.action===google.picker.Action.CANCEL){onCancel&&onCancel();}
+    });
+  if(GOOGLE_APP_ID)b.setAppId(GOOGLE_APP_ID);
+  b.build().setVisible(true);
+}
 function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function fmt(d){if(!d)return"";const dt=new Date(d);return isNaN(dt)?d:dt.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});}
 function bodyHtml(t){return (t||"").split(/\n{2,}/).map(b=>{b=b.trim();if(!b)return"";return b.startsWith("## ")?"<h3>"+esc(b.slice(3))+"</h3>":"<p>"+esc(b).replace(/\n/g,"<br>")+"</p>";}).join("");}
@@ -532,8 +591,7 @@ function card(p){
 function viewHome(){
   const sorted=publicPubs().slice().sort(byDate);
   const featured=sorted.find(p=>p.featured)||sorted[0]||null;
-  let latest=(featured?sorted.filter(p=>p.id!==featured.id):sorted.slice()).slice(0,3);
-  if(!latest.length&&featured)latest=[featured];
+  const latest=sorted.slice(0,12);
   const spotHtml=featured?`
   <section class="section" style="padding-top:30px;padding-bottom:10px"><div class="wrap">
     <a class="spotlight" ${featured.type==="external"?`href="${esc(featured.url)}" target="_blank" rel="noopener"`:`href="#/article/${esc(featured.id)}"`}>
@@ -605,8 +663,10 @@ function viewHome(){
 
   <section class="section"><div class="wrap">
     <div class="sec-head"><div><span class="kicker">Latest</span><h2>Recent publications</h2></div>
-      <a class="more" href="#/publications">View all →</a></div>
-    <div class="pub-grid home">${latest.map(card).join("")||'<div class="empty">No publications yet.</div>'}</div>
+      <div class="slide-controls">
+        ${latest.length>1?`<button class="slide-btn" onclick="slideRecent(-1)" aria-label="Scroll left">‹</button><button class="slide-btn" onclick="slideRecent(1)" aria-label="Scroll right">›</button>`:""}
+        <a class="more" href="#/publications">View all →</a></div></div>
+    ${latest.length?`<div class="recent-track" id="recentTrack">${latest.map(card).join("")}</div>`:'<div class="empty">No publications yet.</div>'}
   </div></section>
 
   <section class="section home-map-sec"><div class="wrap">
@@ -626,7 +686,7 @@ function viewHome(){
     <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>The three states up close</h2>
       <p>Key facts and full leadership histories for each South Caucasus country.</p></div>
       <a class="more" href="#/countries">All countries →</a></div>
-    <div class="pub-grid">${Object.keys(COUNTRIES_INFO).map(countryCard).join("")}</div>
+    <div class="pub-grid">${COUNTRY_ORDER.map(countryCard).join("")}</div>
   </div></section>
 
   <section class="section home-about"><div class="wrap">
@@ -714,8 +774,7 @@ function viewArticle(id){
   const isPdf=p.type==="pdf"&&p.pdfUrl;
   const main=isPdf
     ?`<div class="pdf-wrap"><iframe class="pdf-frame" src="${esc(pdfEmbedUrl(p.pdfUrl))}" title="${esc(p.title)}" allow="autoplay" loading="lazy"></iframe></div>
-      <div class="pdf-actions"><a class="btn line" href="${esc(p.pdfUrl)}" target="_blank" rel="noopener">Open original ↗</a></div>
-      <p class="pdf-note">If the document stays blank, make sure it is shared publicly — e.g. in Google Drive set sharing to “Anyone with the link”.</p>`
+      <div class="pdf-actions"><a class="btn line" href="${esc(p.pdfUrl)}" target="_blank" rel="noopener">Open original ↗</a></div>`
     :`<div class="content">${bodyHtml(p.body)||"<p>(No content yet.)</p>"}</div>`;
   return `<article class="article ${isPdf?'article-wide':''}">
     <a class="back" href="#/publications">← All publications</a>
@@ -741,7 +800,7 @@ function countryCard(k){
       <div class="tags"><span>Profile</span><span>Leadership history</span></div></div></a>`;
 }
 function viewCountries(){
-  const cards=Object.keys(COUNTRIES_INFO).map(countryCard).join("");
+  const cards=COUNTRY_ORDER.map(countryCard).join("");
   return `<section class="section"><div class="wrap">
     <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>Countries</h2>
       <p>Profiles of the three South Caucasus states, with key facts and a timeline of leadership across the years.</p></div></div>
@@ -803,6 +862,7 @@ function viewMaps(){
 const COUNTRIES_GEO={"GEO":{"name":"Georgia","geometry":{"type":"Polygon","coordinates":[[[43.439,41.107],[43.433,41.156],[43.402,41.177],[43.205,41.199],[43.153,41.236],[43.141,41.265],[43.171,41.288],[43.149,41.307],[43.057,41.353],[42.907,41.467],[42.822,41.492],[42.788,41.564],[42.754,41.579],[42.607,41.579],[42.567,41.559],[42.508,41.47],[42.466,41.44],[42.211,41.487],[41.926,41.496],[41.824,41.432],[41.51,41.517],[41.702,41.705],[41.759,41.817],[41.763,41.97],[41.663,42.147],[41.489,42.659],[41.419,42.738],[41.129,42.828],[41.062,42.931],[40.837,43.063],[40.524,43.121],[40.462,43.146],[40.191,43.312],[39.978,43.42],[40.085,43.553],[40.15,43.57],[40.519,43.512],[40.648,43.534],[41.083,43.374],[41.358,43.333],[41.581,43.219],[42.05,43.19],[42.28,43.228],[42.419,43.224],[42.566,43.155],[42.761,43.17],[42.992,43.092],[43.0,43.05],[43.089,42.989],[43.348,42.897],[43.558,42.844],[43.783,42.747],[43.799,42.728],[43.795,42.703],[43.75,42.658],[43.738,42.617],[43.76,42.594],[43.826,42.572],[43.957,42.567],[44.005,42.596],[44.103,42.616],[44.329,42.704],[44.506,42.749],[44.644,42.735],[44.692,42.71],[44.771,42.617],[44.85,42.747],[44.871,42.756],[45.16,42.675],[45.344,42.53],[45.563,42.536],[45.656,42.518],[45.728,42.475],[45.634,42.235],[45.639,42.205],[45.846,42.11],[45.954,42.035],[46.213,41.99],[46.43,41.891],[46.348,41.79],[46.303,41.757],[46.202,41.737],[46.184,41.702],[46.191,41.625],[46.255,41.602],[46.305,41.508],[46.619,41.344],[46.673,41.287],[46.626,41.16],[46.534,41.089],[46.458,41.07],[46.171,41.198],[46.031,41.167],[45.793,41.224],[45.696,41.289],[45.716,41.338],[45.422,41.425],[45.281,41.45],[44.976,41.277],[44.811,41.259],[44.849,41.22],[44.841,41.211],[44.565,41.208],[44.473,41.191],[44.227,41.213],[43.793,41.131],[43.439,41.107]]]}},"ARM":{"name":"Armenia","geometry":{"type":"MultiPolygon","coordinates":[[[[44.768,39.704],[44.56,39.888],[44.4,39.996],[44.289,40.04],[44.005,40.014],[43.792,40.07],[43.666,40.126],[43.71,40.167],[43.608,40.357],[43.616,40.393],[43.569,40.482],[43.668,40.574],[43.713,40.648],[43.723,40.72],[43.632,40.929],[43.592,40.968],[43.517,41.005],[43.455,41.065],[43.439,41.107],[43.793,41.131],[44.227,41.213],[44.473,41.191],[44.565,41.208],[44.841,41.211],[44.849,41.22],[44.811,41.259],[45.001,41.291],[45.023,41.246],[45.085,41.195],[45.189,41.147],[45.19,41.126],[45.071,41.101],[45.071,41.076],[45.273,41.006],[45.369,41.005],[45.419,40.986],[45.444,40.948],[45.587,40.847],[45.579,40.804],[45.401,40.707],[45.379,40.674],[45.376,40.638],[45.454,40.532],[45.57,40.417],[45.965,40.234],[45.968,40.175],[45.886,40.025],[45.858,40.011],[45.63,40.014],[45.596,40.003],[45.58,39.978],[45.662,39.956],[45.79,39.881],[45.863,39.808],[45.94,39.777],[46.202,39.594],[46.322,39.617],[46.481,39.555],[46.478,39.475],[46.378,39.434],[46.365,39.402],[46.585,39.224],[46.55,39.201],[46.42,39.207],[46.4,39.192],[46.401,39.168],[46.475,39.111],[46.49,39.069],[46.491,38.907],[46.318,38.913],[46.17,38.869],[46.114,38.878],[45.952,39.178],[45.977,39.244],[45.766,39.378],[45.796,39.488],[45.784,39.546],[45.75,39.563],[45.611,39.55],[45.457,39.494],[45.35,39.53],[45.253,39.595],[45.173,39.571],[45.153,39.583],[45.149,39.657],[45.125,39.696],[45.032,39.765],[44.768,39.704]],[[45.024,41.027],[45.021,41.078],[44.961,41.079],[44.969,41.027],[45.002,41.016],[45.024,41.027]]],[[[45.552,40.616],[45.514,40.6],[45.479,40.607],[45.479,40.648],[45.534,40.664],[45.562,40.649],[45.552,40.616]]]]}},"AZE":{"name":"Azerbaijan","geometry":{"type":"MultiPolygon","coordinates":[[[[45.0,39.424],[44.768,39.704],[45.032,39.765],[45.125,39.696],[45.149,39.657],[45.153,39.583],[45.173,39.571],[45.253,39.595],[45.35,39.53],[45.457,39.494],[45.687,39.564],[45.75,39.563],[45.784,39.546],[45.796,39.488],[45.766,39.378],[45.977,39.244],[45.952,39.178],[46.114,38.878],[45.575,38.973],[45.48,39.006],[45.336,39.139],[45.141,39.254],[45.072,39.363],[45.0,39.424]]],[[[48.869,38.435],[48.636,38.399],[48.593,38.411],[48.417,38.586],[48.381,38.606],[48.306,38.613],[48.261,38.642],[48.205,38.724],[48.023,38.819],[47.996,38.854],[47.993,38.884],[48.05,38.935],[48.242,38.979],[48.292,39.019],[48.274,39.099],[48.125,39.172],[48.104,39.241],[48.136,39.312],[48.257,39.355],[48.322,39.399],[48.282,39.448],[47.996,39.684],[47.892,39.685],[47.773,39.649],[47.476,39.498],[47.188,39.341],[46.989,39.18],[46.853,39.148],[46.555,38.904],[46.491,38.907],[46.49,39.069],[46.475,39.111],[46.401,39.168],[46.4,39.192],[46.42,39.207],[46.55,39.201],[46.585,39.224],[46.365,39.402],[46.378,39.434],[46.478,39.475],[46.481,39.555],[46.322,39.617],[46.202,39.594],[45.94,39.777],[45.863,39.808],[45.79,39.881],[45.662,39.956],[45.58,39.978],[45.596,40.003],[45.63,40.014],[45.858,40.011],[45.886,40.025],[45.968,40.175],[45.965,40.234],[45.57,40.417],[45.454,40.532],[45.376,40.638],[45.379,40.674],[45.401,40.707],[45.579,40.804],[45.587,40.847],[45.444,40.948],[45.419,40.986],[45.369,41.005],[45.273,41.006],[45.071,41.076],[45.071,41.101],[45.19,41.126],[45.189,41.147],[45.085,41.195],[45.023,41.246],[45.001,41.291],[45.281,41.45],[45.422,41.425],[45.716,41.338],[45.696,41.289],[45.725,41.262],[45.793,41.224],[45.922,41.187],[46.031,41.167],[46.171,41.198],[46.431,41.077],[46.534,41.089],[46.626,41.16],[46.673,41.287],[46.619,41.344],[46.305,41.508],[46.255,41.602],[46.204,41.613],[46.182,41.657],[46.202,41.737],[46.303,41.757],[46.348,41.79],[46.43,41.891],[46.538,41.87],[46.552,41.812],[46.571,41.8],[46.69,41.831],[46.749,41.813],[46.988,41.621],[47.01,41.587],[47.143,41.516],[47.205,41.456],[47.261,41.315],[47.318,41.282],[47.521,41.229],[47.791,41.199],[47.861,41.213],[48.056,41.459],[48.298,41.545],[48.391,41.602],[48.573,41.844],[48.665,41.787],[49.051,41.374],[49.107,41.302],[49.175,41.116],[49.226,41.026],[49.457,40.8],[49.556,40.716],[49.776,40.584],[49.991,40.577],[50.183,40.505],[50.307,40.412],[50.366,40.279],[50.143,40.323],[49.919,40.316],[49.669,40.249],[49.551,40.194],[49.477,40.087],[49.415,39.84],[49.324,39.608],[49.328,39.501],[49.367,39.398],[49.363,39.35],[49.269,39.285],[49.2,39.073],[49.165,39.03],[49.121,39.004],[49.111,39.085],[49.013,39.134],[48.962,39.079],[48.926,38.962],[48.854,38.839],[48.869,38.435]],[[45.552,40.616],[45.562,40.649],[45.534,40.664],[45.479,40.648],[45.479,40.607],[45.514,40.6],[45.552,40.616]]],[[[45.024,41.027],[45.002,41.016],[44.969,41.027],[44.961,41.079],[45.021,41.078],[45.024,41.027]]]]}},"TUR":{"name":"Turkey","geometry":{"type":"Polygon","coordinates":[[[41.51,41.517],[41.824,41.432],[41.926,41.496],[42.211,41.487],[42.466,41.44],[42.508,41.47],[42.567,41.559],[42.607,41.579],[42.682,41.586],[42.788,41.564],[42.822,41.492],[42.907,41.467],[43.057,41.353],[43.171,41.288],[43.141,41.265],[43.153,41.236],[43.205,41.199],[43.359,41.19],[43.433,41.156],[43.455,41.065],[43.632,40.929],[43.723,40.72],[43.713,40.648],[43.668,40.574],[43.569,40.482],[43.616,40.393],[43.608,40.357],[43.71,40.167],[43.666,40.126],[43.942,40.023],[44.005,40.014],[44.289,40.04],[44.4,39.996],[44.734,39.746],[44.817,39.65],[44.782,39.651],[44.587,39.769],[44.517,39.731],[44.456,39.667],[44.389,39.422],[44.335,39.396],[44.124,39.405],[44.023,39.377],[44.058,39.311],[44.079,39.218],[44.178,39.145],[44.172,39.056],[44.145,38.994],[44.171,38.934],[44.272,38.836],[44.257,38.701],[44.298,38.558],[44.299,38.386],[44.431,38.357],[44.45,38.334],[44.45,38.318],[44.381,38.255],[44.349,38.146],[44.268,38.039],[44.211,37.908],[44.223,37.88],[44.336,37.872],[44.561,37.745],[44.59,37.71],[44.545,37.658],[44.577,37.56],[44.574,37.435],[44.715,37.357],[44.794,37.29],[44.797,37.27],[44.758,37.217],[44.765,37.142],[44.731,37.165],[44.606,37.176],[44.282,36.978],[44.246,36.983],[44.202,37.052],[44.208,37.203],[44.192,37.25],[44.114,37.302],[44.013,37.314],[43.836,37.224],[43.676,37.227],[43.516,37.245],[43.092,37.367],[42.937,37.325],[42.775,37.372],[42.741,37.362],[42.635,37.249],[42.456,37.129],[42.359,37.109],[42.313,37.23],[42.269,37.277],[42.203,37.297],[42.168,37.289],[42.06,37.206],[41.887,37.156],[41.516,37.089],[41.265,37.069],[40.959,37.109],[40.706,37.098],[40.45,37.009],[40.016,36.826],[39.687,36.739],[39.357,36.682],[38.767,36.693],[38.689,36.715],[38.444,36.862],[38.192,36.902],[37.436,36.643],[37.066,36.653],[36.985,36.702],[36.942,36.758],[36.659,36.803],[36.628,36.778],[36.597,36.701],[36.538,36.457],[36.641,36.264],[36.637,36.234],[36.477,36.221],[36.375,36.171],[36.348,36.004],[36.0,36.0],[36.0,36.498],[36.188,36.659],[36.18,36.807],[36.049,36.911],[36.0,36.889],[36.0,41.698],[36.052,41.683],[36.179,41.427],[36.278,41.336],[36.405,41.275],[36.51,41.263],[36.587,41.327],[36.647,41.353],[36.778,41.363],[36.992,41.275],[37.066,41.184],[37.431,41.114],[37.766,41.079],[37.91,41.002],[38.381,40.925],[38.557,40.937],[38.852,41.018],[39.426,41.106],[39.808,40.983],[39.911,40.966],[40.0,40.977],[40.128,40.943],[40.265,40.961],[40.688,41.107],[40.82,41.19],[40.959,41.212],[41.084,41.261],[41.414,41.424],[41.51,41.517]]]}},"IRN":{"name":"Iran","geometry":{"type":"Polygon","coordinates":[[[52.2,36.0],[45.362,36.015],[45.241,36.356],[45.207,36.397],[45.112,36.409],[45.084,36.43],[45.031,36.526],[45.034,36.659],[45.019,36.698],[44.881,36.799],[44.765,37.135],[44.758,37.217],[44.797,37.27],[44.794,37.29],[44.715,37.357],[44.574,37.435],[44.577,37.56],[44.545,37.658],[44.59,37.71],[44.561,37.745],[44.336,37.872],[44.223,37.88],[44.211,37.908],[44.268,38.039],[44.349,38.146],[44.381,38.255],[44.45,38.318],[44.45,38.334],[44.431,38.357],[44.299,38.386],[44.298,38.558],[44.257,38.701],[44.272,38.836],[44.171,38.934],[44.145,38.994],[44.172,39.056],[44.178,39.145],[44.079,39.218],[44.058,39.311],[44.023,39.377],[44.124,39.405],[44.335,39.396],[44.389,39.422],[44.456,39.667],[44.517,39.731],[44.587,39.769],[44.782,39.651],[44.817,39.65],[45.0,39.424],[45.072,39.363],[45.141,39.254],[45.336,39.139],[45.48,39.006],[45.575,38.973],[46.17,38.869],[46.318,38.913],[46.555,38.904],[46.853,39.148],[46.989,39.18],[47.188,39.341],[47.338,39.424],[47.773,39.649],[47.892,39.685],[47.996,39.684],[48.282,39.448],[48.322,39.399],[48.257,39.355],[48.136,39.312],[48.104,39.241],[48.125,39.172],[48.274,39.099],[48.292,39.019],[48.242,38.979],[48.05,38.935],[47.993,38.884],[47.996,38.854],[48.023,38.819],[48.205,38.724],[48.261,38.642],[48.306,38.613],[48.381,38.606],[48.417,38.586],[48.593,38.411],[48.636,38.399],[48.869,38.435],[48.901,38.144],[48.96,37.89],[49.081,37.668],[49.171,37.601],[49.372,37.52],[49.47,37.497],[49.727,37.481],[49.981,37.445],[50.13,37.407],[50.214,37.34],[50.338,37.149],[50.533,37.014],[50.927,36.81],[51.119,36.743],[51.762,36.615],[52.2,36.624],[52.2,36.0]]]}},"RUS":{"name":"Russia","geometry":{"type":"MultiPolygon","coordinates":[[[[46.609,48.574],[46.661,48.412],[46.853,48.324],[47.004,48.284],[47.065,48.232],[47.119,48.127],[47.093,47.948],[47.131,47.877],[47.202,47.792],[47.292,47.741],[47.482,47.804],[48.11,47.745],[48.167,47.709],[48.553,47.321],[48.959,46.775],[48.95,46.726],[48.884,46.705],[48.776,46.71],[48.605,46.766],[48.558,46.757],[48.519,46.734],[48.502,46.699],[48.509,46.65],[48.541,46.606],[48.61,46.566],[49.232,46.337],[49.246,46.292],[49.125,46.282],[49.111,46.228],[49.08,46.189],[48.81,46.1],[48.684,46.086],[48.703,45.976],[48.75,45.921],[48.73,45.897],[48.69,45.889],[48.589,45.935],[48.487,45.935],[48.258,45.778],[48.159,45.737],[47.83,45.663],[47.701,45.686],[47.65,45.657],[47.633,45.584],[47.508,45.674],[47.463,45.68],[47.524,45.602],[47.529,45.53],[47.515,45.491],[47.489,45.455],[47.413,45.421],[47.391,45.295],[47.351,45.218],[47.221,45.024],[47.115,44.906],[47.084,44.817],[47.003,44.876],[46.957,44.783],[46.755,44.657],[46.716,44.561],[46.707,44.503],[46.721,44.452],[46.753,44.421],[46.916,44.387],[47.024,44.343],[47.23,44.192],[47.307,44.103],[47.362,43.993],[47.429,43.78],[47.463,43.555],[47.563,43.835],[47.646,43.885],[47.509,43.51],[47.49,43.382],[47.513,43.219],[47.463,43.035],[47.529,42.967],[47.635,42.903],[47.709,42.811],[47.728,42.681],[47.822,42.613],[48.08,42.354],[48.229,42.181],[48.384,41.953],[48.573,41.844],[48.391,41.602],[48.298,41.545],[48.056,41.459],[47.861,41.213],[47.791,41.199],[47.592,41.218],[47.318,41.282],[47.261,41.315],[47.205,41.456],[47.143,41.516],[47.01,41.587],[46.988,41.621],[46.749,41.813],[46.69,41.831],[46.571,41.8],[46.552,41.812],[46.538,41.87],[46.43,41.891],[46.213,41.99],[45.954,42.035],[45.846,42.11],[45.639,42.205],[45.634,42.235],[45.728,42.475],[45.705,42.498],[45.563,42.536],[45.344,42.53],[45.16,42.675],[44.871,42.756],[44.85,42.747],[44.771,42.617],[44.692,42.71],[44.644,42.735],[44.506,42.749],[44.329,42.704],[44.103,42.616],[44.005,42.596],[43.957,42.567],[43.826,42.572],[43.76,42.594],[43.738,42.617],[43.75,42.658],[43.795,42.703],[43.799,42.728],[43.783,42.747],[43.558,42.844],[43.348,42.897],[43.089,42.989],[43.0,43.05],[42.992,43.092],[42.761,43.17],[42.566,43.155],[42.419,43.224],[42.28,43.228],[42.05,43.19],[41.581,43.219],[41.358,43.333],[41.083,43.374],[40.648,43.534],[40.519,43.512],[40.15,43.57],[40.085,43.553],[39.978,43.42],[39.874,43.473],[39.517,43.728],[39.329,43.897],[38.717,44.288],[38.636,44.318],[38.312,44.374],[38.181,44.42],[37.851,44.699],[37.705,44.661],[37.572,44.671],[37.495,44.695],[37.411,44.735],[37.352,44.788],[37.284,44.905],[37.205,44.972],[36.944,45.07],[36.651,45.126],[36.628,45.151],[36.619,45.185],[36.873,45.252],[36.941,45.29],[36.72,45.372],[36.866,45.427],[36.978,45.384],[37.104,45.303],[37.214,45.272],[37.264,45.311],[37.647,45.377],[37.673,45.43],[37.672,45.488],[37.61,45.5],[37.612,45.565],[37.669,45.654],[37.841,45.8],[37.933,46.002],[38.014,46.048],[38.074,46.017],[38.08,45.935],[38.184,46.095],[38.4,46.08],[38.492,46.091],[38.315,46.242],[38.078,46.394],[37.978,46.383],[37.914,46.406],[37.81,46.532],[37.767,46.636],[37.968,46.618],[38.159,46.691],[38.23,46.701],[38.501,46.664],[38.488,46.732],[38.439,46.813],[38.631,46.873],[38.801,46.906],[39.127,47.023],[39.271,47.044],[39.293,47.106],[39.196,47.269],[39.024,47.272],[38.928,47.176],[38.668,47.144],[38.552,47.15],[38.644,47.212],[38.736,47.236],[38.762,47.262],[38.577,47.239],[38.485,47.176],[38.214,47.091],[38.201,47.175],[38.221,47.213],[38.265,47.237],[38.281,47.277],[38.208,47.297],[38.201,47.321],[38.257,47.409],[38.259,47.48],[38.287,47.559],[38.369,47.61],[38.511,47.622],[38.641,47.666],[38.719,47.714],[38.822,47.837],[38.9,47.855],[39.391,47.834],[39.736,47.845],[39.779,47.888],[39.776,47.964],[39.885,48.168],[39.961,48.238],[39.958,48.269],[39.847,48.303],[39.85,48.332],[39.89,48.36],[39.836,48.543],[39.648,48.6],[46.62,48.6],[46.609,48.574]]],[[[47.968,45.47],[47.92,45.562],[47.918,45.618],[47.947,45.647],[47.987,45.554],[47.983,45.488],[47.968,45.47]]],[[[36.0,45.374],[36.077,45.424],[36.171,45.453],[36.29,45.457],[36.575,45.394],[36.451,45.232],[36.393,45.065],[36.23,45.026],[36.0,45.023],[36.0,45.374]]]]}}};
 const FOCUS=new Set(["GEO","ARM","AZE"]);
 const COUNTRY_KEY={GEO:"georgia",ARM:"armenia",AZE:"azerbaijan"};
+const COUNTRY_ORDER=["armenia","azerbaijan","georgia"];
 const COUNTRIES_INFO={
   georgia:{iso:"GEO",name:"Georgia",color:"#1C4D8D",capital:"Tbilisi",population:"~3.7 million",
     government:"Parliamentary republic",fh:{score:51,label:"Partly Free"},
@@ -930,7 +990,7 @@ function initDeFacto(){
   wrap.innerHTML="";wrap.appendChild(makeSVGDeFacto());
   const leg=document.getElementById("legend");
   let lh=`<div class="leg-group">Sovereign states</div>`;
-  Object.entries(COUNTRIES_INFO).forEach(([k,c])=>{
+  Object.entries(COUNTRIES_INFO).sort((a,b)=>COUNTRY_ORDER.indexOf(a[0])-COUNTRY_ORDER.indexOf(b[0])).forEach(([k,c])=>{
     lh+=`<button class="legrow" data-c="${k}"><span class="sw" style="background:${c.color}"></span>
       <span style="flex:1">${c.name}</span><span style="font-size:11px;color:var(--muted)">${c.fh.label}</span></button>`;
   });
@@ -1137,9 +1197,9 @@ function renderAdmin(){
       <div class="field" id="urlField" style="display:none"><label>External URL</label><input id="f_url" value="${v('url')}" placeholder="https://..."></div>
       <div class="field" id="pdfField" style="display:none"><label>PDF URL</label>
         <input id="f_pdfurl" value="${v('pdfUrl')}" placeholder="https://…/document.pdf">
-        <div class="hint">Only this URL is saved to the database — the PDF file itself never goes into it. Host the file on your own site, Cloudflare R2, a Google Drive preview link, or a Supabase Storage bucket.
-          <span style="display:inline-flex;gap:8px;align-items:center;margin-top:6px"><button type="button" class="mini" id="pdfUploadBtn">⤓ Upload to Supabase Storage</button><span id="pdfUploadMsg" style="color:var(--muted)"></span></span>
-          <input type="file" id="pdfFile" accept="application/pdf" style="display:none"></div></div>
+        <div class="hint">Only this URL is saved to the database — never the file itself. Host it on your own site, Cloudflare R2, or pick it straight from Google Drive.
+          <span style="display:inline-flex;gap:8px;align-items:center;margin-top:6px"><button type="button" class="mini" id="pdfDriveBtn">▾ Choose from Google Drive</button><span id="pdfUploadMsg" style="color:var(--muted)"></span></span>
+          <div style="margin-top:4px">The selected Drive file must be shared “Anyone with the link → Viewer” so visitors can see it.</div></div></div>
       <div class="field"><label>Tags (comma separated — used for filters &amp; map matching)</label><input id="f_tags" value="${ed?esc((ed.tags||[]).join(', ')):''}"></div>
       <div class="field"><label>Cover photo URL (optional)</label><input id="f_photo" value="${v('photo')}" placeholder="https://..."></div>
       <div class="field"><label>Excerpt</label><input id="f_excerpt" value="${v('excerpt')}"></div>
@@ -1159,15 +1219,14 @@ function renderAdmin(){
     inner.querySelector("#bodyField").style.display=(ext||pdf)?"none":"block";
     inner.querySelector("#refField").style.display=ext?"none":"block";};
   typeSel.onchange=sync;sync();
-  const pdfBtn=inner.querySelector("#pdfUploadBtn");
-  if(pdfBtn){
-    pdfBtn.onclick=()=>inner.querySelector("#pdfFile").click();
-    inner.querySelector("#pdfFile").onchange=async(e)=>{
-      const f=e.target.files[0];if(!f)return;
-      const msg=inner.querySelector("#pdfUploadMsg");msg.textContent="Uploading…";
-      const url=await uploadPdf(f);
-      if(url){inner.querySelector("#f_pdfurl").value=url;msg.textContent="✓ uploaded";}
-      else msg.textContent="";
+  const driveBtn=inner.querySelector("#pdfDriveBtn");
+  if(driveBtn){
+    driveBtn.onclick=()=>{
+      const msg=inner.querySelector("#pdfUploadMsg");msg.textContent="Opening Drive…";
+      pickFromDrive((url,name)=>{
+        inner.querySelector("#f_pdfurl").value=url;
+        msg.textContent="✓ "+(name||"selected");
+      },()=>{msg.textContent="";});
     };
   }
   inner.querySelector("#newBtn").onclick=()=>{editingId=null;renderAdmin();};
