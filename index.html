@@ -91,6 +91,8 @@ main{min-height:60vh}
 .spotlight .sl-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--sky);font-weight:700;margin-bottom:8px}
 .spotlight h3{font-size:22px;color:#fff;margin-bottom:10px;line-height:1.25}
 .spotlight p{color:#b5c5df;font-size:15px;margin:0 0 18px}
+.spotlight .sl-tags{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 16px}
+.spotlight .sl-tags span{font-size:11.5px;font-weight:600;color:#cfe0f5;background:rgba(255,255,255,.12);border-radius:5px;padding:3px 9px}
 .spotlight .sl-meta{font-size:13px;color:#7a96bc;display:flex;gap:10px;align-items:center}
 .spotlight .sl-date{color:#7a96bc}
 
@@ -477,15 +479,16 @@ function card(p){
 /* ---------- views ---------- */
 function viewHome(){
   const sorted=publicPubs().slice().sort(byDate);
-  const featured=sorted.find(p=>p.featured)||sorted[0];
-  const latest=sorted.filter(p=>!featured||p.id!==featured.id).slice(0,3);
+  const featured=sorted.find(p=>p.featured)||sorted[0]||null;
+  let latest=(featured?sorted.filter(p=>p.id!==featured.id):sorted.slice()).slice(0,3);
+  if(!latest.length&&featured)latest=[featured];
   const spotHtml=featured?`
   <section class="section" style="padding-top:0;padding-bottom:16px"><div class="wrap">
     <div class="spotlight">
       <div class="sl-text">
         <div class="sl-label">Featured</div>
         <h3>${esc(featured.title)}</h3>
-        <p>${esc(featured.excerpt||"")}</p>
+        ${featured.excerpt?`<p>${esc(featured.excerpt)}</p>`:((featured.tags&&featured.tags.length)?`<div class="sl-tags">${featured.tags.slice(0,3).map(t=>`<span>${esc(t)}</span>`).join("")}</div>`:"")}
         <div class="sl-meta">
           ${flagFor(featured.lang)}
           <span>${esc(featured.author||"Timoleon Ilias")}</span>
