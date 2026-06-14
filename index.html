@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>t.ilias · Geopolitics & Security Analysis</title>
 <meta name="description" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="t.ilias">
+<meta property="og:title" id="og-title" content="t.ilias · Geopolitics & Security Analysis">
+<meta property="og:description" id="og-desc" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.">
+<meta property="og:image" id="og-image" content="">
+<meta property="og:url" id="og-url" content="">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" id="tw-title" content="t.ilias · Geopolitics & Security Analysis">
+<meta name="twitter:description" id="tw-desc" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.">
+<meta name="twitter:image" id="tw-image" content="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1422,9 +1432,19 @@ function router(){
   if(parts[0]==="countries"){app.innerHTML=viewCountries();window.scrollTo(0,0);return;}
   if(parts[0]==="country"){app.innerHTML=viewCountry(parts[1]);wireCountry();window.scrollTo(0,0);return;}
   if(parts[0]==="about"){app.innerHTML=viewAbout();window.scrollTo(0,0);return;}
-  if(parts[0]==="article"){app.innerHTML=viewArticle(parts[1]);wireArticle();window.scrollTo(0,0);return;}
-  if(parts[0]==="maps"){app.innerHTML=viewMaps();initDeFacto();window.scrollTo(0,0);return;}
-  app.innerHTML=viewHome();initHomeMap();window.scrollTo(0,0);
+  if(parts[0]==="article"){const ap=PUBS.find(x=>x.id===parts[1]);app.innerHTML=viewArticle(parts[1]);setShareMeta(ap||null);wireArticle();window.scrollTo(0,0);return;}
+  if(parts[0]==="maps"){setShareMeta(null);app.innerHTML=viewMaps();initDeFacto();window.scrollTo(0,0);return;}
+  setShareMeta(null);app.innerHTML=viewHome();initHomeMap();window.scrollTo(0,0);
+}
+function setShareMeta(p){
+  const t=p?`${p.title} · t.ilias`:"t.ilias · Geopolitics & Security Analysis";
+  const d=p?(p.excerpt||p.title||""):"Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.";
+  const img=p?(p.photo||""):"";
+  document.title=t;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.setAttribute("content",v);};
+  set("og-title",t);set("tw-title",t);set("og-desc",d);set("tw-desc",d);
+  set("og-image",img);set("tw-image",img);set("og-url",location.href);
+  const md=document.querySelector('meta[name="description"]');if(md)md.setAttribute("content",d);
 }
 function openShare(href){
   const w=600,h=560;
