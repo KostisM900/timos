@@ -273,12 +273,10 @@ a.chip{text-decoration:none}
 .home-map-box svg text{font-family:"IBM Plex Sans","Inter",system-ui,sans-serif}
 .article-wide{max-width:1000px}
 .pdf-wrap{margin:10px 0 14px}
-.pdf-obj{width:100%;height:80vh;min-height:560px;border:1px solid var(--line);border-radius:12px;background:var(--wash);display:block}
-.pdf-fallback{padding:50px 22px;text-align:center;color:var(--muted)}
-.pdf-fallback p{margin:0 0 14px}
-.pdf-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px}
-.pdf-pill{font-size:11px;font-weight:700;letter-spacing:.05em;background:var(--cyan);color:var(--blue);border-radius:5px;padding:2px 8px;margin-left:2px}
-@media(max-width:760px){.pdf-obj{height:68vh;min-height:420px}}
+.pdf-frame{width:100%;height:80vh;min-height:560px;border:1px solid var(--line);border-radius:12px;background:var(--wash);display:block}
+.pdf-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.pdf-note{font-size:12.5px;color:var(--muted);margin:0 0 6px}
+@media(max-width:760px){.pdf-frame{height:68vh;min-height:420px}}
 .cfacts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
 .cf{background:var(--wash);border:1px solid var(--line);border-radius:11px;padding:14px 16px}
 .cf .k{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
@@ -516,10 +514,9 @@ function coverHtml(p){
 }
 function card(p){
   const ext=p.type==="external";
-  const pdf=p.type==="pdf";
   const href=ext?p.url:("#/article/"+p.id);
   const target=ext?` target="_blank" rel="noopener"`:"";
-  const badge=ext?`<span class="ext" title="Opens on an external outlet">↗ Featured elsewhere</span>`:(pdf?`<span class="ext">PDF</span>`:"");
+  const badge=ext?`<span class="ext" title="Opens on an external outlet">↗ Featured elsewhere</span>`:"";
   const tags=(p.tags||[]).slice(0,3).map(x=>`<span>${esc(x)}</span>`).join("");
   return `<a class="card" href="${href}"${target}>
     <div class="cover">${coverHtml(p)}<span class="tag">${esc((p.tags&&p.tags[0])||"Analysis")}</span>${badge}</div>
@@ -703,26 +700,26 @@ function viewAbout(){
   </div></section>`;
 }
 
+function pdfEmbedUrl(url){
+  if(!url)return"";
+  const g=url.match(/drive\.google\.com\/file\/d\/([^/?#]+)/)||(/drive\.google\.com/.test(url)?url.match(/[?&]id=([^&]+)/):null);
+  if(g)return `https://drive.google.com/file/d/${g[1]}/preview`;
+  if(/[?&]dl=0/.test(url))return url.replace(/([?&])dl=0/,"$1raw=1"); // Dropbox
+  return url+(url.includes("#")?"":"#view=FitH");
+}
 function viewArticle(id){
   const p=PUBS.find(x=>x.id===id);
   if(!p)return `<div class="article"><a class="back" href="#/publications">← Publications</a><h1>Not found</h1><p>This article doesn't exist or was removed.</p></div>`;
   if(p.type==="external"&&p.url){window.open(p.url,"_blank","noopener");location.hash="#/publications";return viewPublications();}
   const isPdf=p.type==="pdf"&&p.pdfUrl;
   const main=isPdf
-    ?`<div class="pdf-wrap">
-        <object class="pdf-obj" data="${esc(p.pdfUrl)}#view=FitH" type="application/pdf">
-          <div class="pdf-fallback"><p>Your browser can't display the PDF inline.</p>
-            <a class="btn primary" href="${esc(p.pdfUrl)}" target="_blank" rel="noopener">Open the PDF ↗</a></div>
-        </object>
-      </div>
-      <div class="pdf-actions">
-        <a class="btn line" href="${esc(p.pdfUrl)}" target="_blank" rel="noopener">Open in new tab ↗</a>
-        <a class="btn line" href="${esc(p.pdfUrl)}" download>Download PDF</a>
-      </div>`
+    ?`<div class="pdf-wrap"><iframe class="pdf-frame" src="${esc(pdfEmbedUrl(p.pdfUrl))}" title="${esc(p.title)}" allow="autoplay" loading="lazy"></iframe></div>
+      <div class="pdf-actions"><a class="btn line" href="${esc(p.pdfUrl)}" target="_blank" rel="noopener">Open original ↗</a></div>
+      <p class="pdf-note">If the document stays blank, make sure it is shared publicly — e.g. in Google Drive set sharing to “Anyone with the link”.</p>`
     :`<div class="content">${bodyHtml(p.body)||"<p>(No content yet.)</p>"}</div>`;
   return `<article class="article ${isPdf?'article-wide':''}">
     <a class="back" href="#/publications">← All publications</a>
-    <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span>${isPdf?'<span class="pdf-pill">PDF</span>':''}</div>
+    <div class="meta">${flagFor(p.lang)}<span>${esc(p.author||"t.ilias")}</span><span>·</span><span>${fmt(p.date)}</span></div>
     <h1>${esc(p.title)}</h1>
     ${p.excerpt?`<p class="lead">${esc(p.excerpt)}</p>`:""}
     ${main}
@@ -1193,6 +1190,7 @@ function renderAdmin(){
     if(obj.featured){const prev=PUBS.find(p=>p.featured&&p.id!==obj.id);if(prev){prev.featured=false;demoted=prev;}}
     if(ed){PUBS[PUBS.findIndex(p=>p.id===ed.id)]=obj;}else PUBS.unshift(obj);
     await persistOne(obj);if(demoted)await persistOne(demoted);
+    const app=document.getElementById("app");if(app){app.innerHTML=viewHome();initHomeMap();}
     editingId=null;renderAdmin();
   };
   const list=inner.querySelector("#adminList");
@@ -1200,7 +1198,7 @@ function renderAdmin(){
     `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${p.draft?'<span class="dbadge">Draft</span>':''}${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':p.type==='pdf'?'PDF':'text'} · ${(p.tags||[]).join(', ')}</small></div>
       <button class="mini" data-edit="${p.id}">Edit</button><button class="mini danger" data-del="${p.id}">Delete</button></div>`).join("");
   list.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editingId=b.dataset.edit;renderAdmin();});
-  list.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("Delete this publication?")){const id=b.dataset.del;PUBS=PUBS.filter(p=>p.id!==id);await removeOne(id);renderAdmin();}});
+  list.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("Delete this publication?")){const id=b.dataset.del;PUBS=PUBS.filter(p=>p.id!==id);await removeOne(id);const app=document.getElementById("app");if(app){app.innerHTML=viewHome();initHomeMap();}renderAdmin();}});
 }
 function exportJSON(){const blob=new Blob([JSON.stringify(PUBS,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="publications.json";a.click();URL.revokeObjectURL(a.href);}
 function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){PUBS=d;if(SUPA_ON){for(const p of PUBS){await persistOne(p);}}else{save();}renderAdmin();}else alert("JSON must be an array.");}catch(x){alert("Invalid JSON.");}};r.readAsText(f);}
