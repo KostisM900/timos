@@ -21,7 +21,6 @@
   • Plausible: <script defer data-domain="YOURDOMAIN.com" src="https://plausible.io/js/script.js"></script>
   • Umami: <script defer src="https://YOUR-UMAMI/script.js" data-website-id="YOUR_ID"></script>
 -->
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "0ddb2dfd38774d74986e39101e4d0d34"}'></script><!-- End Cloudflare Web Analytics -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -255,23 +254,6 @@ main{min-height:60vh}
 .mini:hover{border-color:var(--sky)}.mini.danger{color:#C0493C}.mini.danger:hover{border-color:#C0493C}
 .admin-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
 .admin-list{margin-top:8px;border-top:1px solid var(--line)}
-.cf-stats{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:4px 0 16px;background:var(--wash)}
-.cf-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.cf-row b{font-size:14px;color:var(--navy);margin-right:auto}
-.cf-sel{height:30px;border:1px solid var(--line);border-radius:7px;background:#fff;font-size:13px;padding:0 8px;color:var(--ink)}
-.cf-out{margin-top:12px}
-.cf-grid{display:flex;gap:12px;margin-bottom:14px}
-.cf-kpi{flex:1;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;text-align:center}
-.cf-n{font-size:26px;font-weight:700;color:var(--blue);font-family:var(--display)}
-.cf-l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
-.cf-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.cf-cols h5{margin:0 0 6px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:700}
-.cf-list{list-style:none;margin:0;padding:0;font-size:13px}
-.cf-list li{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
-.cf-list li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
-.cf-list li b{color:var(--navy)}
-.cf-note{display:block;margin-top:10px;color:var(--muted)}
-@media(max-width:620px){.cf-grid{flex-direction:column}.cf-cols{grid-template-columns:1fr}}
 .admin-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
 .admin-row .ai{flex:1;min-width:0}
 .admin-row .ai b{color:var(--navy);font-size:14.5px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1347,12 +1329,6 @@ function renderAdmin(){
         <button class="btn primary" id="newBtn">+ New publication</button>
         <button class="mini danger" id="logoutBtn" style="margin-left:auto">Log out</button>
       </div>
-      <div class="cf-stats">
-        <div class="cf-row"><b>Traffic · Cloudflare</b>
-          <select id="cfDays" class="cf-sel"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select>
-          <button class="mini" id="loadStats">Load stats</button></div>
-        <div id="cfStatsOut" class="cf-out"><small>Visits, page views, top countries, referrers and pages from Cloudflare Web Analytics. Works on the live Cloudflare site once the API token is set on the Worker.</small></div>
-      </div>
       <div class="field"><label>Title</label><input id="f_title" value="${v('title')}"></div>
       <div class="row2">
         <div class="field"><label>Author</label><input id="f_author" value="${ed?esc(ed.author||''):'Timoleon Ilias'}"></div>
@@ -1473,37 +1449,6 @@ function renderAdmin(){
       <button class="mini" data-edit="${p.id}">Edit</button><button class="mini danger" data-del="${p.id}">Delete</button></div>`).join("");
   list.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editingId=b.dataset.edit;renderAdmin();});
   list.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("Delete this publication?")){const id=b.dataset.del;PUBS=PUBS.filter(p=>p.id!==id);await removeOne(id);const app=document.getElementById("app");if(app){app.innerHTML=viewHome();initHomeMap();}renderAdmin();}});
-  const ls=inner.querySelector("#loadStats");
-  if(ls)ls.onclick=async()=>{
-    const out=inner.querySelector("#cfStatsOut");
-    let key="";try{key=sessionStorage.getItem("statsKey")||"";}catch(e){}
-    if(!key){key=prompt("Stats access key (the STATS_KEY you set on the Worker):")||"";if(key){try{sessionStorage.setItem("statsKey",key);}catch(e){}}}
-    if(!key)return;
-    const days=inner.querySelector("#cfDays").value;
-    out.innerHTML="<small>Loading…</small>";
-    try{
-      const r=await fetch(`/api/stats?key=${encodeURIComponent(key)}&days=${days}`);
-      if(r.status===401){out.innerHTML="<small>Wrong stats key.</small>";try{sessionStorage.removeItem("statsKey");}catch(e){}return;}
-      if(r.status===503){out.innerHTML="<small>Cloudflare stats not configured on the Worker yet (set CF_API_TOKEN, CF_ACCOUNT_ID, CF_SITE_TAG and STATS_KEY).</small>";return;}
-      if(!r.ok){out.innerHTML="<small>Could not load stats ("+r.status+").</small>";return;}
-      out.innerHTML=renderCfStats(await r.json());
-    }catch(e){out.innerHTML="<small>Stats endpoint is only available on the live Cloudflare site.</small>";}
-  };
-}
-function renderCfStats(d){
-  if(!d||d.error)return "<small>"+esc((d&&d.error)||"No data")+"</small>";
-  const num=n=>(n==null?"—":Number(n).toLocaleString());
-  const list=arr=>(arr&&arr.length)?("<ul class='cf-list'>"+arr.map(x=>`<li><span>${esc(x.label||"(direct / none)")}</span><b>${num(x.count)}</b></li>`).join("")+"</ul>"):"<small>—</small>";
-  return `<div class="cf-grid">
-      <div class="cf-kpi"><div class="cf-n">${num(d.visits)}</div><div class="cf-l">Visits</div></div>
-      <div class="cf-kpi"><div class="cf-n">${num(d.pageviews)}</div><div class="cf-l">Page views</div></div>
-    </div>
-    <div class="cf-cols">
-      <div><h5>Top countries</h5>${list(d.countries)}</div>
-      <div><h5>Top referrers</h5>${list(d.referrers)}</div>
-      <div><h5>Top pages</h5>${list(d.paths)}</div>
-    </div>
-    <small class="cf-note">Last ${esc(String(d.days||""))} days · Cloudflare Web Analytics</small>`;
 }
 function exportJSON(){const blob=new Blob([JSON.stringify(PUBS,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="publications.json";a.click();URL.revokeObjectURL(a.href);}
 function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){PUBS=d;if(SUPA_ON){for(const p of PUBS){await persistOne(p);}}else{save();}renderAdmin();}else alert("JSON must be an array.");}catch(x){alert("Invalid JSON.");}};r.readAsText(f);}
@@ -1544,9 +1489,7 @@ function setShareMeta(p){
   document.title=t;
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.setAttribute("content",v);};
   set("og-title",t);set("tw-title",t);set("og-desc",d);set("tw-desc",d);
-  set("og-image",img);set("tw-image",img);
-  const u=p?(location.origin+location.pathname+"?p="+encodeURIComponent(p.id)+"#/article/"+p.id):location.href;
-  set("og-url",u);
+  set("og-image",img);set("tw-image",img);set("og-url",location.href);
   const md=document.querySelector('meta[name="description"]');if(md)md.setAttribute("content",d);
 }
 function openShare(href){
@@ -1555,8 +1498,7 @@ function openShare(href){
   window.open(href,"shareWin","noopener,width="+w+",height="+h+",top="+Math.max(0,y)+",left="+Math.max(0,x));
 }
 function wireArticle(){
-  const aid=(location.hash.match(/#\/article\/(.+)$/)||[])[1]||"";
-  const url=location.origin+location.pathname+(aid?("?p="+encodeURIComponent(aid)):"")+(location.hash||"");
+  const url=location.href;
   const title=(document.querySelector(".article h1")||{}).textContent||document.title;
   const enc=encodeURIComponent;
   const link=(id,href)=>{const el=document.getElementById(id);if(el){el.href=href;el.addEventListener("click",e=>{e.preventDefault();openShare(href);});}};
@@ -1580,7 +1522,6 @@ window.addEventListener("hashchange",router);
 })();
 
 /* ---------- boot ---------- */
-(function(){try{const pp=new URLSearchParams(location.search).get("p");if(pp&&!/^#\/article\//.test(location.hash))location.hash="#/article/"+pp;}catch(e){}})();
 load().then(loadViews).then(router);
 </script>
 </body>
