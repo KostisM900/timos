@@ -4,17 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>t.ilias · Geopolitics & Security Analysis</title>
-<meta name="description" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.">
+<meta name="description" content="Analysis, publications and interactive maps on the geopolitics and security of the South Caucasus — Armenia, Azerbaijan, Georgia and the post-Soviet space — by Timoleon Ilias.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="t.ilias">
 <meta property="og:title" id="og-title" content="t.ilias · Geopolitics & Security Analysis">
-<meta property="og:description" id="og-desc" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.">
-<meta property="og:image" id="og-image" content="">
-<meta property="og:url" id="og-url" content="">
+<meta property="og:description" id="og-desc" content="Analysis, publications and interactive maps on the geopolitics and security of the South Caucasus — Armenia, Azerbaijan, Georgia and the post-Soviet space — by Timoleon Ilias.">
+<meta property="og:image" id="og-image" content="https://www.tilias.eu/og.png">
+<meta property="og:url" id="og-url" content="https://www.tilias.eu/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" id="tw-title" content="t.ilias · Geopolitics & Security Analysis">
-<meta name="twitter:description" id="tw-desc" content="Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.">
-<meta name="twitter:image" id="tw-image" content="">
+<meta name="twitter:description" id="tw-desc" content="Analysis, publications and interactive maps on the geopolitics and security of the South Caucasus — Armenia, Azerbaijan, Georgia and the post-Soviet space — by Timoleon Ilias.">
+<meta name="twitter:image" id="tw-image" content="https://www.tilias.eu/og.png">
+<link rel="canonical" href="https://www.tilias.eu/">
+<meta name="robots" content="index, follow">
+<meta name="author" content="Timoleon Ilias">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%230F2854%27%2F%3E%3Ctext%20x%3D%277%27%20y%3D%2724%27%20font-family%3D%27Georgia%2CTimes%2Cserif%27%20font-size%3D%2723%27%20font-weight%3D%27700%27%20fill%3D%27%23ffffff%27%3Et%3C%2Ftext%3E%3Ccircle%20cx%3D%2718.5%27%20cy%3D%2722%27%20r%3D%272.6%27%20fill%3D%27%23BDE8F5%27%2F%3E%3C%2Fsvg%3E">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"t.ilias","alternateName":"Timoleon Ilias","url":"https://www.tilias.eu/","description":"Analysis, publications and interactive maps on the geopolitics and security of the South Caucasus — Armenia, Azerbaijan, Georgia and the post-Soviet space — by Timoleon Ilias.","inLanguage":["en","el"],"author":{"@type":"Person","name":"Timoleon Ilias","url":"https://www.tilias.eu/#/about","sameAs":["https://www.linkedin.com/in/timoleon-ilias-278769283/"],"knowsAbout":["South Caucasus","Geopolitics","Security studies","Armenia","Azerbaijan","Georgia","Post-Soviet space"]}}</script>
 <!-- ANALYTICS: paste one beacon below.
   • Cloudflare Web Analytics (free, no cookies): enable in the Cloudflare dashboard for this Pages project (zero code), or paste:
       <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token":"YOUR_TOKEN"}'></script>
@@ -449,7 +454,7 @@ a.chip{text-decoration:none}
       <a href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">LinkedIn</a>
       <a href="#/admin">Admin</a>
     </div>
-    <small>© 2026 Timoleon Ilias · Geopolitics &amp; security analysis. All views are personal.</small>
+    <small>© 2026 Timoleon Ilias · Geopolitics &amp; security analysis.</small>
   </div>
 </footer>
 
@@ -567,7 +572,9 @@ const GDRIVE_ON=!!(GOOGLE_CLIENT_ID&&GOOGLE_API_KEY);
 const KEY="tilias_pubs_v3";
 let PUBS=[];
 let VIEWS={};
+let CLICKS={};
 function viewCount(id){return VIEWS[id]||0;}
+function clickCount(id){return CLICKS[id]||0;}
 function fmtViews(n){return (n||0)+" "+((n===1)?"view":"views");}
 function readingTime(p){
   if(!p||p.type!=="internal"||!p.body)return"";
@@ -578,14 +585,20 @@ function readingTime(p){
 }
 async function loadViews(){
   if(!SUPA_ON)return;
-  try{const r=await fetch(`${SB_BASE}/rest/v1/pubviews?select=id,views`,{headers:supaHeaders()});
-    if(r.ok){VIEWS={};(await r.json()).forEach(x=>{VIEWS[x.id]=x.views||0;});}}catch(e){}
+  try{const r=await fetch(`${SB_BASE}/rest/v1/pubviews?select=*`,{headers:supaHeaders()});
+    if(r.ok){VIEWS={};CLICKS={};(await r.json()).forEach(x=>{VIEWS[x.id]=x.views||0;CLICKS[x.id]=x.clicks||0;});}}catch(e){}
 }
 async function bumpView(id){
   if(!id)return;
   VIEWS[id]=(VIEWS[id]||0)+1;
   if(!SUPA_ON)return;
   try{await fetch(`${SB_BASE}/rest/v1/rpc/bump_view`,{method:"POST",headers:supaHeaders(),body:JSON.stringify({pid:id})});}catch(e){}
+}
+async function bumpClick(id){
+  if(!id)return;
+  CLICKS[id]=(CLICKS[id]||0)+1;
+  if(!SUPA_ON)return;
+  try{await fetch(`${SB_BASE}/rest/v1/rpc/bump_click`,{method:"POST",headers:supaHeaders(),body:JSON.stringify({pid:id})});}catch(e){}
 }
 function supaHeaders(extra){const tok=authValid()?SESSION.access_token:SUPABASE_KEY;return Object.assign({apikey:SUPABASE_KEY,Authorization:"Bearer "+tok,"Content-Type":"application/json"},extra||{});}
 /* ---------- Supabase Auth (admin sign-in) ---------- */
@@ -746,7 +759,7 @@ function coverHtml(p){
 function card(p){
   const ext=p.type==="external";
   const href=ext?p.url:("#/article/"+p.id);
-  const target=ext?` target="_blank" rel="noopener"`:"";
+  const target=ext?` target="_blank" rel="noopener" data-extid="${p.id}"`:"";
   const badge=ext?`<span class="ext" title="Opens on an external outlet">↗ Featured elsewhere</span>`:"";
   const tags=(p.tags||[]).slice(0,3).map(x=>`<span class="tagchip" data-tag="${esc(x)}">${esc(x)}</span>`).join("");
   return `<a class="card" href="${href}"${target}>
@@ -814,7 +827,7 @@ function viewHome(){
   const latest=sorted.slice(0,6);
   const spotHtml=featured?`
   <section class="section" style="padding-top:30px;padding-bottom:10px"><div class="wrap">
-    <a class="spotlight" ${featured.type==="external"?`href="${esc(featured.url)}" target="_blank" rel="noopener"`:`href="#/article/${esc(featured.id)}"`}>
+    <a class="spotlight" ${featured.type==="external"?`href="${esc(featured.url)}" target="_blank" rel="noopener" data-extid="${esc(featured.id)}"`:`href="#/article/${esc(featured.id)}"`}>
       <div class="sl-label">Featured</div>
       <h3>${esc(featured.title)}</h3>
       ${featured.excerpt?`<p>${esc(featured.excerpt)}</p>`:""}
@@ -939,7 +952,7 @@ function pdfEmbedUrl(url){
 function viewArticle(id){
   const p=PUBS.find(x=>x.id===id);
   if(!p)return `<div class="article"><a class="back" href="#/publications">← Publications</a><h1>Not found</h1><p>This article doesn't exist or was removed.</p></div>`;
-  if(p.type==="external"&&p.url){window.open(p.url,"_blank","noopener");location.hash="#/publications";return viewPublications();}
+  if(p.type==="external"&&p.url){let f=true;try{const k="clk:"+p.id;if(sessionStorage.getItem(k))f=false;else sessionStorage.setItem(k,"1");}catch(e){}if(f)bumpClick(p.id);window.open(p.url,"_blank","noopener");location.hash="#/publications";return viewPublications();}
   const isPdf=p.type==="pdf"&&p.pdfUrl;
   const main=isPdf
     ?`<div class="pdf-wrap"><iframe class="pdf-frame" src="${esc(pdfEmbedUrl(p.pdfUrl))}" title="${esc(p.title)}" allow="autoplay" loading="lazy"></iframe></div>
@@ -1296,7 +1309,7 @@ function openState(k){
     relHtml=`<div class="modal-pubs"><h4>Related publications</h4>`+
       relPubs.map(p=>{
         const href=p.type==="external"?p.url:`#/article/${p.id}`;
-        const target=p.type==="external"?` target="_blank" rel="noopener"`:"";
+        const target=p.type==="external"?` target="_blank" rel="noopener" data-extid="${p.id}"`:"";
         return `<a class="mpub" href="${href}"${target}>
           <div class="mpimg">${p.photo?`<img src="${esc(p.photo)}" alt="">`:`<div class="mpfb"></div>`}</div>
           <div><div class="mpt">${esc(p.title)}</div><div class="mpd">${fmt(p.date)}${p.type==="external"?" · Featured elsewhere":""}</div></div>
@@ -1344,7 +1357,7 @@ function openCountry(key){
   let relHtml="";
   if(rel.length){
     relHtml=`<div class="modal-pubs"><h4>Related publications</h4>`+rel.map(p=>{
-      const href=p.type==="external"?p.url:`#/article/${p.id}`;const target=p.type==="external"?` target="_blank" rel="noopener"`:"";
+      const href=p.type==="external"?p.url:`#/article/${p.id}`;const target=p.type==="external"?` target="_blank" rel="noopener" data-extid="${p.id}"`:"";
       return `<a class="mpub" href="${href}"${target}><div class="mpimg">${p.photo?`<img src="${esc(p.photo)}" alt="">`:`<div class="mpfb"></div>`}</div><div><div class="mpt">${esc(p.title)}</div><div class="mpd">${fmt(p.date)}${p.type==="external"?" · Featured elsewhere":""}</div></div></a>`;
     }).join("")+`</div>`;
   }
@@ -1402,6 +1415,7 @@ function closeModal(id){document.getElementById(id).classList.remove("open");doc
 document.querySelectorAll(".modal-bg").forEach(bg=>bg.addEventListener("click",e=>{if(e.target===bg)closeModal(bg.id);}));
 document.addEventListener("keydown",e=>{if(e.key==="Escape")document.querySelectorAll(".modal-bg.open").forEach(m=>closeModal(m.id));});
 document.addEventListener("click",e=>{const tc=e.target.closest&&e.target.closest(".tagchip[data-tag]");if(tc){e.preventDefault();e.stopPropagation();location.hash="#/tag/"+encodeURIComponent(tc.dataset.tag);}},true);
+document.addEventListener("click",e=>{const ax=e.target.closest&&e.target.closest("a[data-extid]");if(!ax)return;const id=ax.dataset.extid;let f=true;try{const k="clk:"+id;if(sessionStorage.getItem(k))f=false;else sessionStorage.setItem(k,"1");}catch(_e){}if(f)bumpClick(id);});
 
 /* ---------- admin ---------- */
 let editingId=null;
@@ -1555,7 +1569,7 @@ function renderAdmin(){
   };
   const list=inner.querySelector("#adminList");
   list.innerHTML=PUBS.slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")).map(p=>
-    `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${p.draft?'<span class="dbadge">Draft</span>':''}${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':p.type==='pdf'?'PDF':'text'} · 👁 ${viewCount(p.id)} · ${(p.tags||[]).join(', ')}</small></div>
+    `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${p.draft?'<span class="dbadge">Draft</span>':''}${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':p.type==='pdf'?'PDF':'text'} · ${p.type==='external'?'\uD83D\uDD17 '+clickCount(p.id)+' clicks':'\uD83D\uDC41 '+viewCount(p.id)+' views'} · ${(p.tags||[]).join(', ')}</small></div>
       <button class="mini" data-edit="${p.id}">Edit</button><button class="mini danger" data-del="${p.id}">Delete</button></div>`).join("");
   list.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editingId=b.dataset.edit;renderAdmin();});
   list.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("Delete this publication?")){const id=b.dataset.del;PUBS=PUBS.filter(p=>p.id!==id);await removeOne(id);const app=document.getElementById("app");if(app){app.innerHTML=viewHome();initHomeMap();}renderAdmin();}});
@@ -1595,8 +1609,8 @@ function router(){
 }
 function setShareMeta(p){
   const t=p?`${p.title} · t.ilias`:"t.ilias · Geopolitics & Security Analysis";
-  const d=p?(p.excerpt||p.title||""):"Publications, interactive maps and stats on geopolitics, security and the post-Soviet space, by Timoleon Ilias.";
-  const img=p?(p.photo||""):"";
+  const d=p?(p.excerpt||p.title||""):"Analysis, publications and interactive maps on the geopolitics and security of the South Caucasus — Armenia, Azerbaijan, Georgia and the post-Soviet space — by Timoleon Ilias.";
+  const img=(p&&p.photo)?p.photo:"https://www.tilias.eu/og.png";
   document.title=t;
   const set=(id,v)=>{const e=document.getElementById(id);if(e)e.setAttribute("content",v);};
   set("og-title",t);set("tw-title",t);set("og-desc",d);set("tw-desc",d);
