@@ -758,7 +758,7 @@ function coverHtml(p){
 }
 function card(p){
   const ext=p.type==="external";
-  const href=ext?p.url:("#/article/"+p.id);
+  const href=ext?p.url:("/p/"+p.id+"/");
   const target=ext?` target="_blank" rel="noopener" data-extid="${p.id}"`:"";
   const badge=ext?`<span class="ext" title="Opens on an external outlet">↗ Featured elsewhere</span>`:"";
   const tags=(p.tags||[]).slice(0,3).map(x=>`<span class="tagchip" data-tag="${esc(x)}">${esc(x)}</span>`).join("");
@@ -827,7 +827,7 @@ function viewHome(){
   const latest=sorted.slice(0,6);
   const spotHtml=featured?`
   <section class="section" style="padding-top:30px;padding-bottom:10px"><div class="wrap">
-    <a class="spotlight" ${featured.type==="external"?`href="${esc(featured.url)}" target="_blank" rel="noopener" data-extid="${esc(featured.id)}"`:`href="#/article/${esc(featured.id)}"`}>
+    <a class="spotlight" ${featured.type==="external"?`href="${esc(featured.url)}" target="_blank" rel="noopener" data-extid="${esc(featured.id)}"`:`href="/p/${esc(featured.id)}/"`}>
       <div class="sl-label">Featured</div>
       <h3>${esc(featured.title)}</h3>
       ${featured.excerpt?`<p>${esc(featured.excerpt)}</p>`:""}
@@ -1647,7 +1647,18 @@ window.addEventListener("hashchange",router);
 })();
 
 /* ---------- boot ---------- */
-load().then(loadViews).then(router);
+function renderPathArticle(){
+  const m=location.pathname.match(/^\/p\/([^/]+)\/?$/);
+  if(!m)return false;
+  const id=decodeURIComponent(m[1]);
+  const ap=PUBS.find(x=>x.id===id);
+  const appEl=document.getElementById("app");
+  const nav=document.getElementById("nav");if(nav)nav.classList.remove("open");
+  appEl.innerHTML=viewArticle(id);setShareMeta(ap||null);
+  if(ap&&ap.type!=="external"){wireArticle();let fresh=true;try{const sk="seen:"+ap.id;if(sessionStorage.getItem(sk))fresh=false;else sessionStorage.setItem(sk,"1");}catch(e){}if(fresh)bumpView(ap.id);}
+  window.scrollTo(0,0);return true;
+}
+load().then(loadViews).then(()=>{if(!renderPathArticle())router();});
 </script>
 </body>
 </html>
