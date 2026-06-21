@@ -824,6 +824,7 @@ function viewTag(raw){
     <div class="sec-head"><div><span class="kicker cat-kicker"><a href="#/publications">Publications</a> \u00b7 Tag</span><h2>#${esc(tag)}</h2>
       <p>${list.length} publication${list.length===1?"":"s"} tagged with this.</p></div>
       <a class="more" href="#/publications">\u2190 All publications</a></div>
+    ${filtersBar(null,false)}
     <div class="pub-grid">${list.length?list.map(card).join(""):`<div class="empty">No publications with this tag yet.</div>`}</div>
   </div></section>`;
 }
@@ -909,6 +910,17 @@ function viewHome(){
   </div></section>`;
 }
 
+function filtersBar(active,withChips){
+  const chips=withChips===false?"":`<div class="filters">${chipsRow(active)}</div>`;
+  return `<div class="filters-row"${withChips===false?' style="justify-content:flex-end"':''}>
+      ${chips}
+      <div class="lang-filter" id="langFilter">
+        <button class="lang-btn active" data-lang="all" type="button">All</button>
+        <button class="lang-btn" data-lang="el" type="button" title="Ελληνικά" aria-label="Greek">${FLAG_EL}</button>
+        <button class="lang-btn" data-lang="en" type="button" title="English" aria-label="English">${FLAG_EN}</button>
+      </div>
+    </div>`;
+}
 function chipsRow(active){
   let h=`<a class="chip ${!active?'active':''}" href="#/publications">All</a>`;
   allCategories().forEach(c=>{h+=`<a class="chip ${active===c?'active':''}" href="#/category/${encodeURIComponent(c)}">${esc(c)}</a>`;});
@@ -919,14 +931,7 @@ function viewPublications(){
   return `<section class="section"><div class="wrap">
     <div class="sec-head"><div><span class="kicker">Portfolio</span><h2>Publications</h2>
       <p>Click an article to open it. Click a category to see everything filed under it.</p></div></div>
-    <div class="filters-row">
-      <div class="filters">${chipsRow(null)}</div>
-      <div class="lang-filter" id="langFilter">
-        <button class="lang-btn active" data-lang="all" type="button">All</button>
-        <button class="lang-btn" data-lang="el" type="button" title="Ελληνικά" aria-label="Greek">${FLAG_EL}</button>
-        <button class="lang-btn" data-lang="en" type="button" title="English" aria-label="English">${FLAG_EN}</button>
-      </div>
-    </div>
+    ${filtersBar(null)}
     <div class="pub-grid">${list.length?list.map(card).join(""):`<div class="empty">No publications yet.</div>`}</div>
   </div></section>`;
 }
@@ -939,7 +944,7 @@ function viewCategory(raw){
     <div class="sec-head"><div><span class="kicker cat-kicker"><a href="#/publications">Publications</a> · Category</span><h2>${esc(title)}</h2>
       <p>${list.length} publication${list.length===1?"":"s"} in this category.</p></div>
       <a class="more" href="#/publications">← All publications</a></div>
-    <div class="filters">${chipsRow(tag)}</div>
+    ${filtersBar(tag)}
     <div class="pub-grid">${list.length?list.map(card).join(""):`<div class="empty">No publications in this category yet.</div>`}</div>
   </div></section>`;
 }
@@ -1617,8 +1622,8 @@ function router(){
 
   if(parts[0]==="admin"){app.innerHTML=viewHome();initHomeMap();wireLoadMore();openAdmin();window.scrollTo(0,0);return;}
   if(parts[0]==="publications"){app.innerHTML=viewPublications();wireLangFilter();window.scrollTo(0,0);return;}
-  if(parts[0]==="category"){app.innerHTML=viewCategory(parts.slice(1).join("/"));window.scrollTo(0,0);return;}
-  if(parts[0]==="tag"){app.innerHTML=viewTag(parts.slice(1).join("/"));window.scrollTo(0,0);return;}
+  if(parts[0]==="category"){app.innerHTML=viewCategory(parts.slice(1).join("/"));wireLangFilter();window.scrollTo(0,0);return;}
+  if(parts[0]==="tag"){app.innerHTML=viewTag(parts.slice(1).join("/"));wireLangFilter();window.scrollTo(0,0);return;}
   if(parts[0]==="countries"){app.innerHTML=viewCountries();window.scrollTo(0,0);return;}
   if(parts[0]==="country"){app.innerHTML=viewCountry(parts[1]);wireCountry();wireSliders();wireLoadMore();window.scrollTo(0,0);return;}
   if(parts[0]==="about"){app.innerHTML=viewAbout();window.scrollTo(0,0);return;}
@@ -1653,7 +1658,8 @@ function wireArticle(){
   link("shareX",`https://twitter.com/intent/tweet?url=${enc(url)}&text=${enc(title)}`);
   link("shareLi",`https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`);
   const nat=document.getElementById("shareNative");
-  if(nat&&navigator.share){nat.hidden=false;nat.onclick=()=>navigator.share({title,url}).catch(()=>{});}
+  const coarse=window.matchMedia&&window.matchMedia("(pointer:coarse)").matches;
+  if(nat&&navigator.share&&coarse){nat.hidden=false;nat.onclick=()=>navigator.share({title,url}).catch(()=>{});["shareFb","shareX","shareLi"].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display="none";});}
   const b=document.getElementById("copyLink");
   if(b)b.onclick=()=>{try{navigator.clipboard.writeText(url);}catch(e){}b.textContent="Link copied ✓";setTimeout(()=>b.textContent="Copy link",1600);};
 }
