@@ -452,7 +452,6 @@ a.chip{text-decoration:none}
       <a href="#/countries">Countries</a>
       <a href="#/about">About</a>
       <a href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="#/admin">Admin</a>
     </div>
     <small>© 2026 Timoleon Ilias · Geopolitics &amp; security analysis.</small>
   </div>
@@ -536,7 +535,7 @@ const DEFACTO={
   },
   artsakh:{
     name:"Nagorno-Karabakh (Artsakh)",status:"Dissolved (2023)",color:"#9aa0aa",dashed:true,dissolved:true,
-    capital:"Stepanakert (former)",claimed:"Azerbaijan",population:"Depopulated since 2023 (was ~120,000)",match:["Nagorno-Karabakh","Artsakh","Nagorno Karabakh"],
+    capital:"Stepanakert (former)",claimed:"Azerbaijan",population:"145,053 (2015 census)",match:["Nagorno-Karabakh","Artsakh","Nagorno Karabakh"],
     recog:"None (dissolved)",
     recognisedBy:[],
     nextElections:"None (dissolved)",
@@ -736,7 +735,7 @@ function rteAddCol(rte){
   });
 }
 function allTags(){const s=new Set();publicPubs().forEach(p=>(p.tags||[]).forEach(x=>s.add(x)));return[...s];}
-function allCategories(){const s=new Set();publicPubs().forEach(p=>{if(p.category)s.add(p.category);});return[...s].sort((a,b)=>a.localeCompare(b));}
+function allCategories(){const s=new Set();publicPubs().forEach(p=>{if(p.category)s.add(p.category);});return[...s].sort((a,b)=>{const P=["South Caucasus"];const pa=P.indexOf(a),pb=P.indexOf(b);if(pa>=0||pb>=0)return (pa<0?99:pa)-(pb<0?99:pb);return a.localeCompare(b);});}
 function pubMatchesCountry(p,c){
   const terms=[...(p.tags||[]),p.category].filter(Boolean).map(s=>s.toLowerCase());
   const want=[...(c.match||[]),c.name].filter(Boolean).map(s=>s.toLowerCase());
@@ -824,7 +823,7 @@ function wireSliders(root){
 function viewHome(){
   const sorted=publicPubs().slice().sort(byDate);
   const featured=sorted.find(p=>p.featured)||sorted[0]||null;
-  const latest=sorted.slice(0,6);
+  const latest=sorted.slice(0,3);
   const spotHtml=featured?`
   <section class="section" style="padding-top:30px;padding-bottom:10px"><div class="wrap">
     <a class="spotlight" ${featured.type==="external"?`href="${esc(featured.url)}" target="_blank" rel="noopener" data-extid="${esc(featured.id)}"`:`href="/p/${esc(featured.id)}/"`}>
@@ -840,7 +839,7 @@ function viewHome(){
 
   return `
   <section class="hero"><div class="wrap">
-    <h1>-</h1>
+    <h1 style="font-size:clamp(20px,3.4vw,30px);font-weight:400;letter-spacing:.2px">Geopolitics &amp; Security Analysis</h1>
     <div class="cta">
       <a class="btn primary" href="#/publications">Read publications</a>
       <a class="btn ghost" href="#/maps">Explore the map</a>
@@ -862,33 +861,16 @@ function viewHome(){
       <div class="home-map-box" id="home-map"></div>
       <div class="home-map-txt">
         <h3>State entities of the South Caucasus</h3>
-        <p>A clickable vector map of the South Caucasus. Tap any country or breakaway territory for recognition status, Freedom House scores, election calendars and leadership history.</p>
+        <p>Tap any country or breakaway territory for recognition status, Freedom House scores, election calendars and leadership history.</p>
         <a class="btn primary" href="#/maps">Open the full map</a>
       </div>
     </div>
   </div></section>
 
   <section class="section"><div class="wrap">
-    <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>The three states up close</h2>
-      <p>Key facts and full leadership histories for each South Caucasus country.</p></div>
+    <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>Key facts and full leadership histories for each South Caucasus country.</h2></div>
       <a class="more" href="#/countries">All countries →</a></div>
     <div class="pub-grid">${COUNTRY_ORDER.map(countryCard).join("")}</div>
-  </div></section>
-
-  <section class="section home-about"><div class="wrap">
-    <div class="sec-head"><div><span class="kicker">About</span><h2>Behind the analysis</h2></div>
-      <a class="more" href="#/about">Full profile →</a></div>
-    <div class="about-wrap">
-      <div class="home-note-col">
-        <figure class="hand-note home-note"><img src="${NOTE_IMG}" alt="Handwritten note from Timoleon Ilias"></figure>
-        <div class="cta"><a class="btn primary" href="#/about">More about the author</a>
-          <a class="btn line" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">LinkedIn ↗</a></div>
-      </div>
-      <div class="about-card">
-        <h4>Focus areas</h4>
-        <ul><li>South Caucasus security</li><li>De facto &amp; breakaway states</li><li>Energy &amp; regional geopolitics</li><li>Ethnic minorities</li><li>Post-Soviet affairs</li></ul>
-      </div>
-    </div>
   </div></section>`;
 }
 
@@ -921,7 +903,7 @@ function viewCategory(raw){
 }
 function viewAbout(){
   return `<section class="hero" style="padding:46px 0 50px"><div class="wrap">
-    <span class="eyebrow">About</span><h1 style="font-size:34px">Timoleon Ilias</h1>
+    <span class="eyebrow">About</span>
   </div></section>
   <section class="section"><div class="wrap">
     <div class="about-grid">
@@ -933,7 +915,7 @@ function viewAbout(){
       </div>
       <div class="about-card">
       <h4>Focus areas</h4>
-      <ul><li>South Caucasus security</li><li>De facto &amp; breakaway states</li><li>Energy &amp; regional geopolitics</li><li>Ethnic minorities</li><li>Post-Soviet affairs</li></ul>
+      <ul><li>South Caucasus</li><li>Armenian-Azerbaijani relations</li><li>Peace and Conflict affairs</li><li>International Security</li><li>De facto states</li><li>Authoritarianism</li></ul>
       <a class="li-link" href="https://www.linkedin.com/in/timoleon-ilias-278769283/" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
         linkedin.com/in/timoleon-ilias</a>
@@ -1017,12 +999,9 @@ function viewCountry(key){
       <div class="cf"><div class="k">Government</div><div class="v">${esc(c.government)}</div></div>
       <div class="cf"><div class="k">Freedom House</div><div class="v">${c.fh.score}/100 · ${esc(c.fh.label)}</div></div>
       <div class="cf"><div class="k">Next elections</div><div class="v">${esc(c.elections)}</div></div>
-      <div class="cf"><div class="k">Status</div><div class="v">${esc(c.status)}</div></div>
     </div>
-    <p class="country-desc">${esc(c.desc)}</p>
 
-    <div class="sec-head" style="margin-top:34px"><div><span class="kicker">Leadership</span><h2>Office-holders over the years</h2>
-      <p>Heads of state, heads of government and foreign ministers, tap any name for details. A demo dataset, extend it in your own records.</p></div></div>
+    <div class="sec-head" style="margin-top:34px"><div><span class="kicker">Leadership</span><h2>Office-holders over the years</h2></div></div>
     <div class="leaders-grid">${leaders}</div>
 
     ${rel.length?`<div class="sec-head" style="margin-top:34px"><div><span class="kicker">Reading</span><h2>Related publications</h2></div></div>
@@ -1337,7 +1316,6 @@ function openState(k){
         <div class="f"><div class="k">Next elections</div><div class="v">${esc(d.nextElections)}</div></div>
         ${fhHtml}
       </div>
-      <p>${esc(d.info)}</p>
       ${relHtml}
     </div>`;
   inner.querySelector(".x").onclick=()=>closeModal("ethModal");
@@ -1370,12 +1348,11 @@ function openCountry(key){
       <div class="eth-facts">
         <div class="f"><div class="k">Capital</div><div class="v">${esc(c.capital)}</div></div>
         <div class="f"><div class="k">Population</div><div class="v">${esc(c.population)}</div></div>
-        <div class="f"><div class="k">Government</div><div class="v" style="font-size:13px">${esc(c.government)}</div></div>
-        <div class="f"><div class="k">Next elections</div><div class="v" style="font-size:13px">${esc(c.elections)}</div></div>
+        <div class="f"><div class="k">Government</div><div class="v">${esc(c.government)}</div></div>
+        <div class="f"><div class="k">Next elections</div><div class="v">${esc(c.elections)}</div></div>
         <div class="f" style="grid-column:1/-1"><div class="k">Freedom House</div><div class="v">${c.fh.score}/100 · ${esc(c.fh.label)}</div>
           <div class="fh-bar"><div class="fh-fill" style="width:${c.fh.score}%;background:${c.fh.score<40?'#C0493C':c.fh.score<60?'#E0A93A':'#2E8B57'}"></div></div></div>
       </div>
-      <p>${esc(c.desc)}</p>
       ${relHtml}
       <a class="btn primary" style="margin-top:18px" href="#/country/${key}" data-nav="1">Full country profile &amp; leadership history →</a>
     </div>`;
