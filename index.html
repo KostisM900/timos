@@ -339,7 +339,7 @@ a.chip{text-decoration:none}
 .about-card li{font-size:14px;color:var(--ink);padding:8px 0;border-bottom:1px solid var(--line)}
 .about-card li:last-child{border-bottom:0}
 .about-card .li-link{display:inline-flex;gap:8px;align-items:center;font-weight:600;color:var(--blue);margin-top:14px}
-.about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:center;max-width:1000px;margin:0 auto}
+.about-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:start;max-width:1000px;margin:0 auto}
 .about-grid .hand-note{margin:0}
 .about-grid .about-note-col{min-width:0}
 .about-cta{justify-content:flex-start;margin:20px 0 0}
@@ -347,6 +347,7 @@ a.chip{text-decoration:none}
 .home-note{margin:0 0 20px;text-align:left}
 .home-note img{width:100%;max-width:560px;height:auto;display:block}
 @media(max-width:860px){.about-grid{grid-template-columns:1fr;gap:26px}.about-cta{justify-content:center}.home-note{text-align:center}.home-note img{margin:0 auto}}
+@media(max-width:560px){.filters-row{flex-direction:column;align-items:flex-start;gap:14px}.sec-head{flex-direction:column;align-items:flex-start;gap:10px}.lang-btn{padding:7px 13px}}
 .home-about{background:var(--wash);border-top:1px solid var(--line)}
 #svgmap-wrap svg text{font-family:"IBM Plex Sans","Inter",system-ui,sans-serif}
 .home-map-box svg text{font-family:"IBM Plex Sans","Inter",system-ui,sans-serif}
