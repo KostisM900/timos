@@ -95,6 +95,14 @@ nav.main a.active{color:#fff;background:rgba(255,255,255,.12)}
 .home-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .topic-chip{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;text-decoration:none;transition:.15s}
 .topic-chip:hover{background:#fff;color:var(--navy);border-color:#fff}
+.country-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;background:linear-gradient(120deg,var(--navy),var(--cb,#1C4D8D));color:#fff;border-radius:14px;padding:18px 22px;margin-bottom:22px;text-decoration:none}
+.country-banner .cb-main{display:flex;flex-direction:column}
+.country-banner .cb-kick{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);font-weight:600}
+.country-banner strong{font-size:22px;font-weight:700;font-family:var(--display);margin-top:2px}
+.country-banner .cb-sub{font-size:13px;color:#cdddf2;margin-top:3px}
+.country-banner .cb-go{flex-shrink:0;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600;white-space:nowrap}
+.country-banner:hover .cb-go{background:#fff;color:var(--navy)}
+@media(max-width:560px){.country-banner{flex-direction:column;align-items:flex-start;gap:12px}}
 .lm-wrap{display:flex;justify-content:center;margin-top:24px}
 
 /* ── home: stat band ── */
@@ -831,6 +839,7 @@ function viewTag(raw){
   const tl=tag.toLowerCase();
   const list=publicPubs().filter(p=>(p.tags||[]).some(x=>String(x).toLowerCase()===tl)).sort(byDate);
   return `<section class="section"><div class="wrap">
+    ${countryBannerFor(tag)}
     <div class="sec-head"><div><span class="kicker cat-kicker"><a href="#/publications">Publications</a> \u00b7 Tag</span><h2>#${esc(tag)}</h2>
       <p>${list.length} publication${list.length===1?"":"s"} tagged with this.</p></div>
       <a class="more" href="#/publications">\u2190 All publications</a></div>
@@ -874,33 +883,43 @@ function homeTopics(){
   return out.slice(0,9).map(a=>`<a class="topic-chip" href="${a[0]}">${esc(a[1])}</a>`).join("");
 }
 function searchNorm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
+function searchTokens(s){return searchNorm(s).split(/[^a-z0-9]+/).filter(Boolean);}
+function tokScore(toks,t){let b=0;for(const w of toks){if(w===t)return 2;if(b<1&&w.startsWith(t))b=1;}return b;}
 function searchPubs(q){
-  const terms=searchNorm(q).split(/\s+/).filter(Boolean);
-  if(!terms.length)return [];
-  const scored=publicPubs().map(p=>{
-    const F={ti:searchNorm(p.title),tg:searchNorm((p.tags||[]).join(" ")),ct:searchNorm(p.category),ex:searchNorm(p.excerpt),au:searchNorm(p.author),bd:searchNorm(String(p.body||"").replace(/<[^>]+>/g," "))};
+  const terms=searchTokens(q);if(!terms.length)return [];
+  const res=[];
+  publicPubs().forEach(p=>{
+    const F={ti:searchTokens(p.title),tg:searchTokens((p.tags||[]).join(" ")),ct:searchTokens(p.category),ex:searchTokens(p.excerpt),au:searchTokens(p.author),bd:searchTokens(String(p.body||"").replace(/<[^>]+>/g," "))};
     let score=0,ok=true;
-    terms.forEach(t=>{let s=0;
-      if(F.ti.includes(t)){s+=10;if((" "+F.ti).includes(" "+t))s+=4;}
-      if(F.tg.includes(t))s+=6; if(F.ct.includes(t))s+=5;
-      if(F.ex.includes(t))s+=3; if(F.au.includes(t))s+=3; if(F.bd.includes(t))s+=1;
-      if(s===0)ok=false; score+=s;});
-    return {p,score,ok};
+    for(const t of terms){
+      const ti=tokScore(F.ti,t),tg=tokScore(F.tg,t),ct=tokScore(F.ct,t),ex=tokScore(F.ex,t),au=tokScore(F.au,t),bd=tokScore(F.bd,t);
+      if(!(ti||tg||ct||ex||au))ok=false;
+      score+=ti*7+tg*4+ct*3+ex*2.5+au*2+(bd?1:0);
+    }
+    if(ok)res.push({p,score});
   });
-  return scored.filter(x=>x.ok).sort((a,b)=>b.score-a.score||byDate(a.p,b.p)).map(x=>x.p);
+  return res.sort((a,b)=>b.score-a.score||byDate(a.p,b.p)).map(x=>x.p);
 }
+function countryKeyFor(name){const n=searchNorm(name).trim();for(const k of COUNTRY_ORDER){if(searchNorm(COUNTRIES_INFO[k].name)===n||k===n)return k;}return null;}
+function searchCountryKey(q){const t=searchNorm(q).trim();if(t.length<2)return null;for(const k of COUNTRY_ORDER){const n=searchNorm(COUNTRIES_INFO[k].name);if(n.startsWith(t)||t.startsWith(n))return k;}return null;}
+function countryBanner(k){const c=COUNTRIES_INFO[k];if(!c)return "";return `<a class="country-banner" href="#/country/${k}" style="--cb:${c.color}">
+    <div class="cb-main"><span class="cb-kick">Country profile</span><strong>${esc(c.name)}</strong>
+      <span class="cb-sub">Capital, leadership history, elections, recognition status &amp; key stats</span></div>
+    <span class="cb-go">View profile →</span></a>`;}
+function countryBannerFor(name){const k=countryKeyFor(name);return k?countryBanner(k):"";}
 function wireHomeSearch(){
   const inp=document.getElementById("homeSearch");if(!inp)return;
   const def=document.getElementById("homeDefault"),res=document.getElementById("searchResults");
   if(!def||!res)return;
   const run=()=>{
     const q=inp.value.trim();
-    if(!q){res.hidden=true;res.innerHTML="";def.style.display="";return;}
-    const hits=searchPubs(q);
+    if(q.length<2){res.hidden=true;res.innerHTML="";def.style.display="";return;}
+    const hits=searchPubs(q);const ck=searchCountryKey(q);const cb=ck?countryBanner(ck):"";
     def.style.display="none";res.hidden=false;
     res.innerHTML=`<section class="section"><div class="wrap">
       <div class="sec-head"><div><span class="kicker">Search</span><h2>${hits.length} result${hits.length===1?"":"s"}</h2></div>
         <button class="more" type="button" id="clearSearch">Clear \u2715</button></div>
+      ${cb}
       ${hits.length?`<div class="pub-grid">${hits.map(card).join("")}</div>`:`<div class="empty">No matches for \u201c${esc(q)}\u201d. Try fewer or different words.</div>`}
     </div></section>`;
     const cs=document.getElementById("clearSearch");if(cs)cs.onclick=()=>{inp.value="";run();inp.focus();};
@@ -997,6 +1016,7 @@ function viewCategory(raw){
   if(tag==="external"){list=list.filter(p=>p.type==="external");title="Featured elsewhere";}
   else{list=list.filter(p=>p.category===tag||(p.tags||[]).includes(tag));title=tag;}
   return `<section class="section"><div class="wrap">
+    ${countryBannerFor(title)}
     <div class="sec-head"><div><span class="kicker cat-kicker"><a href="#/publications">Publications</a> · Category</span><h2>${esc(title)}</h2>
       <p>${list.length} publication${list.length===1?"":"s"} in this category.</p></div>
       <a class="more" href="#/publications">← All publications</a></div>
