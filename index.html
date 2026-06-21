@@ -85,6 +85,16 @@ nav.main a.active{color:#fff;background:rgba(255,255,255,.12)}
 .hero .role{font-size:clamp(16px,2vw,20px);color:var(--cyan);font-weight:500;margin-bottom:14px}
 .hero p{max-width:58ch;color:#c5d2e8;font-size:17px;margin:0}
 .hero .cta{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap;align-items:center}
+.home-top{background:var(--navy);color:#fff;padding:36px 0 30px}
+.home-top .eyebrow{display:block;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--sky);font-weight:600;margin-bottom:18px}
+.home-search{position:relative;max-width:560px}
+.home-search .hs-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#90a0b8;pointer-events:none}
+.home-search input{width:100%;box-sizing:border-box;padding:13px 16px 13px 44px;border:1px solid transparent;border-radius:999px;font-size:15px;font-family:inherit;background:#fff;color:var(--navy);outline:none}
+.home-search input::placeholder{color:#90a0b8}
+.home-search input:focus{box-shadow:0 0 0 3px rgba(73,136,196,.5)}
+.home-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.topic-chip{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);color:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;text-decoration:none;transition:.15s}
+.topic-chip:hover{background:#fff;color:var(--navy);border-color:#fff}
 .lm-wrap{display:flex;justify-content:center;margin-top:24px}
 
 /* ── home: stat band ── */
@@ -855,6 +865,49 @@ function wireSliders(root){
 }
 
 /* ---------- views ---------- */
+function homeTopics(){
+  const cats=allCategories();const tc={};
+  publicPubs().forEach(p=>(p.tags||[]).forEach(t=>{tc[t]=(tc[t]||0)+1;}));
+  const tags=Object.keys(tc).sort((a,b)=>tc[b]-tc[a]);
+  const out=[];cats.forEach(c=>out.push(["#/category/"+encodeURIComponent(c),c]));
+  tags.forEach(t=>{if(out.length<9)out.push(["#/tag/"+encodeURIComponent(t),t]);});
+  return out.slice(0,9).map(a=>`<a class="topic-chip" href="${a[0]}">${esc(a[1])}</a>`).join("");
+}
+function searchNorm(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");}
+function searchPubs(q){
+  const terms=searchNorm(q).split(/\s+/).filter(Boolean);
+  if(!terms.length)return [];
+  const scored=publicPubs().map(p=>{
+    const F={ti:searchNorm(p.title),tg:searchNorm((p.tags||[]).join(" ")),ct:searchNorm(p.category),ex:searchNorm(p.excerpt),au:searchNorm(p.author),bd:searchNorm(String(p.body||"").replace(/<[^>]+>/g," "))};
+    let score=0,ok=true;
+    terms.forEach(t=>{let s=0;
+      if(F.ti.includes(t)){s+=10;if((" "+F.ti).includes(" "+t))s+=4;}
+      if(F.tg.includes(t))s+=6; if(F.ct.includes(t))s+=5;
+      if(F.ex.includes(t))s+=3; if(F.au.includes(t))s+=3; if(F.bd.includes(t))s+=1;
+      if(s===0)ok=false; score+=s;});
+    return {p,score,ok};
+  });
+  return scored.filter(x=>x.ok).sort((a,b)=>b.score-a.score||byDate(a.p,b.p)).map(x=>x.p);
+}
+function wireHomeSearch(){
+  const inp=document.getElementById("homeSearch");if(!inp)return;
+  const def=document.getElementById("homeDefault"),res=document.getElementById("searchResults");
+  if(!def||!res)return;
+  const run=()=>{
+    const q=inp.value.trim();
+    if(!q){res.hidden=true;res.innerHTML="";def.style.display="";return;}
+    const hits=searchPubs(q);
+    def.style.display="none";res.hidden=false;
+    res.innerHTML=`<section class="section"><div class="wrap">
+      <div class="sec-head"><div><span class="kicker">Search</span><h2>${hits.length} result${hits.length===1?"":"s"}</h2></div>
+        <button class="more" type="button" id="clearSearch">Clear \u2715</button></div>
+      ${hits.length?`<div class="pub-grid">${hits.map(card).join("")}</div>`:`<div class="empty">No matches for \u201c${esc(q)}\u201d. Try fewer or different words.</div>`}
+    </div></section>`;
+    const cs=document.getElementById("clearSearch");if(cs)cs.onclick=()=>{inp.value="";run();inp.focus();};
+  };
+  inp.addEventListener("input",run);
+  inp.addEventListener("keydown",e=>{if(e.key==="Escape"){inp.value="";run();}});
+}
 function viewHome(){
   const sorted=publicPubs().slice().sort(byDate);
   const featured=sorted.find(p=>p.featured)||sorted[0]||null;
@@ -872,14 +925,18 @@ function viewHome(){
   </div></section>`:"";
 
   return `
-  <section class="hero"><div class="wrap">
-    <span class="eyebrow" style="font-size:16px">Geopolitics &amp; Security Analysis</span>
-    <div class="cta">
-      <a class="btn primary" href="#/publications">Read publications</a>
-      <a class="btn ghost" href="#/maps">Explore the map</a>
+  <section class="home-top"><div class="wrap">
+    <span class="eyebrow">Geopolitics &amp; Security Analysis</span>
+    <div class="home-search">
+      <svg class="hs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="homeSearch" type="search" autocomplete="off" placeholder="Search publications, topics, countries\u2026" aria-label="Search publications">
     </div>
+    <div class="home-chips">${homeTopics()}</div>
   </div></section>
 
+  <div id="searchResults" hidden></div>
+
+  <div id="homeDefault">
   ${spotHtml}
 
   <section class="section"><div class="wrap">
@@ -905,7 +962,8 @@ function viewHome(){
     <div class="sec-head"><div><span class="kicker">Info · Stats</span><h2>Key facts and full leadership histories for each South Caucasus country.</h2></div>
       <a class="more" href="#/countries">All countries →</a></div>
     <div class="pub-grid">${COUNTRY_ORDER.map(countryCard).join("")}</div>
-  </div></section>`;
+  </div></section>
+  </div>`;
 }
 
 function filtersBar(active,withChips){
@@ -1388,7 +1446,7 @@ function openCountry(key){
   const inner=document.getElementById("ethInner");
   inner.innerHTML=`<button class="x" aria-label="Close">×</button>
     <div class="eth-head" style="background:${c.color}">
-      <div class="fam">Sovereign state</div><h2>${esc(c.name)}</h2><div class="sub">${esc(c.status)}</div>
+      <div class="fam">Sovereign state</div><h2>${esc(c.name)}</h2>
     </div>
     <div class="eth-body">
       <div class="eth-facts">
@@ -1587,7 +1645,7 @@ function renderAdmin(){
     if(obj.featured){const prev=PUBS.find(p=>p.featured&&p.id!==obj.id);if(prev){prev.featured=false;demoted=prev;}}
     if(ed){PUBS[PUBS.findIndex(p=>p.id===ed.id)]=obj;}else PUBS.unshift(obj);
     await persistOne(obj);if(demoted)await persistOne(demoted);
-    const app=document.getElementById("app");if(app){app.innerHTML=viewHome();initHomeMap();wireLoadMore();}
+    const app=document.getElementById("app");if(app){app.innerHTML=viewHome();initHomeMap();wireLoadMore();wireHomeSearch();}
     editingId=null;renderAdmin();
   };
   const list=inner.querySelector("#adminList");
@@ -1595,7 +1653,7 @@ function renderAdmin(){
     `<div class="admin-row">${flagFor(p.lang)}<div class="ai"><b>${p.draft?'<span class="dbadge">Draft</span>':''}${esc(p.title)}</b><small>${fmt(p.date)} · ${p.type==='external'?'external':p.type==='pdf'?'PDF':'text'} · ${p.type==='external'?'\uD83D\uDD17 '+clickCount(p.id)+' clicks':'\uD83D\uDC41 '+viewCount(p.id)+' views'} · ${(p.tags||[]).join(', ')}</small></div>
       <button class="mini" data-edit="${p.id}">Edit</button><button class="mini danger" data-del="${p.id}">Delete</button></div>`).join("");
   list.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editingId=b.dataset.edit;renderAdmin();});
-  list.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("Delete this publication?")){const id=b.dataset.del;PUBS=PUBS.filter(p=>p.id!==id);await removeOne(id);const app=document.getElementById("app");if(app){app.innerHTML=viewHome();initHomeMap();wireLoadMore();}renderAdmin();}});
+  list.querySelectorAll("[data-del]").forEach(b=>b.onclick=async()=>{if(confirm("Delete this publication?")){const id=b.dataset.del;PUBS=PUBS.filter(p=>p.id!==id);await removeOne(id);const app=document.getElementById("app");if(app){app.innerHTML=viewHome();initHomeMap();wireLoadMore();wireHomeSearch();}renderAdmin();}});
 }
 function exportJSON(){const blob=new Blob([JSON.stringify(PUBS,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="publications.json";a.click();URL.revokeObjectURL(a.href);}
 function importJSON(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=async()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){PUBS=d;if(SUPA_ON){for(const p of PUBS){await persistOne(p);}}else{save();}renderAdmin();}else alert("JSON must be an array.");}catch(x){alert("Invalid JSON.");}};r.readAsText(f);}
@@ -1616,7 +1674,7 @@ function router(){
   setActiveNav(navPath);
   document.getElementById("nav").classList.remove("open");
 
-  if(parts[0]==="admin"){app.innerHTML=viewHome();initHomeMap();wireLoadMore();openAdmin();window.scrollTo(0,0);return;}
+  if(parts[0]==="admin"){app.innerHTML=viewHome();initHomeMap();wireLoadMore();wireHomeSearch();openAdmin();window.scrollTo(0,0);return;}
   if(parts[0]==="publications"){app.innerHTML=viewPublications();wireLangFilter();window.scrollTo(0,0);return;}
   if(parts[0]==="category"){app.innerHTML=viewCategory(parts.slice(1).join("/"));wireLangFilter();window.scrollTo(0,0);return;}
   if(parts[0]==="tag"){app.innerHTML=viewTag(parts.slice(1).join("/"));wireLangFilter();window.scrollTo(0,0);return;}
@@ -1628,7 +1686,7 @@ function router(){
       if(fresh)bumpView(ap.id).then(()=>{const el=document.getElementById("viewCount");if(el)el.textContent=fmtViews(viewCount(ap.id));});}
     window.scrollTo(0,0);return;}
   if(parts[0]==="maps"){setShareMeta(null);app.innerHTML=viewMaps();initDeFacto();window.scrollTo(0,0);return;}
-  setShareMeta(null);app.innerHTML=viewHome();initHomeMap();wireLoadMore();window.scrollTo(0,0);
+  setShareMeta(null);app.innerHTML=viewHome();initHomeMap();wireLoadMore();wireHomeSearch();window.scrollTo(0,0);
 }
 function setShareMeta(p){
   const t=p?`${p.title} · t.ilias`:"t.ilias · Geopolitics & Security Analysis";
