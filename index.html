@@ -839,11 +839,11 @@ function viewTag(raw){
   const tl=tag.toLowerCase();
   const list=publicPubs().filter(p=>(p.tags||[]).some(x=>String(x).toLowerCase()===tl)).sort(byDate);
   return `<section class="section"><div class="wrap">
-    ${countryBannerFor(tag)}
     <div class="sec-head"><div><span class="kicker cat-kicker"><a href="#/publications">Publications</a> \u00b7 Tag</span><h2>#${esc(tag)}</h2>
       <p>${list.length} publication${list.length===1?"":"s"} tagged with this.</p></div>
       <a class="more" href="#/publications">\u2190 All publications</a></div>
     ${filtersBar(null,false)}
+    ${countryBannerFor(tag)}
     <div class="pub-grid">${list.length?list.map(card).join(""):`<div class="empty">No publications with this tag yet.</div>`}</div>
   </div></section>`;
 }
@@ -1016,11 +1016,11 @@ function viewCategory(raw){
   if(tag==="external"){list=list.filter(p=>p.type==="external");title="Featured elsewhere";}
   else{list=list.filter(p=>p.category===tag||(p.tags||[]).includes(tag));title=tag;}
   return `<section class="section"><div class="wrap">
-    ${countryBannerFor(title)}
     <div class="sec-head"><div><span class="kicker cat-kicker"><a href="#/publications">Publications</a> · Category</span><h2>${esc(title)}</h2>
       <p>${list.length} publication${list.length===1?"":"s"} in this category.</p></div>
       <a class="more" href="#/publications">← All publications</a></div>
     ${filtersBar(tag)}
+    ${countryBannerFor(title)}
     <div class="pub-grid">${list.length?list.map(card).join(""):`<div class="empty">No publications in this category yet.</div>`}</div>
   </div></section>`;
 }
@@ -1154,7 +1154,7 @@ const FOCUS=new Set(["GEO","ARM","AZE"]);
 const COUNTRY_KEY={GEO:"georgia",ARM:"armenia",AZE:"azerbaijan"};
 const COUNTRY_ORDER=["armenia","azerbaijan","georgia"];
 const COUNTRIES_INFO={
-  georgia:{iso:"GEO",name:"Georgia",color:"#1C4D8D",capital:"Tbilisi",population:"~3.7 million",
+  georgia:{iso:"GEO",name:"Georgia",color:"#C8102E",capital:"Tbilisi",population:"~3.7 million",
     government:"Parliamentary republic",fh:{score:51,label:"Partly Free"},
     elections:"Parliamentary: 2028 (next), last Oct 2024",status:"EU candidate (2023)",
     match:["Georgia","Black Sea","Caucasus","Abkhazia","South Ossetia"],
@@ -1203,7 +1203,7 @@ const COUNTRIES_INFO={
         {n:"Alexander Chikvaidze",y:"1992-1995"},
         {n:"Giorgi Khoshtaria",y:"1991-1992"}]
     }},
-  armenia:{iso:"ARM",name:"Armenia",color:"#4E8D6E",capital:"Yerevan",population:"~2.7 million",
+  armenia:{iso:"ARM",name:"Armenia",color:"#E8A33D",capital:"Yerevan",population:"~2.7 million",
     government:"Parliamentary republic",fh:{score:54,label:"Partly Free"},
     elections:"Parliamentary: held 7 June 2026, next ~2031",status:"CSTO member (participation frozen)",
     match:["Armenia","Artsakh","Nagorno-Karabakh","Caucasus"],
@@ -1240,7 +1240,7 @@ const COUNTRIES_INFO={
         {n:"Vahan Papazian",y:"1993-1996"},
         {n:"Raffi Hovannisian",y:"1991-1992",i:"US-born lawyer and Armenia's first foreign minister, later a prominent opposition leader."}]
     }},
-  azerbaijan:{iso:"AZE",name:"Azerbaijan",color:"#2E6E8E",capital:"Baku",population:"~10.2 million",
+  azerbaijan:{iso:"AZE",name:"Azerbaijan",color:"#1CA3D8",capital:"Baku",population:"~10.2 million",
     government:"Presidential republic (dominant-party)",fh:{score:6,label:"Not Free"},
     elections:"Presidential: ~2031, Parliamentary: ~2029",status:"Non-aligned, major energy exporter",
     match:["Azerbaijan","Energy","Caucasus"],
